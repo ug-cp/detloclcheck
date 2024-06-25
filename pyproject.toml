@@ -17,8 +17,8 @@ dependencies = ["numpy"]
 # dependencies = ["opencv-python", "numpy"]
 
 [project.license]
-file = "LICENSE.txt"
-name = "..."
+file = "LICENSE.md"
+name = "LGPL-3.0-or-later"
 
 [project.scripts]
 detloclcheck_find_checkerboard = "detloclcheck.scripts.detloclcheck_find_checkerboard:main"

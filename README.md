@@ -41,6 +41,6 @@ Author: Daniel Mohr.
 
 Date: 2024-06-25 (last change).
 
-License:
+License: LGPL-3.0-or-later
 
 Copyright (C) 2024 Daniel Mohr
