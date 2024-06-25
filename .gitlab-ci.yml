@@ -50,7 +50,7 @@ ruff:
   extends: .display_env
   variables:
     PIP_INSTALL: "pip3 install --break-system-packages --user"
-    PIP_UNINSTALL: "pip3 uninstall --break-system-packages"
+    PIP_UNINSTALL: "pip3 uninstall --yes --break-system-packages"
   script:
     - apt-get update
     - $APT_GET_INSTALL python3-hatchling python3-numpy python3-opencv python3-pip
@@ -71,7 +71,7 @@ ubuntu-2224:
   extends: .debian_based_test
   variables:
     PIP_INSTALL: "pip3 install --user"
-    PIP_UNINSTALL: "pip3 uninstall "
+    PIP_UNINSTALL: "pip3 uninstall"
 
 ubuntu-2424:
   image:
