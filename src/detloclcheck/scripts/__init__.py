@@ -1,7 +1,7 @@
 """
 :mod:`detloclcheck.scripts`
 ===========================
-   :synopsis: :mod:`detloclcheck` is a python module for Detection and 
+   :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
               L shape marker using template matching.
 
