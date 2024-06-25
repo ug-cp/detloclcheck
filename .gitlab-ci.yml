@@ -49,6 +49,7 @@ ruff:
   stage: build_test
   extends: .display_env
   script:
+    - apt-get update
     - $APT_GET_INSTALL python3-hatchling python3-numpy python3-opencv python3-pip
     - pip3 install --break-system-packages --user .
     - ls -lah "$HOMe/.local/lib/python3.11/site-packages/"
