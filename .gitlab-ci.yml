@@ -84,7 +84,7 @@ ubuntu-2224:
   extends: .debian_based_test
   variables:
     PIP_INSTALL: "pip3 install --user"
-    PIP_UNINSTALL: "pip3 uninstall"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
 
 ubuntu-2424:
   image:
