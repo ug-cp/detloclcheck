@@ -20,6 +20,7 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import os
 import sys
 
 
