@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "DetLocLCheck"
+version = "2024.6.25"
+authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
+description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L shape marker using template matching."
+keywords=["calibration target", "checkerboard", "detection", "localization",
+          "marker", "L shape marker ", "template matching"]
+readme = "README.md"
+
+requires-python = ">=3.10"
+
+dependencies = ["numpy"]
+# dependencies = ["opencv-python", "numpy"]
+
+[project.license]
+file = "LICENSE.txt"
+name = "..."
+
+[project.scripts]
+detloclcheck_find_checkerboard = "detloclcheck.scripts.detloclcheck_find_checkerboard:main"
+
+[project.optional-dependencies] # Optional
+test = ["pytest", "pytest-cov", "pytest-xdist"]
