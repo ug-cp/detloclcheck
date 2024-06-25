@@ -17,8 +17,8 @@ Or you can run only one test, e. g.::
   pytest-3 -k TestScriptsExecutable main.py
 """
 
-import unittest
 import subprocess
+import unittest
 
 
 class TestScriptsExecutable(unittest.TestCase):

@@ -20,6 +20,12 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import sys
+
+
+def run_find_checkerboard(args):
+    pass
+
 
 def check_arg_file(data):
     """
@@ -31,6 +37,7 @@ def check_arg_file(data):
         msg = f'"{data}" is not a file'
         raise argparse.ArgumentTypeError(msg)
     return data
+
 
 def main():
     """
@@ -67,7 +74,12 @@ def main():
         'detection and localization of a checkerboard calibration target '
         'containing L shape marker using template matching.',
         epilog=epilog)
+    parser_find_checkerboard.set_defaults(func=run_find_checkerboard)
     args = parser.parse_args()
+    if args.subparser_name is not None:
+        sys.exit(args.func(args))
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
