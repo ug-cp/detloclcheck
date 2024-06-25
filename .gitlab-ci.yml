@@ -69,9 +69,12 @@ ruff:
     - $PIP_INSTALL .
     - ls -lah "$HOME"/.local/lib/*/site-packages/
     - export PATH="$PATH":~/.local/bin
-    - detloclcheck_find_checkerboard -h
+    - detloclcheck find_checkerboard -h
     - $PIP_UNINSTALL DetLocLCheck
     - ls -lah "$HOME"/.local/lib/*/site-packages/
+    - $APT_GET_INSTALL python3-pytest python3-pytest-cov python3-pytest-xdist
+    - $PIP_INSTALL .
+    - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
 
 debian-latest:
   image:
