@@ -75,6 +75,9 @@ ruff:
     - $APT_GET_INSTALL python3-pytest python3-pytest-cov python3-pytest-xdist
     - $PIP_INSTALL .
     - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+    - $PIP_INSTALL -e .
+    - detloclcheck find_checkerboard -h
 
 debian-latest:
   image:
