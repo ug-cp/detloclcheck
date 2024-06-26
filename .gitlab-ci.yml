@@ -63,7 +63,7 @@ ruff:
     PIP_UNINSTALL: "pip3 uninstall --yes --break-system-packages"
   script:
     - apt-get update
-    - $APT_GET_INSTALL python3-hatchling python3-numpy python3-opencv python3-pip
+    - $APT_GET_INSTALL python3-numpy python3-opencv python3-pip
     - python3 --version
     - pip3 --version
     - $PIP_INSTALL .
