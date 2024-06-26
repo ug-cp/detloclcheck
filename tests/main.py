@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-06-25
+:Date: 2024-06-26
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -19,6 +19,27 @@ Or you can run only one test, e. g.::
 
 import subprocess
 import unittest
+
+try:
+    from scripts_detloclcheck_check_arg_file \
+        import TestCheck_arg_file  # noqa: F401
+except ImportError:
+    from tests.scripts_detloclcheck_check_arg_file \
+        import TestCheck_arg_file  # noqa: F401
+
+
+class TestImport(unittest.TestCase):
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-06-26
+
+    env python3 main.py TestImport
+    pytest-3 -k TestImport main.py
+    """
+
+    def test_import(self):
+        import detloclcheck  # noqa: F401
+        import detloclcheck.scripts  # noqa: F401
 
 
 class TestScriptsExecutable(unittest.TestCase):
@@ -87,3 +108,7 @@ class TestScriptsExecutable(unittest.TestCase):
         # check end of help output
         self.assertTrue(cpi.stdout.strip().endswith(
             b'License: LGPL-3.0-or-later'))
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
