@@ -17,8 +17,6 @@
 .. autofunction:: _normed_TM_CCORR_NORMED
 .. autofunction:: get_map
 .. autofunction:: set_black_border
-.. autofunction:: calculate_square_distances
-.. autofunction:: calculate_sharpness
 
 .. autoclass:: CalculateTemplateMatching
    :members:
@@ -52,6 +50,8 @@ import multiprocessing
 
 import cv2
 import numpy
+from detloclcheck.tools import (calculate_square_distances,
+                                filter_blurry_corners)
 
 
 @functools.cache
@@ -141,46 +141,6 @@ def set_black_border(image, templateshape):
     image[:, -border_size:] = 0
 
 
-def calculate_square_distances(x0, y0, x1, y1):
-    """
-    :Author: Daniel Mohr
-    :Email: daniel.mohr@dlr.de
-    :Date: 2018-02-12 (last change).
-    :License: LGPL-3.0-or-later
-
-    calculate the squared distances between all given
-    points (x0,y0) and (x1,y1)
-
-    :param x0: numpy array (vector) with the x coordinates in a column vector
-    :param y0: numpy array (vector) with the y coordinates in a column vector
-    :param x1: numpy array (vector) with the x coordinates in a column vector
-    :param y1: numpy array (vector) with the y coordinates in a column vector
-
-    :returns: return a matrix A with all squared distances
-              A[i,j] is the distance between (x0[j],y0[j]) and (x1[i],y1[i])
-    """
-    # calculate x-distances
-    # (numpy.ones((x1.shape[0],1)) * x0)
-    # numpy.tile(x0,x1.shape[0]).reshape((x1.shape[0],x0.shape[0]))
-    xd = ((numpy.ones((x1.shape[0], 1)) * x0) -
-          (numpy.ones((x0.shape[0], 1)) * x1).transpose())
-    # calculate y-distances
-    yd = ((numpy.ones((y1.shape[0], 1)) * y0) -
-          (numpy.ones((y0.shape[0], 1)) * y1).transpose())
-    # calculate square of distances and return it
-    return numpy.square(xd) + numpy.square(yd)
-
-
-def calculate_sharpness(img):
-    """
-    :Author: Daniel Mohr
-    :Email: daniel.mohr@uni-greifswald.de
-    :Date: 2024-02-20
-    :License: LGPL-3.0-or-later
-    """
-    return cv2.Laplacian(img, cv2.IMREAD_GRAYSCALE).var()
-
-
 class ParallelFind4QuadCornerSubpix():
     def __init__(self, image, coordinates, window_size):
         self.image = image
@@ -267,30 +227,9 @@ def find_checkerboard(
             break
     approx_coordinates = numpy.array(approx_coordinates)
     log.debug('found approximated coordinates')
-    # filter blurry corners (1)
-    blurry_corners = []
-    size = crosssizes[0]
-    log.debug(f'use size = {size} for filtering blurry corners')
-    for i in range(approx_coordinates.shape[0]):
-        i0 = int(round(approx_coordinates[i, 0, 0] - size))
-        i1 = int(round(approx_coordinates[i, 0, 0] + size))
-        j0 = int(round(approx_coordinates[i, 0, 1] - size))
-        j1 = int(round(approx_coordinates[i, 0, 1] + size))
-        if ((i0 >= 0) and (i1 >= 0) and (j0 >= 0) and (j1 >= 0) and
-            (i0 < image.shape[1]) and (i1 < image.shape[1]) and
-                (j0 < image.shape[0]) and (j1 < image.shape[0])):
-            clip = image[j0:j1, i0:i1]
-            sharpness = calculate_sharpness(clip)
-            if sharpness < min_sharpness:
-                blurry_corners.append(i)
-        else:
-            # we cannot calculate the sharpness in this way
-            # this means, we do not know the sharpness
-            blurry_corners.append(i)
-    if len(blurry_corners) > 0:
-        approx_coordinates = numpy.delete(
-            approx_coordinates, blurry_corners, axis=0)
-    log.debug(f'removed {len(blurry_corners)} blurry corners')
+    # filter blurry corners
+    approx_coordinates = filter_blurry_corners(
+        image, approx_coordinates, crosssizes[0], min_sharpness)
     n = approx_coordinates.shape[0]
     distances = calculate_square_distances(
         approx_coordinates[:, :, 0].reshape((n,)),

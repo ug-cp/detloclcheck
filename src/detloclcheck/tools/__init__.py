@@ -1,6 +1,6 @@
 """
-:mod:`detloclcheck`
-===================
+:mod:`detloclcheck.tools`
+=========================
    :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
               L shape marker using template matching.
@@ -8,20 +8,20 @@
 .. contents::
 
 description
-===========
+-----------
 
 `DetLocLCheck` is a software tool for Detection and Localization of a
 Checkerboard calibration target containing L shape marker using
 template matching.
 
-submodules
-==========
-.. automodule:: detloclcheck.find_checkerboard
-.. automodule:: detloclcheck.tools
-.. automodule:: detloclcheck.scripts
+functions
+---------
+.. currentmodule:: detloclcheck.tools
+.. autofunction:: calculate_sharpness
+.. autofunction:: calculate_square_distances
 
 copyright + license
-===================
+-------------------
 :Author: Daniel Mohr
 :Date: 2024-07-01
 :License: LGPL-3.0-or-later
@@ -41,3 +41,11 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+from .calculate_sharpness import calculate_sharpness
+from .calculate_square_distances import calculate_square_distances
+from .filter_blurry_corners import filter_blurry_corners
+
+__all__ = ["calculate_sharpness",
+           "calculate_square_distances",
+           "filter_blurry_corners"]

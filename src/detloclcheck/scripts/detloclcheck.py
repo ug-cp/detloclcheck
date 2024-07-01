@@ -27,8 +27,8 @@ import sys
 
 import cv2
 
-
 from detloclcheck.find_checkerboard import find_checkerboard
+from detloclcheck.tools import filter_blurry_corners
 
 
 def run_find_checkerboard(args):
@@ -47,14 +47,29 @@ def run_find_checkerboard(args):
             log.error(f'file "{filename}" cannot be read as image')
             return 1
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        # coordinates = find_checkerboard(
-        find_checkerboard(
+        coordinates = find_checkerboard(
             gray_image,
             crosssizes=args.crosssizes,
             angles=args.angles,
             hit_bound=args.hit_bound[0],
             min_sharpness=args.min_sharpness[0],
             run_parallel=args.run_parallel)
+        if coordinates is None:
+            log.error('ERROR: no inner corners detected')
+            return 1
+        # filter blurry corners (2)
+        coordinates = filter_blurry_corners(
+            gray_image, coordinates, args.crosssizes[0], args.min_sharpness[1])
+    if coordinates[1].shape[0] < 24:
+        log.error(
+            'ERROR: only %i corners detected, '
+            'but we need at least 24 for marker detection',
+            coordinates[1].shape[0])
+        return 1
+    log.debug(f'go on with {coordinates[1].shape[0]} corners')
+    # coordinate_system, zeropoint, axis1, axis2 = get_coordinate_system(
+    #     gray_image, coordinates, args.max_distance_factor_range,
+    #     min_sharpness=args.min_sharpness[2])
     return 0
 
 

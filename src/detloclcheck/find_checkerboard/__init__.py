@@ -47,4 +47,4 @@ copyright + license
 
 from .find_checkerboard import find_checkerboard
 
-__all__ = find_checkerboard
+__all__ = ["find_checkerboard"]
