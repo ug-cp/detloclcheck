@@ -2,10 +2,6 @@
 set -e
 
 function create_pdf() {
-    skipcp=$1
-    if [ "$skipcp" != "true" ]; then
-	cp -p README.md docs/
-    fi
     (
 	cd docs
 	make latexpdf && make latexpdf && cp -p _build/latex/detloclcheck.pdf ../manual_detloclcheck.pdf || exit $?
@@ -15,7 +11,7 @@ function create_pdf() {
 function create_html() {
     skipcp=$1
     if [ "$skipcp" != "true" ]; then
-	cp -p README.md docs/
+	cp -p README.md LICENSE.md LICENSE.LESSER.md docs/
     fi
     if [ -f docs/test_coverage_report/index.html ]; then
 	rm docs/test_coverage_report/index.html
