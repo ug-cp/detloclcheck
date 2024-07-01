@@ -1,6 +1,7 @@
 *~
 __pycache__/
 .coverage
+coverage.xml
 docs/LICENSE.LESSER.md
 docs/LICENSE.md
 docs/README.md
