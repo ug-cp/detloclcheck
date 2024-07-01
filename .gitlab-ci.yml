@@ -78,6 +78,13 @@ ruff:
     - $PIP_UNINSTALL DetLocLCheck
     - $PIP_INSTALL -e .
     - detloclcheck find_checkerboard -h
+    - $APT_GET_INSTALL make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync
+    - ./create_doc html
+    - mv manual_detloclcheck public
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - public
 
 debian-latest:
   image:

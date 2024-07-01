@@ -1,6 +1,6 @@
 """
-:mod:`detloclcheck.scripts`
-===========================
+:mod:`detloclcheck.find_checkerboard`
+=====================================
    :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
               L shape marker using template matching.
@@ -14,10 +14,19 @@ description
 Checkerboard calibration target containing L shape marker using
 template matching.
 
+functions
+---------
+.. currentmodule:: detloclcheck.find_checkerboard
+.. autofunction:: find_checkerboard
+
+submodules
+----------
+.. automodule:: detloclcheck.find_checkerboard.find_checkerboard
+
 copyright + license
 -------------------
 :Author: Daniel Mohr
-:Date: 2024-06-25
+:Date: 2024-07-01
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -35,3 +44,5 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+from .find_checkerboard import find_checkerboard

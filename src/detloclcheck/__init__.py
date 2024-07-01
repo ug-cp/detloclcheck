@@ -17,16 +17,14 @@ template matching.
 submodules
 ==========
 .. automodule:: detloclcheck.scripts
+.. automodule:: detloclcheck.find_checkerboard
 
 copyright + license
 ===================
-Author: Daniel Mohr
-
-Date: 2024-06-25
-
-License: LGPL-3.0-or-later
-
-Copyright (C) 2024 Daniel Mohr
+:Author: Daniel Mohr
+:Date: 2024-07-01
+:License: LGPL-3.0-or-later
+:Copyright: (C) 2024 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #

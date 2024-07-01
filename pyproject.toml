@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "DetLocLCheck"
-version = "2024.6.28"
+version = "2024.7.1"
 authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
 description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L shape marker using template matching."
 keywords=["calibration target", "checkerboard", "detection", "localization",
@@ -23,5 +23,9 @@ name = "LGPL-3.0-or-later"
 [project.scripts]
 detloclcheck = "detloclcheck.scripts.detloclcheck:main"
 
-[project.optional-dependencies] # Optional
+[project.optional-dependencies]
 test = ["pytest", "pytest-cov", "pytest-xdist"]
+docs = ["sphinx", "sphinx-argparse"]
+
+[tool.ruff.lint.per-file-ignores]
+"docs/conf.py" = ["F401"]

@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-06-28
+:Date: 2024-07-01
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -20,28 +20,50 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import logging
+import logging.handlers
 import os
 import sys
+
+import cv2
+
+
+from detloclcheck.find_checkerboard import find_checkerboard
 
 
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-06-28
+    :Date: 2024-07-01
     :License: LGPL-3.0-or-later
     """
+    log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
+        log.info(f'handle file "{filename}"')
         output_filename = \
             os.path.splitext(filename)[0] + '.' + args.output_format[0]
-        pass
+        image = cv2.imread(filename)
+        if image is None:
+            log.error(f'file "{filename}" cannot be read as image')
+            return 1
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        coordinates = find_checkerboard(
+            gray_image,
+            crosssizes=args.crosssizes,
+            angles=args.angles,
+            hit_bound=args.hit_bound[0],
+            min_sharpness=args.min_sharpness[0],
+            run_parallel=args.run_parallel)
 
 
 def check_arg_file(data):
     """
     :Author: Daniel Mohr
-    :Date: 2024-06-25
+    :Date: 2024-07-01
     :License: LGPL-3.0-or-later
     """
+    log = logging.getLogger('detloclcheck.check_arg_file')
+    log.debug(f'handle file "{data}"')
     if not os.path.isfile(data):
         msg = f'"{data}" is not a file'
         raise argparse.ArgumentTypeError(msg)
@@ -51,9 +73,11 @@ def check_arg_file(data):
 def check_arg_crosssizes(data):
     """
     :Author: Daniel Mohr
-    :Date: 2024-06-25
+    :Date: 2024-07-01
     :License: LGPL-3.0-or-later
     """
+    log = logging.getLogger('detloclcheck.check_arg_crosssizes')
+    log.debug(f'check crosssize "{data}"')
     try:
         data = int(data)
     except ValueError:
@@ -64,15 +88,9 @@ def check_arg_crosssizes(data):
         raise argparse.ArgumentTypeError(msg)
     return data
 
-
-def main():
-    """
-    :Author: Daniel Mohr
-    :Date: 2024-06-28
-    :License: LGPL-3.0-or-later
-    """
+def my_argument_parser():
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-06-25\n"
+    epilog += "Date: 2024-07-01\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -99,7 +117,7 @@ def main():
         type=check_arg_file,
         required=True,
         dest='file',
-        help='Set the file(s) to use. ',
+        help='Set the file(s) to use.',
         metavar='f')
     parser_find_checkerboard.add_argument(
         '-output_format',
@@ -125,6 +143,38 @@ def main():
         'This is used during template matching. default: 15, 23',
         metavar='s')
     parser_find_checkerboard.add_argument(
+        '-angles',
+        nargs="+",
+        type=check_arg_crosssizes,
+        required=False,
+        default=[0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5],
+        dest='angles',
+        help='Set a list of angles to test. '
+        'This is used during template matching. '
+        'default: 0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5',
+        metavar='a')
+    parser_find_checkerboard.add_argument(
+        '-hit_bound',
+        nargs=1,
+        type=float,
+        required=False,
+        default=[0.93],
+        dest='hit_bound',
+        help='This value is used during template matching. A checkerboard '
+        'corner has to reach at least this value. default: 0.93',
+        metavar='x')
+    parser_find_checkerboard.add_argument(
+        '-min_sharpness',
+        nargs=3,
+        type=float,
+        required=False,
+        default=(100, 500, 1000),
+        dest='min_sharpness',
+        help='At 3 steps blurry corners are removed. These list of values '
+        'define the minimal sharpness for a good corner and others are '
+        'intepreted as blurry. default: 100, 500, 1000',
+        metavar='x')
+    parser_find_checkerboard.add_argument(
         '-max_distance_factor_range',
         nargs="+",
         type=float,
@@ -140,21 +190,51 @@ def main():
         'on. default: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.',
         metavar='x')
     parser_find_checkerboard.add_argument(
-        '-min_sharpness',
-        nargs=3,
-        type=float,
+        '-log_file',
+        nargs=1,
+        type=str,
         required=False,
-        default=(100, 500, 1000),
-        dest='min_sharpness',
-        help='At 3 steps blurry corners are removed. These list of values '
-        'define the minimal sharpness for a good corner and others are '
-        'intepreted as blurry. default: 100, 500, 1000',
-        metavar='x')
+        dest='log_file',
+        help='Set the log file. If not given logging is only done on stdout.',
+        metavar='f')
+    parser_find_checkerboard.add_argument(
+        '-run_parallel',
+        default=False,
+        required=False,
+        action='store_true',
+        dest='run_parallel',
+        help='If set this flag, will try to do things in parallel.')
+    return parser
+
+def main():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-01
+    :License: LGPL-3.0-or-later
+    """
+    log = logging.getLogger('detloclcheck')
+    ch = logging.StreamHandler()
+    ch.setFormatter(
+        logging.Formatter(
+            '%(asctime)s %(name)s %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S %Z'))
+    log.addHandler(ch)
+    log.setLevel(logging.DEBUG)
+    parser = my_argument_parser()
     args = parser.parse_args()
+    if hasattr(args, 'log_file') and (args.log_file is not None):
+        fh = logging.handlers.WatchedFileHandler(args.log_file[0])
+        fh.setFormatter(
+            logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s',
+                              datefmt='%Y-%m-%dT%H:%M:%S_%Z'))
+        log.addHandler(fh)
+        log.debug(f'added logging to file "{args.log_file[0]}"')
     if args.subparser_name is not None:
+        log.info('start detloclcheck')
         sys.exit(args.func(args))
     else:
         parser.print_help()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
