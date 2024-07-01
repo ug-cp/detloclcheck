@@ -46,3 +46,5 @@ copyright + license
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 from .find_checkerboard import find_checkerboard
+
+__all__ = find_checkerboard
