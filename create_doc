@@ -34,23 +34,26 @@ function create_html() {
 	mkdir $outputdir
     fi
     rsync --delete-after --archive --one-file-system --links --hard-links --sparse --checksum docs/_build/html/ $outputdir/
+    if [ -d coverage_report ]; then
+	rsync -a -r --delete --exclude=index.rst --exclude=index.html coverage_report/ $outputdir/test_coverage_report/
+    fi
 }
 
 cp -p README.md LICENSE.md LICENSE.LESSER.md docs/ || exit $?
 
 if [ $# -eq 0 ]; then
     # build all documentation formats in parallel
-    create_pdf skipcp &
+    create_pdf &
     pid1=$!
     create_html skipcp &
     pid2=$!
     wait $pid1 $pid2 && echo -e "\n+-------+\n| ready |\n+-------+"
 else
     if [ "$1" = "html" ]; then
-	create_html skipcp
+	create_html
     fi
     if [ "$1" = "pdf" ]; then
-	create_pdf skipcp
+	create_pdf
     fi
     echo -e "\n+-------+\n| ready |\n+-------+"
 fi

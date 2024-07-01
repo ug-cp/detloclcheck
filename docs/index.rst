@@ -13,6 +13,7 @@ Welcome to DetLocLCheck's documentation!
    README.md
    script_detloclcheck
    module_detloclcheck
+   test_coverage_report/index
    LICENSE.LESSER.md
    LICENSE.md
 
