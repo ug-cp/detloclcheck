@@ -1,7 +1,7 @@
 """
 :mod:`detloclcheck.find_checkerboard.find_checkerboard`
 =======================================================
-:synopsis: :mod:`detloclcheck.find_checkerboard.find_checkerboard` 
+:synopsis: :mod:`detloclcheck.find_checkerboard.find_checkerboard`
            provides the helper functions for
            :func:`detloclcheck.find_checkerboard.find_checkerboard`.
 :Author: Daniel Mohr
@@ -218,7 +218,7 @@ def find_checkerboard(
     :param image: 2 dimensional numpy array describing the image
     :param crosssizes: list of cross sizes to test
     :param angles: list of angles to test
-    :param hit_bound: minimal value in the template matching to be a 
+    :param hit_bound: minimal value in the template matching to be a
                       checkerboard corner
     :param min_sharpness: minimal sharpness for a good corner
 

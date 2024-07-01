@@ -40,20 +40,22 @@ def run_find_checkerboard(args):
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
         log.info(f'handle file "{filename}"')
-        output_filename = \
-            os.path.splitext(filename)[0] + '.' + args.output_format[0]
+        # output_filename = \
+        #     os.path.splitext(filename)[0] + '.' + args.output_format[0]
         image = cv2.imread(filename)
         if image is None:
             log.error(f'file "{filename}" cannot be read as image')
             return 1
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        coordinates = find_checkerboard(
+        # coordinates = find_checkerboard(
+        find_checkerboard(
             gray_image,
             crosssizes=args.crosssizes,
             angles=args.angles,
             hit_bound=args.hit_bound[0],
             min_sharpness=args.min_sharpness[0],
             run_parallel=args.run_parallel)
+    return 0
 
 
 def check_arg_file(data):
@@ -87,6 +89,7 @@ def check_arg_crosssizes(data):
         msg = f'"{data}" is not odd'
         raise argparse.ArgumentTypeError(msg)
     return data
+
 
 def my_argument_parser():
     epilog = "Author: Daniel Mohr\n"
@@ -183,8 +186,8 @@ def my_argument_parser():
         dest='max_distance_factor_range',
         help='Set the possible maximal distance factors. Typically it is '
         'assumed that the x size and y size of a checkerboard cell is equal. '
-        'But if the checkerboard is rotated against the focus plane then other '
-        'x/y are possible. This list defines which factors are maximal '
+        'But if the checkerboard is rotated against the focus plane then '
+        'other x/y are possible. This list defines which factors are maximal '
         'allowed. We try first to find the coordinate axis with the maximal '
         'the first factor. If this is not possible, we take the next and so '
         'on. default: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.',
@@ -205,6 +208,7 @@ def my_argument_parser():
         dest='run_parallel',
         help='If set this flag, will try to do things in parallel.')
     return parser
+
 
 def main():
     """
