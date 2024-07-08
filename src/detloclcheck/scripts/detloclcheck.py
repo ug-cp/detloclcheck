@@ -31,6 +31,7 @@ from detloclcheck.find_checkerboard import find_checkerboard
 from detloclcheck.tools import filter_blurry_corners
 from detloclcheck.create_coordinate_system import create_coordinate_system
 
+
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr

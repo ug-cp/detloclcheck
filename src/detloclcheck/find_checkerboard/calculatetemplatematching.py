@@ -32,7 +32,7 @@
 
 import cv2
 import numpy
-from detloclcheck.tools import normed_TM_CCORR_NORMED
+from detloclcheck.tools import array2image, normed_TM_CCORR_NORMED
 
 from .array2image import array2image
 from .create_template import create_template

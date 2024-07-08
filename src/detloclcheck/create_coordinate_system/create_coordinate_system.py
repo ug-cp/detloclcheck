@@ -23,7 +23,8 @@ import logging
 
 import cv2
 import numpy
-from detloclcheck.tools import filter_blurry_corners, normed_TM_CCORR_NORMED
+from detloclcheck.tools import (array2image, filter_blurry_corners,
+                                normed_TM_CCORR_NORMED)
 
 
 def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
@@ -441,7 +442,6 @@ def create_coordinate_system(
     # coordinate_system[:, 0, :] are the pixel coordinates
     # coordinate_system[:, 1, :] are the coordinates in an artificial system
     # filter blurry corners (3)
-    blurry_corners = []
     size = 0.4 * (numpy.linalg.norm(axis1) + numpy.linalg.norm(axis2))
     coordinate_system = filter_blurry_corners(
         image, coordinate_system, size, min_sharpness)

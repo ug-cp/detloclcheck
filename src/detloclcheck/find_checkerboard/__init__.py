@@ -21,7 +21,6 @@ functions
 
 submodules
 ----------
-.. automodule:: detloclcheck.find_checkerboard.array2image
 .. automodule:: detloclcheck.find_checkerboard.calculatetemplatematching
 .. automodule:: detloclcheck.find_checkerboard.create_template
 .. automodule:: detloclcheck.find_checkerboard.find_checkerboard

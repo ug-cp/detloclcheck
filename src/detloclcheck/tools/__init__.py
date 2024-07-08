@@ -17,6 +17,7 @@ template matching.
 functions
 ---------
 .. currentmodule:: detloclcheck.tools
+.. autofunction:: array2image
 .. autofunction:: calculate_sharpness
 .. autofunction:: calculate_square_distances
 .. autofunction:: filter_blurry_corners
@@ -44,12 +45,14 @@ copyright + license
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
+from .array2image import array2image
 from .calculate_sharpness import calculate_sharpness
 from .calculate_square_distances import calculate_square_distances
 from .filter_blurry_corners import filter_blurry_corners
 from .normed_tm_ccorr_normed import normed_TM_CCORR_NORMED
 
-__all__ = ["calculate_sharpness",
+__all__ = ["array2image",
+           "calculate_sharpness",
            "calculate_square_distances",
            "filter_blurry_corners",
            "normed_TM_CCORR_NORMED"]

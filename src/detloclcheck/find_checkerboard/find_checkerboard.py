@@ -37,7 +37,6 @@ import numpy
 from detloclcheck.tools import (calculate_square_distances,
                                 filter_blurry_corners)
 
-from .array2image import array2image
 from .calculatetemplatematching import CalculateTemplateMatching
 from .create_template import create_template
 from .parallelfind4quadcornersubpix import ParallelFind4QuadCornerSubpix
