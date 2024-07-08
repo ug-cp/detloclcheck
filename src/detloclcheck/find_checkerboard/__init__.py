@@ -21,12 +21,16 @@ functions
 
 submodules
 ----------
+.. automodule:: detloclcheck.find_checkerboard.array2image
+.. automodule:: detloclcheck.find_checkerboard.calculatetemplatematching
+.. automodule:: detloclcheck.find_checkerboard.create_template
 .. automodule:: detloclcheck.find_checkerboard.find_checkerboard
+.. automodule:: detloclcheck.find_checkerboard.parallelfind4quadcornersubpix
 
 copyright + license
 -------------------
 :Author: Daniel Mohr
-:Date: 2024-07-01
+:Date: 2024-07-08
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """

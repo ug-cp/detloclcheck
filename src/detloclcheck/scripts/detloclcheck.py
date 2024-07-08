@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-01
+:Date: 2024-07-08
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -29,12 +29,12 @@ import cv2
 
 from detloclcheck.find_checkerboard import find_checkerboard
 from detloclcheck.tools import filter_blurry_corners
-
+from detloclcheck.create_coordinate_system import create_coordinate_system
 
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-01
+    :Date: 2024-07-08
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
@@ -60,16 +60,18 @@ def run_find_checkerboard(args):
         # filter blurry corners (2)
         coordinates = filter_blurry_corners(
             gray_image, coordinates, args.crosssizes[0], args.min_sharpness[1])
-    if coordinates[1].shape[0] < 24:
+    if coordinates.shape[0] < 24:
         log.error(
             'ERROR: only %i corners detected, '
             'but we need at least 24 for marker detection',
-            coordinates[1].shape[0])
+            coordinates.shape[0])
         return 1
-    log.debug(f'go on with {coordinates[1].shape[0]} corners')
-    # coordinate_system, zeropoint, axis1, axis2 = get_coordinate_system(
-    #     gray_image, coordinates, args.max_distance_factor_range,
-    #     min_sharpness=args.min_sharpness[2])
+    log.debug(f'go on with {coordinates.shape[0]} corners')
+    coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
+        gray_image, coordinates, args.max_distance_factor_range,
+        min_sharpness=args.min_sharpness[2])
+    if coordinate_system is None:
+        return zeropoint  # zeropoint is used as error code
     return 0
 
 

@@ -1,32 +1,13 @@
 """
-:mod:`detloclcheck`
-===================
-   :synopsis: :mod:`detloclcheck` is a python module for Detection and
-              Localization of a Checkerboard calibration target containing
-              L shape marker using template matching.
-
-.. contents::
-
-description
-===========
-
-`DetLocLCheck` is a software tool for Detection and Localization of a
-Checkerboard calibration target containing L shape marker using
-template matching.
-
-submodules
-==========
-.. automodule:: detloclcheck.create_coordinate_system
-.. automodule:: detloclcheck.find_checkerboard
-.. automodule:: detloclcheck.tools
-.. automodule:: detloclcheck.scripts
-
-copyright + license
-===================
 :Author: Daniel Mohr
+:Email: daniel.mohr@uni-greifswald.de
 :Date: 2024-07-08
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
+
+.. currentmodule:: detloclcheck.find_checkerboard.create_template
+.. autofunction:: create_template
+
 """
 # This file is part of DetLocLCheck.
 #
@@ -42,3 +23,18 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+import functools
+
+import numpy
+
+
+@functools.cache
+def create_template(crosssize):
+    template = numpy.zeros((crosssize, crosssize), dtype=numpy.uint8)
+    numpy.fill_diagonal(template, 128)
+    numpy.fill_diagonal(numpy.fliplr(template), 128)
+    for i in range(crosssize):
+        template[i, (1+i):(crosssize-i-1)] = 255
+        template[i, (crosssize-i):i] = 255
+    return template

@@ -61,5 +61,6 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
     if len(blurry_corners) > 0:
         coordinates = numpy.delete(
             coordinates, blurry_corners, axis=0)
-    log.debug(f'removed {len(blurry_corners)} blurry corners')
+    log.debug(f'removed {len(blurry_corners)} blurry corners '
+              f'(min_sharpness = {min_sharpness})')
     return coordinates
