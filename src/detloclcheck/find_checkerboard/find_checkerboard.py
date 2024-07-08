@@ -9,9 +9,6 @@
 :Date: 2024-07-08
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
-
-.. currentmodule:: detloclcheck.find_checkerboard.find_checkerboard
-.. autofunction:: _set_black_border
 """
 # This file is part of DetLocLCheck.
 #
@@ -40,15 +37,7 @@ from detloclcheck.tools import (calculate_square_distances,
 from .calculatetemplatematching import CalculateTemplateMatching
 from .create_template import create_template
 from .parallelfind4quadcornersubpix import ParallelFind4QuadCornerSubpix
-
-
-def _set_black_border(image, templateshape):
-    border_size = templateshape[0] // 2
-    image[:border_size, :] = 0
-    image[-border_size:, :] = 0
-    border_size = templateshape[1] // 2
-    image[:, :border_size] = 0
-    image[:, -border_size:] = 0
+from .set_black_border import _set_black_border
 
 
 def find_checkerboard(

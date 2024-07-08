@@ -5,8 +5,8 @@
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 
-.. currentmodule:: detloclcheck.find_checkerboard.create_template
-.. autofunction:: create_template
+.. currentmodule:: detloclcheck.find_checkerboard.set_black_border
+.. autofunction:: _set_black_border
 """
 # This file is part of DetLocLCheck.
 #
@@ -23,22 +23,16 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
-import functools
 
-import numpy
-
-
-@functools.cache
-def create_template(crosssize):
+def _set_black_border(image, templateshape):
     """
     :Author: Daniel Mohr
     :Date: 2024-07-01
     :License: LGPL-3.0-or-later
     """
-    template = numpy.zeros((crosssize, crosssize), dtype=numpy.uint8)
-    numpy.fill_diagonal(template, 128)
-    numpy.fill_diagonal(numpy.fliplr(template), 128)
-    for i in range(crosssize):
-        template[i, (1+i):(crosssize-i-1)] = 255
-        template[i, (crosssize-i):i] = 255
-    return template
+    border_size = templateshape[0] // 2
+    image[:border_size, :] = 0
+    image[-border_size:, :] = 0
+    border_size = templateshape[1] // 2
+    image[:, :border_size] = 0
+    image[:, -border_size:] = 0

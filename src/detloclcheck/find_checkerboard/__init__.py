@@ -23,8 +23,8 @@ submodules
 ----------
 .. automodule:: detloclcheck.find_checkerboard.calculatetemplatematching
 .. automodule:: detloclcheck.find_checkerboard.create_template
-.. automodule:: detloclcheck.find_checkerboard.find_checkerboard
 .. automodule:: detloclcheck.find_checkerboard.parallelfind4quadcornersubpix
+.. automodule:: detloclcheck.find_checkerboard.set_black_border
 
 copyright + license
 -------------------

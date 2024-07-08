@@ -6,8 +6,7 @@
 :Copyright: (C) 2024 Daniel Mohr
 
 .. currentmodule:: detloclcheck.find_checkerboard.calculatetemplatematching
-.. autofunction:: _rotate
-.. autofunction:: _normed_TM_CCORR_NORMED
+.. autofunction:: _rotate_image
 .. autofunction:: _get_map
 
 .. autoclass:: CalculateTemplateMatching
@@ -52,6 +51,11 @@ def _rotate_image(image, angle):
 
 
 def _get_map(image, crosssize, angle):
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-01
+    :License: LGPL-3.0-or-later
+    """
     template = create_template(crosssize)
     if angle == 0:
         result = normed_TM_CCORR_NORMED(image, template)
@@ -73,6 +77,11 @@ def _get_map(image, crosssize, angle):
 
 
 class CalculateTemplateMatching():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-01
+    :License: LGPL-3.0-or-later
+    """
     def __init__(self, image):
         self.image = image
 
