@@ -23,8 +23,8 @@ import logging
 
 import cv2
 import numpy
-from detloclcheck.tools import (array2image, filter_blurry_corners,
-                                normed_TM_CCORR_NORMED)
+from detloclcheck.tools import (array2image, draw_coordinate_system,
+                                filter_blurry_corners, normed_TM_CCORR_NORMED)
 
 
 def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
