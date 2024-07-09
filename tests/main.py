@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-06-26
+:Date: 2024-07-09
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -18,7 +18,9 @@ Or you can run only one test, e. g.::
 """
 
 import subprocess
+import tempfile
 import unittest
+import os
 
 try:
     from scripts_detloclcheck_check_arg_file \
@@ -108,6 +110,111 @@ class TestScriptsExecutable(unittest.TestCase):
         # check end of help output
         self.assertTrue(cpi.stdout.strip().endswith(
             b'License: LGPL-3.0-or-later'))
+
+    def test_detloclcheck_create_checkerboard_executable(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+
+        env python3 main.py \
+        TestScriptsExecutable.test_detloclcheck_create_checkerboard_executable
+        """
+        cpi = subprocess.run(
+            "detloclcheck create_checkerboard_image -h",
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            shell=True, timeout=self.subprocess_timeout, check=True)
+        # check at least minimal help output
+        self.assertTrue(len(cpi.stdout) >= 42)
+        # check begin of help output
+        self.assertTrue(cpi.stdout.startswith(
+            b'usage: detloclcheck create_checkerboard_image'))
+        # check end of help output
+        self.assertTrue(cpi.stdout.strip().endswith(
+            b'License: LGPL-3.0-or-later'))
+
+    def test_detloclcheck_create_checkerboard_0(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+
+        env python3 main.py \
+        TestScriptsExecutable.test_detloclcheck_create_checkerboard_0
+        """
+        filename = "foo.png"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            filename = os.path.join(tmpdir, "foo.png")
+            subprocess.run(
+                "detloclcheck create_checkerboard_image "
+                "-o " + filename + " -integrate_method 0",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(filename))
+
+    def test_detloclcheck_create_checkerboard_1(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+
+        env python3 main.py \
+        TestScriptsExecutable.test_detloclcheck_create_checkerboard_1
+        """
+        filename = "foo.png"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            filename = os.path.join(tmpdir, "bar.png")
+            subprocess.run(
+                "detloclcheck create_checkerboard_image "
+                "-o " + filename + " -integrate_method 1",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(filename))
+
+    def test_detloclcheck_create_checkerboard_2(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+
+        env python3 main.py \
+        TestScriptsExecutable.test_detloclcheck_create_checkerboard_2
+        """
+        filename = "foo.png"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            filename = os.path.join(tmpdir, "baz.png")
+            subprocess.run(
+                "detloclcheck create_checkerboard_image "
+                "-o " + filename + " -integrate_method 2",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=6*self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(filename))
+
+    def test_detloclcheck_0(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+
+        env python3 main.py \
+        TestScriptsExecutable.test_detloclcheck_0
+        """
+        filename = "foo.png"
+        with tempfile.TemporaryDirectory() as tmpdir:
+            filename = os.path.join(tmpdir, "foo.png")
+            subprocess.run(
+                "detloclcheck create_checkerboard_image "
+                "-o " + filename + " -integrate_method 0",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(filename))
+            subprocess.run(
+                "detloclcheck find_checkerboard "
+                "-f " + filename + " -crosssizes 11",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(os.path.join(tmpdir, "foo.json")))
+            subprocess.run(
+                "detloclcheck find_checkerboard "
+                "-f " + filename + " -crosssizes 11 -o mat",
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                shell=True, timeout=self.subprocess_timeout, check=True)
+            self.assertTrue(os.path.isfile(os.path.join(tmpdir, "foo.mat")))
 
 
 if __name__ == '__main__':
