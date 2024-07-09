@@ -93,7 +93,10 @@ def run_find_checkerboard(args):
 
 
 def run_create_checkerboard_image(args):
-    image = create_checkerboard_image(args)
+    # image = create_checkerboard_image(args)
+    image = create_checkerboard_image(
+        args.m[0], args.n[0], args.size[0], args.zeropoint,
+        args.integrate_method[0], args.transition_value[0], args.scale[0])
     cv2.imwrite(args.outfile[0], image)
 
 

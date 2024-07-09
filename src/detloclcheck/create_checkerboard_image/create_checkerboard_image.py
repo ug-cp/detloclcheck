@@ -26,26 +26,27 @@ import numpy
 from .checkerboard_image_class import CheckerboardImageClass
 
 
-def create_checkerboard_image(args):
+def create_checkerboard_image(
+        m, n, size, zeropoint, integrate_method, transition_value, scale):
     """
     :Author: Daniel Mohr
     :Date: 2024-07-09
     :License: LGPL-3.0-or-later
     """
-    image_size = (int(numpy.ceil(args.m[0]*args.size[0])),
-                  int(numpy.ceil(args.n[0]*args.size[0])))
-    if args.zeropoint is None:
-        args.zeropoint = (image_size[0]/2, image_size[1]/2)
+    image_size = (int(numpy.ceil(m*size)),
+                  int(numpy.ceil(n*size)))
+    if zeropoint is None:
+        zeropoint = (image_size[0]/2 - 0.5, image_size[1]/2 - 0.5)
     image = numpy.zeros(
         image_size,
         dtype=numpy.uint8)
     checkerboard_image = CheckerboardImageClass(
-        args.size[0], args.zeropoint,
-        args.integrate_method[0], args.transition_value[0])
+        size, zeropoint,
+        integrate_method, transition_value)
     for i in range(image_size[0]):
         for j in range(image_size[1]):
             image[i, j] = int(checkerboard_image(i, j))
     return cv2.resize(
         image,
-        (int(args.scale[0]*image.shape[1]), int(args.scale[0]*image.shape[0])),
+        (int(scale*image.shape[1]), int(scale*image.shape[0])),
         interpolation=cv2.INTER_AREA)
