@@ -320,7 +320,7 @@ def create_coordinate_system(
         markertemplate = numpy.fliplr(markertemplate)
         markerdirection = 'L fliplr'
         result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
-        print('result', result.max())
+        # print('result', result.max())
         if result.max() != 1:
             markertemplate = numpy.fliplr(markertemplate)
             markertemplate = numpy.flipud(markertemplate)
@@ -389,8 +389,8 @@ def create_coordinate_system(
         clip_rotated_image = rotated_image[i0:(1+i1), j0:(1+j1)]
         vertical_sum = clip_rotated_image.sum(axis=0)
         horizontal_sum = clip_rotated_image.sum(axis=1)
-        print('vertical_sum', vertical_sum.max())
-        print('horizontal_sum', horizontal_sum.max())
+        # print('vertical_sum', vertical_sum.max())
+        # print('horizontal_sum', horizontal_sum.max())
         if vertical_sum.max() > horizontal_sum.max():
             # axis1 is y axis and axis2 is x axis
             if markerdirection == 'L':
