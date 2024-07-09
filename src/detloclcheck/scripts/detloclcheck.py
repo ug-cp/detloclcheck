@@ -299,23 +299,23 @@ def my_argument_parser():
         nargs=1,
         type=int,
         required=False,
-        default=[7],
+        default=[8],
         dest='m',
-        help='number rows of checkerboard fields. default: 7',
+        help='number rows of checkerboard fields. default: 8',
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-n',
         nargs=1,
         type=int,
         required=False,
-        default=[7],
+        default=[8],
         dest='n',
-        help='number columns of checkerboard fields. default: 7',
+        help='number columns of checkerboard fields. default: 8',
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-zeropoint',
-        nargs=1,
-        type=int,
+        nargs=2,
+        type=float,
         required=False,
         default=None,
         dest='zeropoint',
@@ -329,9 +329,23 @@ def my_argument_parser():
         required=False,
         default=[0],
         dest='integrate_method',
-        help='Set the method used for integration. 0: no integration. '
-        '1: simple simpsons rule. 2: use of scipy.integrate.nquad. '
+        help='Set the method used for integration over one pixel. '
+        '0: no integration. 1: simple Simpson\'s Rule. '
+        '2: use of scipy.integrate.nquad. '
         'default: 0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-transition_value',
+        nargs=1,
+        type=int,
+        choices=range(256),
+        required=False,
+        default=[128],
+        dest='transition_value',
+        help='Set the transition value between white and black areas. '
+        'For a value of 255 the light areas in the image run out. '
+        'For a value of 0 the reverse effect is simulated. '
+        'default: 128',
         metavar='f')
     return parser
 

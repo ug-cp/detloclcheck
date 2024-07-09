@@ -59,22 +59,40 @@ def simpsons_rule(f, x1, x2, y1, y2):
 
 
 class CheckerboardImageClass():
-    def __init__(self, size, zeropoint, integrate_method=0):
+    def __init__(self, size, zeropoint,
+                 integrate_method=0, transition_value=128):
+        """
+        Example:
+
+        from detloclcheck.create_checkerboard_image.checkerboard_image_class \
+            import CheckerboardImageClass
+        c = CheckerboardImageClass(1, (10,10), 0)
+        c(0,0)
+        c(0,0.5)
+        c(0,1)
+        """
         self.size = size
         self.zeropoint = numpy.array(zeropoint)
         self.integrate_method = integrate_method
+        self.transition_value = transition_value
 
     def value(self, x, y):
         xy = (x, y)
         v = (xy - self.zeropoint) / self.size
-        if (-2 <= v[1]) and (v[1] < -1) and (-3 <= v[0]) and (v[0] < 2):
-            if ((-5/3 <= v[1]) and (v[1] < -4/3) and
-                    (-8/3 <= v[0]) and (v[0] < 5/3)):
+        if (-2 <= v[1]) and (v[1] <= -1) and (-3 <= v[0]) and (v[0] <= 2):
+            if ((-5/3 <= v[1]) and (v[1] <= -4/3) and
+                    (-8/3 <= v[0]) and (v[0] <= 5/3)):
                 return 255
-        elif (-1 <= v[1]) and (v[1] < 2) and (-2 <= v[0]) and (v[0] < -1):
-            if ((-2/3 <= v[1]) and (v[1] < 5/3) and
-                    (-5/3 <= v[0]) and (v[0] < -4/3)):
+        elif (-1 <= v[1]) and (v[1] <= 2) and (-2 <= v[0]) and (v[0] <= -1):
+            if ((-2/3 <= v[1]) and (v[1] <= 5/3) and
+                    (-5/3 <= v[0]) and (v[0] <= -4/3)):
                 return 255
+        elif (numpy.floor(v) == v).any():
+            if (-2 <= v[1]) and (v[1] <= -1) and (-3 <= v[0]) and (v[0] <= 2):
+                return 0
+            if (-1 <= v[1]) and (v[1] <= 2) and (-2 <= v[0]) and (v[0] <= -1):
+                return 0
+            return self.transition_value
         elif int(numpy.sum(numpy.floor(v))) % 2 == 0:
             return 255
         return 0
@@ -83,8 +101,11 @@ class CheckerboardImageClass():
         if self.integrate_method == 0:
             return self.value(x, y)
         elif self.integrate_method == 1:
-            return simpsons_rule(self.value, x, x+self.size, y, y+self.size)
+            return simpsons_rule(
+                self.value,
+                x - 0.5, x + 0.5,
+                y - 0.5, y + 0.5)
         elif self.integrate_method == 2:
             v, _ = scipy.integrate.nquad(
-                self.value, [[x, x+self.size], [y, y+self.size]])
+                self.value, [[x - 0.5, x + 0.5], [y - 0.5, y + 0.5]])
             return v

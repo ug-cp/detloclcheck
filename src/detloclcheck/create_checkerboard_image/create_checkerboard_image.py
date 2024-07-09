@@ -40,7 +40,8 @@ def create_checkerboard_image(args):
         image_size,
         dtype=numpy.uint8)
     checkerboard_image = CheckerboardImageClass(
-        args.size[0], args.zeropoint, args.integrate_method[0])
+        args.size[0], args.zeropoint,
+        args.integrate_method[0], args.transition_value[0])
     for i in range(image_size[0]):
         for j in range(image_size[1]):
             image[i, j] = int(checkerboard_image(i, j))
