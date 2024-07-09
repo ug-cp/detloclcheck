@@ -3,8 +3,10 @@ set -e
 
 function create_pdf() {
     (
-	cd docs
-	make latexpdf && make latexpdf && cp -p _build/latex/detloclcheck.pdf ../manual_detloclcheck.pdf || exit $?
+	cd docs || exit 1
+	make latexpdf || exit 1
+	make latexpdf || exit 1
+	cp -p _build/latex/detloclcheck.pdf ../manual_detloclcheck.pdf || exit 1
     ) || exit 1
 }
 
@@ -21,8 +23,8 @@ function create_html() {
     fi
 
     (
-	cd docs
-	make html
+	cd docs || exit 1
+	make html || exit 1
     ) || exit 1
 
     outputdir="manual_detloclcheck"

@@ -78,7 +78,7 @@ ruff:
     - $PIP_UNINSTALL DetLocLCheck
     - $PIP_INSTALL -e .
     - detloclcheck find_checkerboard -h
-    - $APT_GET_INSTALL make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync
+    - $APT_GET_INSTALL latexmk texlive-latex-extra texlive-latex-recommended make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync tex-gyre
     - ./create_doc html
     - mv manual_detloclcheck public
   artifacts:
