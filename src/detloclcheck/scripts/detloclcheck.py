@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-08
+:Date: 2024-07-09
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -20,29 +20,31 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import json
 import logging
 import logging.handlers
 import os
 import sys
 
 import cv2
+import scipy.io
 
+from detloclcheck.create_coordinate_system import create_coordinate_system
 from detloclcheck.find_checkerboard import find_checkerboard
 from detloclcheck.tools import filter_blurry_corners
-from detloclcheck.create_coordinate_system import create_coordinate_system
 
 
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-08
+    :Date: 2024-07-09
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
         log.info(f'handle file "{filename}"')
-        # output_filename = \
-        #     os.path.splitext(filename)[0] + '.' + args.output_format[0]
+        output_filename = \
+            os.path.splitext(filename)[0] + '.' + args.output_format[0]
         image = cv2.imread(filename)
         if image is None:
             log.error(f'file "{filename}" cannot be read as image')
@@ -61,18 +63,31 @@ def run_find_checkerboard(args):
         # filter blurry corners (2)
         coordinates = filter_blurry_corners(
             gray_image, coordinates, args.crosssizes[0], args.min_sharpness[1])
-    if coordinates.shape[0] < 24:
-        log.error(
-            'ERROR: only %i corners detected, '
-            'but we need at least 24 for marker detection',
-            coordinates.shape[0])
-        return 1
-    log.debug(f'go on with {coordinates.shape[0]} corners')
-    coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
-        gray_image, coordinates, args.max_distance_factor_range,
-        min_sharpness=args.min_sharpness[2])
-    if coordinate_system is None:
-        return zeropoint  # zeropoint is used as error code
+        if coordinates.shape[0] < 24:
+            log.error(
+                'ERROR: only %i corners detected, '
+                'but we need at least 24 for marker detection',
+                coordinates.shape[0])
+            return 1
+        log.debug(f'go on with {coordinates.shape[0]} corners')
+        coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
+            gray_image, coordinates, args.max_distance_factor_range,
+            min_sharpness=args.min_sharpness[2])
+        if coordinate_system is None:
+            return zeropoint  # zeropoint is used as error code
+        if args.output_format[0] == 'json':
+            with open(output_filename, 'w') as fp:
+                json.dump(
+                    {'coordinate_system': coordinate_system.tolist(),
+                     'zeropoint': zeropoint.tolist(),
+                     'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
+                    fp, indent=args.json_indent[0])
+        if args.output_format[0] == 'mat':
+            scipy.io.savemat(
+                output_filename,
+                {'coordinate_system': coordinate_system,
+                 'zeropoint': zeropoint,
+                 'axis1': axis1, 'axis2': axis2})
     return 0
 
 
@@ -111,7 +126,7 @@ def check_arg_crosssizes(data):
 
 def my_argument_parser():
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-07-01\n"
+    epilog += "Date: 2024-07-09\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -152,6 +167,18 @@ def my_argument_parser():
         '"json" will save the result as a json file. '
         '"mat" will save the result as a MATLAB-style .mat file. '
         'default: json',
+        metavar='f')
+    parser_find_checkerboard.add_argument(
+        '-json_indent',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[None],
+        dest='json_indent',
+        help='Set the indent in the json output. On default a minimal file '
+        'size is achieved. Setting any numbers will lead to a better human '
+        'readable output with a larger file size. '
+        'default: None',
         metavar='f')
     parser_find_checkerboard.add_argument(
         '-crosssizes',
