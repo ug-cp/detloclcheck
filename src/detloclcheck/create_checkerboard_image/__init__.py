@@ -1,6 +1,6 @@
 """
-:mod:`detloclcheck`
-===================
+:mod:`detloclcheck.create_checkerboard_image`
+=============================================
    :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
               L shape marker using template matching.
@@ -8,22 +8,23 @@
 .. contents::
 
 description
-===========
+-----------
 
 `DetLocLCheck` is a software tool for Detection and Localization of a
 Checkerboard calibration target containing L shape marker using
 template matching.
 
+functions
+---------
+.. currentmodule:: detloclcheck.create_checkerboard_image
+.. autofunction:: create_checkerboard_image
+
 submodules
-==========
-.. automodule:: detloclcheck.create_checkerboard_image
-.. automodule:: detloclcheck.create_coordinate_system
-.. automodule:: detloclcheck.find_checkerboard
-.. automodule:: detloclcheck.tools
-.. automodule:: detloclcheck.scripts
+----------
+.. automodule:: detloclcheck.create_checkerboard_image.checkerboard_image_class
 
 copyright + license
-===================
+-------------------
 :Author: Daniel Mohr
 :Date: 2024-07-09
 :License: LGPL-3.0-or-later
@@ -43,3 +44,7 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+from .create_checkerboard_image import create_checkerboard_image
+
+__all__ = ["create_checkerboard_image"]

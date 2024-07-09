@@ -32,6 +32,7 @@ import scipy.io
 from detloclcheck.create_coordinate_system import create_coordinate_system
 from detloclcheck.find_checkerboard import find_checkerboard
 from detloclcheck.tools import filter_blurry_corners
+from detloclcheck.create_checkerboard_image import create_checkerboard_image
 
 
 def run_find_checkerboard(args):
@@ -89,6 +90,11 @@ def run_find_checkerboard(args):
                  'zeropoint': zeropoint,
                  'axis1': axis1, 'axis2': axis2})
     return 0
+
+
+def run_create_checkerboard_image(args):
+    image = create_checkerboard_image(args)
+    cv2.imwrite(args.outfile[0], image)
 
 
 def check_arg_file(data):
@@ -252,6 +258,81 @@ def my_argument_parser():
         action='store_true',
         dest='run_parallel',
         help='If set this flag, will try to do things in parallel.')
+    # subparser create_checkerboard_image
+    parser_create_checkerboard_image = subparsers.add_parser(
+        'create_checkerboard_image',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='For more help: detloclcheck create_checkerboard_image -h',
+        description='detloclcheck create_checkerboard_image is a python script'
+        ' to create an artificial image of a checkerboard.',
+        epilog=epilog)
+    parser_create_checkerboard_image.set_defaults(
+        func=run_create_checkerboard_image)
+    parser_create_checkerboard_image.add_argument(
+        '-outfile',
+        nargs=1,
+        type=str,
+        required=True,
+        dest='outfile',
+        help='Set the filename to write result.',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-size',
+        nargs=1,
+        type=float,
+        required=False,
+        default=[15.0],
+        dest='size',
+        help='size of a checkerboard field. default: 15.0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-scale',
+        nargs=1,
+        type=float,
+        required=False,
+        default=[1.0],
+        dest='scale',
+        help='scaling factor. default 1.0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-m',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[7],
+        dest='m',
+        help='number rows of checkerboard fields. default: 7',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-n',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[7],
+        dest='n',
+        help='number columns of checkerboard fields. default: 7',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-zeropoint',
+        nargs=1,
+        type=int,
+        required=False,
+        default=None,
+        dest='zeropoint',
+        help='zeropoint. default: [middle of the image]',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-integrate_method',
+        nargs=1,
+        type=int,
+        choices=[0, 1, 2],
+        required=False,
+        default=[0],
+        dest='integrate_method',
+        help='Set the method used for integration. 0: no integration. '
+        '1: simple simpsons rule. 2: use of scipy.integrate.nquad. '
+        'default: 0',
+        metavar='f')
     return parser
 
 
