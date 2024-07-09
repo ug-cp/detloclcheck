@@ -19,7 +19,7 @@ pre-commit:
     name: alpine:edge
   extends: .display_env
   script:
-    - apk add --no-cache git pre-commit shellcheck
+    - apk add --no-cache git npm pre-commit shellcheck
     - pre-commit --version
     - pre-commit run --all-files
     - CREATED_SCRIPTS=$(mktemp -d)
@@ -63,7 +63,7 @@ ruff:
     PIP_UNINSTALL: "pip3 uninstall --yes --break-system-packages"
   script:
     - apt-get update
-    - $APT_GET_INSTALL python3-hatchling python3-numpy python3-opencv python3-pip
+    - $APT_GET_INSTALL python3-numpy python3-opencv python3-pip python3-scipy
     - python3 --version
     - pip3 --version
     - $PIP_INSTALL .
@@ -74,12 +74,28 @@ ruff:
     - ls -lah "$HOME"/.local/lib/*/site-packages/
     - $APT_GET_INSTALL python3-pytest python3-pytest-cov python3-pytest-xdist
     - $PIP_INSTALL .
-    - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - pytest-3 --numprocesses=auto --cov=detloclcheck --cov-report=html:coverage_report/ --cov-report=term --cov-report=xml --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+    - $PIP_INSTALL -e .
+    - detloclcheck find_checkerboard -h
+    - $APT_GET_INSTALL make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync
+    - ./create_doc html
+    - mv manual_detloclcheck public
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - public
 
 debian-latest:
   image:
     name: debian:latest
   extends: .debian_based_test
+  coverage: '/^TOTAL\s*[0-9]+\s*[0-9]+\s*([0-9]+\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 
 ubuntu-2224:
   image:

@@ -1,23 +1,7 @@
 """
-:mod:`detloclcheck.scripts`
-===========================
-   :synopsis: :mod:`detloclcheck` is a python module for Detection and
-              Localization of a Checkerboard calibration target containing
-              L shape marker using template matching.
-
-.. contents::
-
-description
------------
-
-`DetLocLCheck` is a software tool for Detection and Localization of a
-Checkerboard calibration target containing L shape marker using
-template matching.
-
-copyright + license
--------------------
 :Author: Daniel Mohr
-:Date: 2024-06-25
+:Email: daniel.mohr@uni-greifswald.de
+:Date: 2024-07-01
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -35,3 +19,15 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+import cv2
+
+
+def calculate_sharpness(img):
+    """
+    :Author: Daniel Mohr
+    :Email: daniel.mohr@uni-greifswald.de
+    :Date: 2024-02-20
+    :License: LGPL-3.0-or-later
+    """
+    return cv2.Laplacian(img, cv2.IMREAD_GRAYSCALE).var()

@@ -1,25 +1,12 @@
 """
-:mod:`detloclcheck.scripts`
-===========================
-   :synopsis: :mod:`detloclcheck` is a python module for Detection and
-              Localization of a Checkerboard calibration target containing
-              L shape marker using template matching.
-
-.. contents::
-
-description
------------
-
-`DetLocLCheck` is a software tool for Detection and Localization of a
-Checkerboard calibration target containing L shape marker using
-template matching.
-
-copyright + license
--------------------
 :Author: Daniel Mohr
-:Date: 2024-06-25
+:Email: daniel.mohr@uni-greifswald.de
+:Date: 2024-07-08
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
+
+.. currentmodule:: detloclcheck.find_checkerboard.set_black_border
+.. autofunction:: _set_black_border
 """
 # This file is part of DetLocLCheck.
 #
@@ -35,3 +22,17 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+
+def _set_black_border(image, templateshape):
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-01
+    :License: LGPL-3.0-or-later
+    """
+    border_size = templateshape[0] // 2
+    image[:border_size, :] = 0
+    image[-border_size:, :] = 0
+    border_size = templateshape[1] // 2
+    image[:, :border_size] = 0
+    image[:, -border_size:] = 0
