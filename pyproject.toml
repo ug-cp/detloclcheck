@@ -13,8 +13,8 @@ readme = "README.md"
 
 requires-python = ">=3.10"
 
-dependencies = ["numpy"]
-# dependencies = ["opencv-python", "numpy"]
+dependencies = ["numpy", "scipy"]
+# dependencies = ["opencv-python", "numpy", "scipy"]
 
 [project.license]
 file = "LICENSE.md"
