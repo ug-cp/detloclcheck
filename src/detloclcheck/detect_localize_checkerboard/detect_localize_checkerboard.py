@@ -27,7 +27,6 @@
 
 import logging
 
-from detloclcheck.create_checkerboard_image import create_checkerboard_image
 from detloclcheck.create_coordinate_system import create_coordinate_system
 from detloclcheck.find_checkerboard import find_checkerboard
 from detloclcheck.tools import filter_blurry_corners
