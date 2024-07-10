@@ -120,3 +120,21 @@ ubuntu-2424:
   image:
     name: ubuntu:24.04
   extends: .debian_based_test
+
+almalinux-latest:
+  image:
+    name: almalinux:latest
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install --user"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+  script:
+    - yum -y install pip python3-numpy python3-scipy python3-pytest python3-pytest-cov python3-pytest-xdist
+    - dnf update -y
+    - dnf install epel-release -y
+    - dnf config-manager --set-enabled crb
+    - dnf install opencv python3-opencv -y
+    - $PIP_INSTALL .
+    - detloclcheck find_checkerboard -h
+    - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck

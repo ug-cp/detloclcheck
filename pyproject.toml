@@ -11,7 +11,7 @@ keywords=["calibration target", "checkerboard", "detection", "localization",
           "marker", "L shape marker ", "template matching"]
 readme = "README.md"
 
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 
 dependencies = ["numpy", "scipy"]
 # dependencies = ["opencv-python", "numpy", "scipy"]
