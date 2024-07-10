@@ -43,6 +43,17 @@ pycodestyle:
     - pycodestyle --version
     - pycodestyle --show-source --show-pep8 --statistics --verbose .
 
+pylint_alpine:
+  stage: pre
+  image:
+    name: alpine:latest
+  allow_failure: true
+  extends: .display_env
+  script:
+    - apk add --no-cache py3-pylint
+    - pylint --version
+    - pylint $(find -name "*.py")
+
 ruff:
   stage: pre
   image:
