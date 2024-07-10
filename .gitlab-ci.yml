@@ -43,7 +43,7 @@ pycodestyle:
     - pycodestyle --version
     - pycodestyle --show-source --show-pep8 --statistics --verbose .
 
-pylint_alpine:
+pylint:
   stage: pre
   image:
     name: alpine:latest
@@ -52,7 +52,7 @@ pylint_alpine:
   script:
     - apk add --no-cache py3-pylint
     - pylint --version
-    - pylint $(find -name "*.py")
+    - find . -name '*.py' -exec pylint {} +
 
 ruff:
   stage: pre
