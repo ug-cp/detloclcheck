@@ -39,8 +39,5 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
         print('zeropoint', zeropoint)
 
 
-
-
-
 if __name__ == '__main__':
     unittest.main(verbosity=2)
