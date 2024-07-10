@@ -27,7 +27,7 @@ from .checkerboard_image_class import CheckerboardImageClass
 
 
 def create_checkerboard_image(
-        m, n, size,
+        width, height, size,
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
@@ -42,8 +42,8 @@ def create_checkerboard_image(
     >>> import cv2
     >>> cv2.imwrite("foo.png", image)
     """
-    image_size = (int(numpy.ceil(m*size)),
-                  int(numpy.ceil(n*size)))
+    image_size = (int(numpy.ceil(width*size)),
+                  int(numpy.ceil(height*size)))
     if zeropoint is None:
         zeropoint = (image_size[0]/2 - 0.5, image_size[1]/2 - 0.5)
     image = numpy.zeros(

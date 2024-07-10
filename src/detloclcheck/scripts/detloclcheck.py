@@ -42,12 +42,12 @@ def run_find_checkerboard(args):
     """
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
-        log.info(f'handle file "{filename}"')
+        log.info('handle file "%s"', filename)
         output_filename = \
             os.path.splitext(filename)[0] + '.' + args.output_format[0]
         image = cv2.imread(filename)
         if image is None:
-            log.error(f'file "{filename}" cannot be read as image')
+            log.error('file "%s" cannot be read as image', filename)
             return 1
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         coordinate_system, zeropoint, axis1, axis2 = \
@@ -56,12 +56,12 @@ def run_find_checkerboard(args):
                 args.min_sharpness, args.run_parallel,
                 args.max_distance_factor_range, log=None)
         if args.output_format[0] == 'json':
-            with open(output_filename, 'w') as fp:
+            with open(output_filename, 'w', encoding='utf8') as fd:
                 json.dump(
                     {'coordinate_system': coordinate_system.tolist(),
                      'zeropoint': zeropoint.tolist(),
                      'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
-                    fp, indent=args.json_indent[0])
+                    fd, indent=args.json_indent[0])
         if args.output_format[0] == 'mat':
             scipy.io.savemat(
                 output_filename,
@@ -90,7 +90,7 @@ def check_arg_file(data):
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.check_arg_file')
-    log.debug(f'handle file "{data}"')
+    log.debug('handle file "%s"', data)
     if not os.path.isfile(data):
         msg = f'"{data}" is not a file'
         raise argparse.ArgumentTypeError(msg)
@@ -104,11 +104,12 @@ def check_arg_crosssizes(data):
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.check_arg_crosssizes')
-    log.debug(f'check crosssize "{data}"')
+    log.debug('check crosssize "%s"', data)
     try:
         data = int(data)
     except ValueError:
         msg = f'"{data}" can not be interpreted as int'
+        # pylint: disable=raise-missing-from
         raise argparse.ArgumentTypeError(msg)
     if data % 2 == 0:
         msg = f'"{data}" is not odd'
@@ -117,6 +118,11 @@ def check_arg_crosssizes(data):
 
 
 def my_argument_parser():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-10
+    :License: LGPL-3.0-or-later
+    """
     epilog = "Author: Daniel Mohr\n"
     epilog += "Date: 2024-07-09\n"
     epilog += "License: LGPL-3.0-or-later"
@@ -343,22 +349,22 @@ def main():
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck')
-    ch = logging.StreamHandler()
-    ch.setFormatter(
+    stdout_handler = logging.StreamHandler()
+    stdout_handler.setFormatter(
         logging.Formatter(
             '%(asctime)s %(name)s %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S %Z'))
-    log.addHandler(ch)
+    log.addHandler(stdout_handler)
     log.setLevel(logging.DEBUG)
     parser = my_argument_parser()
     args = parser.parse_args()
     if hasattr(args, 'log_file') and (args.log_file is not None):
-        fh = logging.handlers.WatchedFileHandler(args.log_file[0])
-        fh.setFormatter(
+        file_handler = logging.handlers.WatchedFileHandler(args.log_file[0])
+        file_handler.setFormatter(
             logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s',
                               datefmt='%Y-%m-%dT%H:%M:%S_%Z'))
-        log.addHandler(fh)
-        log.debug(f'added logging to file "{args.log_file[0]}"')
+        log.addHandler(file_handler)
+        log.debug('added logging to file "%s"', args.log_file[0])
     if args.subparser_name is not None:
         log.info('start detloclcheck')
         sys.exit(args.func(args))

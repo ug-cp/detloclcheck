@@ -24,7 +24,7 @@ import logging
 import cv2
 import numpy
 from detloclcheck.tools import (array2image, draw_coordinate_system,
-                                filter_blurry_corners, normed_TM_CCORR_NORMED)
+                                filter_blurry_corners, normed_tm_ccorr_normed)
 
 
 def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
@@ -315,21 +315,21 @@ def create_coordinate_system(
          [255,   0,   0,   0,   0, 255],
          [255, 255, 255, 255, 255, 255]], dtype=numpy.uint8)
     markerdirection = 'L'
-    result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
+    result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
     if result.max() != 1:
         markertemplate = numpy.fliplr(markertemplate)
         markerdirection = 'L fliplr'
-        result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
+        result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
         # print('result', result.max())
         if result.max() != 1:
             markertemplate = numpy.fliplr(markertemplate)
             markertemplate = numpy.flipud(markertemplate)
             markerdirection = 'L flipud'
-            result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
+            result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
             if result.max() != 1:
                 markertemplate = numpy.fliplr(markertemplate)
                 markerdirection = 'L flipud fliplr'
-                result = normed_TM_CCORR_NORMED(
+                result = normed_tm_ccorr_normed(
                     coordinatesmap, markertemplate)
     if result.max() == 1:
         # marker exact found

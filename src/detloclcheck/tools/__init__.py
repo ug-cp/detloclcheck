@@ -22,7 +22,7 @@ functions
 .. autofunction:: calculate_square_distances
 .. autofunction:: draw_coordinate_system
 .. autofunction:: filter_blurry_corners
-.. autofunction:: normed_TM_CCORR_NORMED
+.. autofunction:: normed_tm_ccorr_normed
 
 copyright + license
 -------------------
@@ -51,11 +51,11 @@ from .calculate_sharpness import calculate_sharpness
 from .calculate_square_distances import calculate_square_distances
 from .draw_coordinate_system import draw_coordinate_system
 from .filter_blurry_corners import filter_blurry_corners
-from .normed_tm_ccorr_normed import normed_TM_CCORR_NORMED
+from .normed_tm_ccorr_normed import normed_tm_ccorr_normed
 
 __all__ = ["array2image",
            "calculate_sharpness",
            "calculate_square_distances",
            "draw_coordinate_system",
            "filter_blurry_corners",
-           "normed_TM_CCORR_NORMED"]
+           "normed_tm_ccorr_normed"]

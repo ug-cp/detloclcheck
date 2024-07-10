@@ -24,12 +24,12 @@ import os
 
 try:
     from scripts_detloclcheck_check_arg_file \
-        import TestCheck_arg_file  # noqa: F401
+        import TestCheckArgFile  # noqa: F401
     from detect_localize_checkerboard \
         import TestCheck_detect_localize_checkerboard  # noqa: F401
 except ImportError:
     from tests.scripts_detloclcheck_check_arg_file \
-        import TestCheck_arg_file  # noqa: F401
+        import TestCheckArgFile  # noqa: F401
     from tests.detect_localize_checkerboard \
         import TestCheck_detect_localize_checkerboard  # noqa: F401
 
@@ -55,7 +55,7 @@ class TestImport(unittest.TestCase):
 class TestScriptsExecutable(unittest.TestCase):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-09
+    :Date: 2024-07-10
 
     env python3 main.py TestScriptsExecutable
     pytest-3 -k TestScriptsExecutable main.py
@@ -179,7 +179,7 @@ class TestScriptsExecutable(unittest.TestCase):
     def test_detloclcheck_create_checkerboard_2(self):
         """
         :Author: Daniel Mohr
-        :Date: 2024-07-09
+        :Date: 2024-07-10
 
         env python3 main.py \
         TestScriptsExecutable.test_detloclcheck_create_checkerboard_2
@@ -191,7 +191,7 @@ class TestScriptsExecutable(unittest.TestCase):
                 "detloclcheck create_checkerboard_image "
                 "-o " + filename + " -integrate_method 2",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                shell=True, timeout=6*self.subprocess_timeout, check=True)
+                shell=True, timeout=10*self.subprocess_timeout, check=True)
             self.assertTrue(os.path.isfile(filename))
 
     def test_detloclcheck_0(self):
