@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-09
+:Date: 2024-07-10
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -25,15 +25,19 @@ import os
 try:
     from scripts_detloclcheck_check_arg_file \
         import TestCheck_arg_file  # noqa: F401
+    from detect_localize_checkerboard \
+        import TestCheck_detect_localize_checkerboard  # noqa: F401
 except ImportError:
     from tests.scripts_detloclcheck_check_arg_file \
         import TestCheck_arg_file  # noqa: F401
+    from tests.detect_localize_checkerboard \
+        import TestCheck_detect_localize_checkerboard  # noqa: F401
 
 
 class TestImport(unittest.TestCase):
     """
     :Author: Daniel Mohr
-    :Date: 2024-06-26
+    :Date: 2024-07-10
 
     env python3 main.py TestImport
     pytest-3 -k TestImport main.py
@@ -41,13 +45,17 @@ class TestImport(unittest.TestCase):
 
     def test_import(self):
         import detloclcheck  # noqa: F401
+        import detloclcheck.create_checkerboard_image  # noqa: F401
+        import detloclcheck.create_coordinate_system  # noqa: F401
+        import detloclcheck.find_checkerboard  # noqa: F401
         import detloclcheck.scripts  # noqa: F401
+        import detloclcheck.tools  # noqa: F401
 
 
 class TestScriptsExecutable(unittest.TestCase):
     """
     :Author: Daniel Mohr
-    :Date: 2024-06-25
+    :Date: 2024-07-09
 
     env python3 main.py TestScriptsExecutable
     pytest-3 -k TestScriptsExecutable main.py

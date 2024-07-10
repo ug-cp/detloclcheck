@@ -27,8 +27,8 @@ class TestCheck_arg_file(unittest.TestCase):
     :Author: Daniel Mohr
     :Date: 2024-06-26
 
-    env python3 main.py TestImport
-    pytest-3 -k TestImport main.py
+    env python3 scripts_detloclcheck_check_arg_file.py TestCheck_arg_file
+    pytest-3 -k TestCheck_arg_file scripts_detloclcheck_check_arg_file.py
     """
 
     def test_import(self):

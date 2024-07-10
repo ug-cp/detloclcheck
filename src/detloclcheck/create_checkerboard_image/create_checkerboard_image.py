@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-09
+:Date: 2024-07-10
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -27,11 +27,20 @@ from .checkerboard_image_class import CheckerboardImageClass
 
 
 def create_checkerboard_image(
-        m, n, size, zeropoint, integrate_method, transition_value, scale):
+        m, n, size,
+        zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-09
+    :Date: 2024-07-10
     :License: LGPL-3.0-or-later
+
+    Example:
+
+    >>> from detloclcheck.create_checkerboard_image import \
+    ...    create_checkerboard_image
+    >>> image = create_checkerboard_image(8, 8, 15)
+    >>> import cv2
+    >>> cv2.imwrite("foo.png", image)
     """
     image_size = (int(numpy.ceil(m*size)),
                   int(numpy.ceil(n*size)))

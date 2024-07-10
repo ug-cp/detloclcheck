@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-09
+:Date: 2024-07-10
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -29,16 +29,15 @@ import sys
 import cv2
 import scipy.io
 
-from detloclcheck.create_coordinate_system import create_coordinate_system
-from detloclcheck.find_checkerboard import find_checkerboard
-from detloclcheck.tools import filter_blurry_corners
 from detloclcheck.create_checkerboard_image import create_checkerboard_image
+from detloclcheck.detect_localize_checkerboard import \
+    detect_localize_checkerboard
 
 
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-09
+    :Date: 2024-07-10
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
@@ -51,31 +50,11 @@ def run_find_checkerboard(args):
             log.error(f'file "{filename}" cannot be read as image')
             return 1
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        coordinates = find_checkerboard(
-            gray_image,
-            crosssizes=args.crosssizes,
-            angles=args.angles,
-            hit_bound=args.hit_bound[0],
-            min_sharpness=args.min_sharpness[0],
-            run_parallel=args.run_parallel)
-        if coordinates is None:
-            log.error('ERROR: no inner corners detected')
-            return 1
-        # filter blurry corners (2)
-        coordinates = filter_blurry_corners(
-            gray_image, coordinates, args.crosssizes[0], args.min_sharpness[1])
-        if coordinates.shape[0] < 24:
-            log.error(
-                'ERROR: only %i corners detected, '
-                'but we need at least 24 for marker detection',
-                coordinates.shape[0])
-            return 1
-        log.debug(f'go on with {coordinates.shape[0]} corners')
-        coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
-            gray_image, coordinates, args.max_distance_factor_range,
-            min_sharpness=args.min_sharpness[2])
-        if coordinate_system is None:
-            return zeropoint  # zeropoint is used as error code
+        coordinate_system, zeropoint, axis1, axis2 = \
+            detect_localize_checkerboard(
+                gray_image, args.crosssizes, args.angles, args.hit_bound[0],
+                args.min_sharpness, args.run_parallel,
+                args.max_distance_factor_range, log=None)
         if args.output_format[0] == 'json':
             with open(output_filename, 'w') as fp:
                 json.dump(
@@ -93,7 +72,11 @@ def run_find_checkerboard(args):
 
 
 def run_create_checkerboard_image(args):
-    # image = create_checkerboard_image(args)
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-10
+    :License: LGPL-3.0-or-later
+    """
     image = create_checkerboard_image(
         args.m[0], args.n[0], args.size[0], args.zeropoint,
         args.integrate_method[0], args.transition_value[0], args.scale[0])
@@ -194,7 +177,7 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=[15, 23],
+        default=(15, 23),
         dest='crosssizes',
         help='Set a list of cross sizes to test. You can use odd integers. '
         'This is used during template matching. default: 15, 23',
@@ -204,7 +187,7 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=[0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5],
+        default=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5),
         dest='angles',
         help='Set a list of angles to test. '
         'This is used during template matching. '
