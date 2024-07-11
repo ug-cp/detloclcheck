@@ -136,6 +136,7 @@ almalinux-latest:
     - dnf config-manager --set-enabled crb
     - dnf install -y python3-opencv python3-pytest-cov python3-pytest-xdist
     - $PIP_INSTALL .
+    - export PATH="$PATH":~/.local/bin
     - detloclcheck -h
     - detloclcheck create_checkerboard_image -h
     - detloclcheck find_checkerboard -h
