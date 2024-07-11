@@ -119,6 +119,7 @@ ubuntu-20.04:
     PIP_UNINSTALL: "pip3 uninstall --yes"
     VENV_PATH: "$HOME/.venv_DetLocLCheck"
   script:
+    - apt-get update
     - $APT_GET_INSTALL python3.9-venv
     - python3.9 -m venv --system-site-packages "$VENV_PATH"
     - . "$VENV_PATH"/bin/activate
