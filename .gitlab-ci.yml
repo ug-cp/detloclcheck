@@ -130,12 +130,14 @@ almalinux-latest:
     PIP_INSTALL: "pip3 install --user"
     PIP_UNINSTALL: "pip3 uninstall --yes"
   script:
-    - yum -y install pip python3-numpy python3-scipy python3-pytest python3-pytest-cov python3-pytest-xdist
+    - yum -y install pip python3-numpy python3-scipy python3-pytest
     - dnf update -y
-    - dnf install epel-release -y
+    - dnf install -y epel-release
     - dnf config-manager --set-enabled crb
-    - dnf install opencv python3-opencv -y
+    - dnf install -y python3-opencv python3-pytest-cov python3-pytest-xdist
     - $PIP_INSTALL .
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
     - detloclcheck find_checkerboard -h
     - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
     - $PIP_UNINSTALL DetLocLCheck
