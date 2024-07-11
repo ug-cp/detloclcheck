@@ -31,7 +31,7 @@ pre-commit:
         ./yaml2script.py .gitlab-ci.yml "$jobname" | tee "$CREATED_SCRIPTS/$jobname"
       done < "$JOBNAMES"
       rm "$JOBNAMES"
-    - shellcheck -e SC2154 "$CREATED_SCRIPTS"/*
+    - shellcheck -e SC1091 "$CREATED_SCRIPTS"/*
 
 pycodestyle:
   stage: pre
@@ -88,10 +88,11 @@ ruff:
     - pytest-3 --numprocesses=auto --cov=detloclcheck --cov-report=html:coverage_report/ --cov-report=term --cov-report=xml --verbose tests/main.py
     - $PIP_UNINSTALL DetLocLCheck
     - $PIP_INSTALL -e .
-    - detloclcheck find_checkerboard -h
+    - detloclcheck -h
     - $APT_GET_INSTALL latexmk texlive-latex-extra texlive-latex-recommended make python3-recommonmark python3-sphinx python3-sphinx-argparse rsync tex-gyre
     - ./create_doc html
     - mv manual_detloclcheck public
+    - python3 --version
   artifacts:
     expire_in: 1 hrs
     paths:
@@ -108,7 +109,30 @@ debian-latest:
         coverage_format: cobertura
         path: coverage.xml
 
-ubuntu-2224:
+ubuntu-20.04:
+  stage: build_test
+  image:
+    name: ubuntu:20.04
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+    VENV_PATH: "$HOME/.venv_DetLocLCheck"
+  script:
+    - $APT_GET_INSTALL python3.9-venv
+    - python3.9 -m venv --system-site-packages "$VENV_PATH"
+    - . "$VENV_PATH"/bin/activate
+    - python3 --version
+    - pip3 --version
+    - $PIP_INSTALL opencv-python .
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
+    - detloclcheck find_checkerboard -h
+    - $PIP_INSTALL pytest pytest-cov pytest-xdist
+    - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+
+ubuntu-22.04:
   image:
     name: ubuntu:22.04
   extends: .debian_based_test
@@ -116,7 +140,7 @@ ubuntu-2224:
     PIP_INSTALL: "pip3 install --user"
     PIP_UNINSTALL: "pip3 uninstall --yes"
 
-ubuntu-2424:
+ubuntu-24.04:
   image:
     name: ubuntu:24.04
   extends: .debian_based_test
@@ -142,3 +166,26 @@ almalinux-latest:
     - detloclcheck find_checkerboard -h
     - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
     - $PIP_UNINSTALL DetLocLCheck
+    - python3 --version
+
+opensuse_leap_latest:
+  stage: build_test
+  image:
+    name: opensuse/leap:latest
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install --user"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+  script:
+    - zypper --non-interactive install git python311-hatchling python311-numpy python311-opencv python311-pip python3-scipy python311-pytest python311-pytest-cov python311-pytest-xdist
+    - $PIP_INSTALL .
+    - export PATH="$PATH":~/.local/bin
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
+    - detloclcheck find_checkerboard -h
+    - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+    - $PIP_INSTALL -e .
+    - detloclcheck -h
+    - $PIP_UNINSTALL DetLocLCheck
+    - python3 --version

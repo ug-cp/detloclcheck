@@ -52,11 +52,13 @@ For development you could install an editable version, e. g.:
 pip3 install --break-system-packages -e .
 ```
 
+But this is only working from Python 3.10 on.
+
 ## copyright + license
 
 Author: Daniel Mohr.
 
-Date: 2024-06-26 (last change).
+Date: 2024-07-11 (last change).
 
 License: LGPL-3.0-or-later
 
