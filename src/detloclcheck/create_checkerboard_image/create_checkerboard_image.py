@@ -31,16 +31,48 @@ def create_checkerboard_image(
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2024-07-23
     :License: LGPL-3.0-or-later
 
-    Example:
+    Example 1:
 
     >>> from detloclcheck.create_checkerboard_image import \
     ...    create_checkerboard_image
-    >>> image = create_checkerboard_image(8, 8, 15)
+    >>> _, _, image = create_checkerboard_image(8, 8, 15)
     >>> import cv2
     >>> cv2.imwrite("foo.png", image)
+
+    Example 2:
+
+    >>> from detloclcheck.create_checkerboard_image import \
+    ...    create_checkerboard_image
+    >>> _, _, image = create_checkerboard_image(8, 8, 15)
+    import matplotlib.pyplot
+    matplotlib.pyplot.imshow(image)
+    matplotlib.pyplot.plot(
+    ...     coordinate_system[:,0,0], coordinate_system[:,0,1], 'x')
+    matplotlib.pyplot.show()
+
+    Example 3:
+
+    >>> import matplotlib.pyplot
+    >>> from detloclcheck.create_checkerboard_image import \
+    ...     create_checkerboard_image
+    >>> from detloclcheck.detect_localize_checkerboard import \
+    ...     detect_localize_checkerboard
+    >>> zeropoint, coordinates, image = create_checkerboard_image(8, 8, 15)
+    >>> matplotlib.pyplot.imshow(image, cmap="Greys")
+    >>> matplotlib.pyplot.plot(coordinates[:,0], coordinates[:,1],
+    ...                        'r1', markersize=20)
+    >>> matplotlib.pyplot.plot(zeropoint[0], zeropoint[1], 'b2', markersize=20)
+    >>> coordinate_system, zeropoint, axis1, axis2 = \
+    ...     detect_localize_checkerboard(
+    ...         image, crosssizes=(11,),
+    ...         angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
+    >>> matplotlib.pyplot.plot(
+    ...     coordinate_system[:,0,0], coordinate_system[:,0,1],
+    ...     'g3', markersize=20)
+    >>> matplotlib.pyplot.show()
     """
     image_size = (int(numpy.ceil(width*size)),
                   int(numpy.ceil(height*size)))
@@ -55,7 +87,20 @@ def create_checkerboard_image(
     for i in range(image_size[0]):
         for j in range(image_size[1]):
             image[i, j] = int(checkerboard_image(i, j))
-    return cv2.resize(
+    coordinates = []
+    x0 = int(numpy.ceil((0 - zeropoint[0]) / size))
+    x1 = int(numpy.floor((image_size[0] - zeropoint[0]) / size))
+    y0 = int(numpy.ceil((0 - zeropoint[1]) / size))
+    y1 = int(numpy.floor((image_size[1] - zeropoint[1]) / size))
+    for x in range(x0, x1):
+        for y in range(y0, y1):
+            if not (x, y) in [(-2, -2),(-1, -2),(0, -2),(1, -2),
+                              (-2, -1),(-1, -1),(0, -1),(1, -1),
+                              (-2, 0),(-1, 0),
+                              (-2, 1),(-1, 1)]:
+                coordinates.append(
+                    (zeropoint[0] + x * size, zeropoint[1] + y * size))
+    return zeropoint, numpy.array(coordinates), cv2.resize(
         image,
         (int(scale*image.shape[1]), int(scale*image.shape[0])),
         interpolation=cv2.INTER_AREA)

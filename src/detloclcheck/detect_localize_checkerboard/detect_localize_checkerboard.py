@@ -47,7 +47,7 @@ def detect_localize_checkerboard(
 
     >>> from detloclcheck.create_checkerboard_image import \
     ...    create_checkerboard_image
-    >>> image = create_checkerboard_image(8, 8, 15)
+    >>> _, _, image = create_checkerboard_image(8, 8, 15)
     >>> from detloclcheck.detect_localize_checkerboard import \
     ...    detect_localize_checkerboard
     >>> coordinate_system, zeropoint, axis1, axis2 = \

@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-10
+:Date: 2024-07-23
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -74,13 +74,27 @@ def run_find_checkerboard(args):
 def run_create_checkerboard_image(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2024-07-23
     :License: LGPL-3.0-or-later
     """
-    image = create_checkerboard_image(
+    zeropoint, coordinates, image = create_checkerboard_image(
         args.m[0], args.n[0], args.size[0], args.zeropoint,
         args.integrate_method[0], args.transition_value[0], args.scale[0])
     cv2.imwrite(args.outfile[0], image)
+    output_filename = \
+        os.path.splitext(args.outfile[0])[0] + '_ground_truth' \
+        + '.' + args.output_format[0]
+    if args.output_format[0] == 'json':
+        with open(output_filename, 'w', encoding='utf8') as fd:
+            json.dump(
+                {'coordinates': coordinates.tolist(),
+                 'zeropoint': zeropoint},
+                fd, indent=args.json_indent[0])
+    if args.output_format[0] == 'mat':
+        scipy.io.savemat(
+            output_filename,
+            {'coordinates': coordinates,
+             'zeropoint': zeropoint})
 
 
 def check_arg_file(data):
@@ -120,11 +134,11 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2024-07-23
     :License: LGPL-3.0-or-later
     """
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-07-09\n"
+    epilog += "Date: 2024-07-23\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -266,7 +280,33 @@ def my_argument_parser():
         type=str,
         required=True,
         dest='outfile',
-        help='Set the filename to write result.',
+        help='Set the filename to write result image. '
+        'The coordinates will be written to a file with a different postfix.',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-output_format',
+        nargs=1,
+        type=str,
+        choices=['json', 'mat'],
+        required=False,
+        default=['json'],
+        dest='output_format',
+        help='Set the output format to use for the coordinates. '
+        '"json" will save the result as a json file. '
+        '"mat" will save the result as a MATLAB-style .mat file. '
+        'default: json',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-json_indent',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[None],
+        dest='json_indent',
+        help='Set the indent in the json output. On default a minimal file '
+        'size is achieved. Setting any numbers will lead to a better human '
+        'readable output with a larger file size. '
+        'default: None',
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-size',
