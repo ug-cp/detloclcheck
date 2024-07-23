@@ -94,10 +94,10 @@ def create_checkerboard_image(
     y1 = int(numpy.floor((image_size[1] - zeropoint[1]) / size))
     for x in range(x0, x1):
         for y in range(y0, y1):
-            if not (x, y) in [(-2, -2),(-1, -2),(0, -2),(1, -2),
-                              (-2, -1),(-1, -1),(0, -1),(1, -1),
-                              (-2, 0),(-1, 0),
-                              (-2, 1),(-1, 1)]:
+            if (x, y) not in [(-2, -2), (-1, -2), (0, -2), (1, -2),
+                              (-2, -1), (-1, -1), (0, -1), (1, -1),
+                              (-2, 0), (-1, 0),
+                              (-2, 1), (-1, 1)]:
                 coordinates.append(
                     (zeropoint[0] + x * size, zeropoint[1] + y * size))
     return zeropoint, numpy.array(coordinates), cv2.resize(
