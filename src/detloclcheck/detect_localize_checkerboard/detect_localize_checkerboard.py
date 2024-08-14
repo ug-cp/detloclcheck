@@ -43,7 +43,7 @@ def detect_localize_checkerboard(
     :Date: 2024-07-10
     :License: LGPL-3.0-or-later
 
-    Example:
+    Example 1:
 
     >>> from detloclcheck.create_checkerboard_image import \
     ...    create_checkerboard_image
@@ -54,6 +54,25 @@ def detect_localize_checkerboard(
     ...    detect_localize_checkerboard(\
     ...        image, crosssizes=(11,),\
     ...        angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
+
+    Example 2:
+
+    >>> import cv2
+    >>> from detloclcheck import find_checkerboard
+    >>> image = cv2.imread('foo.png')
+    >>> gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    >>> from detloclcheck.detect_localize_checkerboard import \
+    ...     detect_localize_checkerboard
+    >>> coordinate_system, zeropoint, axis1, axis2 = \
+    ...     detect_localize_checkerboard(
+    ...         gray_image, (35,55), (0, 45, 90, 135),
+    ...         min_sharpness=(80, 50, 100))
+    >>> import matplotlib.pyplot
+    >>> matplotlib.pyplot.imshow(gray_image, cmap="Greys")
+    >>> matplotlib.pyplot.plot(
+    ...     coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
+    ...     'r1', markersize=20)
+    >>> matplotlib.pyplot.show()
     """
     if log is None:
         log = logging.getLogger('detloclcheck')
