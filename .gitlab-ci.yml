@@ -120,6 +120,26 @@ ruff:
     - $PIP_UNINSTALL DetLocLCheck
     - python3 --version
 
+.opensuse_based_test:
+  stage: build_test
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install --user"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+  script:
+    - zypper --non-interactive install git python311-hatchling python311-numpy python311-opencv python311-pip python3-scipy python311-pytest python311-pytest-cov python311-pytest-xdist
+    - $PIP_INSTALL .
+    - export PATH="$PATH":~/.local/bin
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
+    - detloclcheck find_checkerboard -h
+    - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+    - $PIP_INSTALL -e .
+    - detloclcheck -h
+    - $PIP_UNINSTALL DetLocLCheck
+    - python3 --version
+
 debian-latest:
   image:
     name: debian:latest
@@ -198,23 +218,13 @@ almalinux-latest-arm64:
   extends: .almalinux_based_test
 
 opensuse_leap_latest:
-  stage: build_test
   image:
     name: opensuse/leap:latest
-  extends: .display_env
-  variables:
-    PIP_INSTALL: "pip3 install --user"
-    PIP_UNINSTALL: "pip3 uninstall --yes"
-  script:
-    - zypper --non-interactive install git python311-hatchling python311-numpy python311-opencv python311-pip python3-scipy python311-pytest python311-pytest-cov python311-pytest-xdist
-    - $PIP_INSTALL .
-    - export PATH="$PATH":~/.local/bin
-    - detloclcheck -h
-    - detloclcheck create_checkerboard_image -h
-    - detloclcheck find_checkerboard -h
-    - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
-    - $PIP_UNINSTALL DetLocLCheck
-    - $PIP_INSTALL -e .
-    - detloclcheck -h
-    - $PIP_UNINSTALL DetLocLCheck
-    - python3 --version
+  extends: .opensuse_based_test
+
+opensuse_leap_latest-arm64:
+  image:
+    name: opensuse/leap:latest
+  tags:
+    - aarch64
+  extends: .opensuse_based_test
