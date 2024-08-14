@@ -66,7 +66,7 @@ def detect_localize_checkerboard(
     >>> coordinate_system, zeropoint, axis1, axis2 = \
     ...     detect_localize_checkerboard(
     ...         gray_image, (35,55), (0, 45, 90, 135),
-    ...         min_sharpness=(80, 50, 100))
+    ...         min_sharpness=(25, 50, 100))
     >>> import matplotlib.pyplot
     >>> matplotlib.pyplot.imshow(gray_image, cmap="Greys")
     >>> matplotlib.pyplot.plot(

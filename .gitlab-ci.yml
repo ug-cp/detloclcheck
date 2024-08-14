@@ -99,6 +99,27 @@ ruff:
     paths:
       - public
 
+.almalinux_based_test:
+  stage: build_test
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install --user"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+  script:
+    - yum -y install pip python3-numpy python3-scipy python3-pytest
+    - dnf update -y
+    - dnf install -y epel-release
+    - dnf config-manager --set-enabled crb
+    - dnf install -y python3-opencv python3-pytest-cov python3-pytest-xdist
+    - $PIP_INSTALL .
+    - export PATH="$PATH":~/.local/bin
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
+    - detloclcheck find_checkerboard -h
+    - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
+    - $PIP_UNINSTALL DetLocLCheck
+    - python3 --version
+
 debian-latest:
   image:
     name: debian:latest
@@ -109,6 +130,13 @@ debian-latest:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
+
+debian-latest-arm64:
+  image:
+    name: debian:latest
+  tags:
+    - aarch64
+  extends: .debian_based_test
 
 ubuntu-20.04:
   stage: build_test
@@ -142,33 +170,32 @@ ubuntu-22.04:
     PIP_INSTALL: "pip3 install --user"
     PIP_UNINSTALL: "pip3 uninstall --yes"
 
+ubuntu-22.04-arm64:
+  image:
+    name: ubuntu:22.04
+  tags:
+    - aarch64
+  extends: .debian_based_test
+  variables:
+    PIP_INSTALL: "pip3 install --user"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+
 ubuntu-24.04:
   image:
     name: ubuntu:24.04
   extends: .debian_based_test
 
 almalinux-latest:
-  stage: build_test
   image:
     name: almalinux:latest
-  extends: .display_env
-  variables:
-    PIP_INSTALL: "pip3 install --user"
-    PIP_UNINSTALL: "pip3 uninstall --yes"
-  script:
-    - yum -y install pip python3-numpy python3-scipy python3-pytest
-    - dnf update -y
-    - dnf install -y epel-release
-    - dnf config-manager --set-enabled crb
-    - dnf install -y python3-opencv python3-pytest-cov python3-pytest-xdist
-    - $PIP_INSTALL .
-    - export PATH="$PATH":~/.local/bin
-    - detloclcheck -h
-    - detloclcheck create_checkerboard_image -h
-    - detloclcheck find_checkerboard -h
-    - pytest-3 --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
-    - $PIP_UNINSTALL DetLocLCheck
-    - python3 --version
+  extends: .almalinux_based_test
+
+almalinux-latest-arm64:
+  image:
+    name: almalinux:latest
+  tags:
+    - aarch64
+  extends: .almalinux_based_test
 
 opensuse_leap_latest:
   stage: build_test
