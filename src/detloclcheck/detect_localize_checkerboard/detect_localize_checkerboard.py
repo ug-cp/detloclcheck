@@ -6,7 +6,7 @@
               L shape marker using template matching.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-10
+:Date: 2024-08-14
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -40,8 +40,12 @@ def detect_localize_checkerboard(
         log=None):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2024-08-14
     :License: LGPL-3.0-or-later
+
+    :return: (coordinate_system, zeropoint, axis1, axis2) on success,
+             otherwise (None, error_code, None, None).
+             possible error codes: 2, 3, 4, 5
 
     Example 1:
 
@@ -99,6 +103,4 @@ def detect_localize_checkerboard(
     coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
         image, coordinates, max_distance_factor_range,
         min_sharpness=min_sharpness[2])
-    if coordinate_system is None:
-        return zeropoint  # zeropoint is used as error code
     return coordinate_system, zeropoint, axis1, axis2

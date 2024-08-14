@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-23
+:Date: 2024-08-14
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -37,9 +37,10 @@ from detloclcheck.detect_localize_checkerboard import \
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2024-08-14
     :License: LGPL-3.0-or-later
     """
+    errorcode = 0
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
         log.info('handle file "%s"', filename)
@@ -55,6 +56,11 @@ def run_find_checkerboard(args):
                 gray_image, args.crosssizes, args.angles, args.hit_bound[0],
                 args.min_sharpness, args.run_parallel,
                 args.max_distance_factor_range, log=None)
+        if coordinate_system is None:
+            log.error(
+                'ERROR %i during handling file "%s"', zeropoint, filename)
+            errorcode += zeropoint
+            continue
         if args.output_format[0] == 'json':
             with open(output_filename, 'w', encoding='utf8') as fd:
                 json.dump(
@@ -68,7 +74,7 @@ def run_find_checkerboard(args):
                 {'coordinate_system': coordinate_system,
                  'zeropoint': zeropoint,
                  'axis1': axis1, 'axis2': axis2})
-    return 0
+    return errorcode
 
 
 def run_create_checkerboard_image(args):
