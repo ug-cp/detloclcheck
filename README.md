@@ -57,7 +57,8 @@ But this is only working from Python 3.10 on.
 ## Example
 
 ```sh
-detloclcheck find_checkerboard -log_file cam.log -run_parallel -crosssizes 35 55 -min_sharpness 25 50 100 -f *.png
+detloclcheck find_checkerboard -log_file cam.log -run_parallel \
+    -crosssizes 35 55 -min_sharpness 25 50 100 -f *.png
 ```
 
 ## copyright + license
