@@ -6,7 +6,7 @@
               L shape marker using template matching.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-08-14
+:Date: 2024-08-28
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -40,12 +40,12 @@ def detect_localize_checkerboard(
         log=None):
     """
     :Author: Daniel Mohr
-    :Date: 2024-08-14
+    :Date: 2024-08-28
     :License: LGPL-3.0-or-later
 
     :return: (coordinate_system, zeropoint, axis1, axis2) on success,
              otherwise (None, error_code, None, None).
-             possible error codes: 2, 3, 4, 5
+             possible error codes: 1, 2, 3, 4, 5, 6
 
     Example 1:
 
@@ -89,7 +89,7 @@ def detect_localize_checkerboard(
         run_parallel=run_parallel)
     if coordinates is None:
         log.error('ERROR: no inner corners detected')
-        return 1
+        return None, 1, None, None
     # filter blurry corners (2)
     coordinates = filter_blurry_corners(
         image, coordinates, crosssizes[0], min_sharpness[1])
@@ -98,7 +98,7 @@ def detect_localize_checkerboard(
             'ERROR: only %i corners detected, '
             'but we need at least 24 for marker detection',
             coordinates.shape[0])
-        return 1
+        return None, 6, None, None
     log.debug(f'go on with {coordinates.shape[0]} corners')
     coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
         image, coordinates, max_distance_factor_range,
