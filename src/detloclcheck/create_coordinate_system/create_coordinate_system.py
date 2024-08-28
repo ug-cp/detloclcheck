@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-08
+:Date: 2024-08-28
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -87,10 +87,13 @@ def _find_better_axis(
         if max(objectpoint) > 1:
             new_axis, residuals, rank, s = numpy.linalg.lstsq(A, b, rcond=None)
         else:
-            new_axis = numpy.linalg.solve(A, b)
-            residuals = [0]
-            rank = 2
-        if (rank == 0) or (residuals[0] > 1):
+            try:
+                new_axis = numpy.linalg.solve(A, b)
+                residuals = [0]
+                rank = 2
+            except numpy.linalg.LinAlgError:
+                new_axis = None
+        if (new_axis is not None) and ((rank == 0) or (residuals[0] > 1)):
             new_axis = None
     return new_axis
 

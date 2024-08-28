@@ -6,7 +6,7 @@
            :func:`detloclcheck.find_checkerboard.find_checkerboard`.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-08-14
+:Date: 2024-08-28
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -45,7 +45,7 @@ def find_checkerboard(
         hit_bound=0.93, min_sharpness=100, run_parallel=False):
     """
     :Author: Daniel Mohr
-    :Date: 2024-08-14
+    :Date: 2024-08-28
     :License: LGPL-3.0-or-later
 
     find the inner checkerboard corners in the image
@@ -119,6 +119,12 @@ def find_checkerboard(
     approx_coordinates = filter_blurry_corners(
         image, approx_coordinates, crosssizes[0], min_sharpness)
     n = approx_coordinates.shape[0]
+    if n < 24:
+        log.error(
+            'ERROR: only %i corners detected, '
+            'but we need at least 24 for marker detection',
+            n)
+        return None
     distances = calculate_square_distances(
         approx_coordinates[:, :, 0].reshape((n,)),
         approx_coordinates[:, :, 1].reshape((n,)),
