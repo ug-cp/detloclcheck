@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-08-28
+:Date: 2024-09-02
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -132,6 +132,10 @@ def create_coordinate_system(
         image, coordinates, max_distance_factor_range, min_sharpness=1000,
         draw_images=(False, False, False)):
     """
+    :Author: Daniel Mohr
+    :Email: daniel.mohr@uni-greifswald.de
+    :Date: 2024-09-02 (last change).
+
     :param image: 2 dimensional numpy array describing the image
     :param coordinates: numpy array with the coordinates of the corners;
                         could be returned from
@@ -139,7 +143,7 @@ def create_coordinate_system(
 
     :return: (coordinate_system, zeropoint, axis1, axis2) on success,
              otherwise (None, error_code, None, None).
-             possible error codes: 2, 3, 4, 5
+             possible error codes: 2, 3, 4, 5, 6
     """
     log = logging.getLogger('detloclcheck.create_coordinate_system')
     centerpoint = 0.5 * numpy.array(image.shape)
@@ -318,6 +322,10 @@ def create_coordinate_system(
          [255,   0,   0,   0,   0, 255],
          [255, 255, 255, 255, 255, 255]], dtype=numpy.uint8)
     markerdirection = 'L'
+    if ((coordinatesmap.shape[0] < markertemplate.shape[0]) or
+        (coordinatesmap.shape[1] < markertemplate.shape[1])):
+        # coordinatesmap is too small!
+        return None, 6, None, None
     result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
     if result.max() != 1:
         markertemplate = numpy.fliplr(markertemplate)
