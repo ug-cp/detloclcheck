@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-08-14
+:Date: 2024-09-02
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -37,15 +37,13 @@ from detloclcheck.detect_localize_checkerboard import \
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-08-14
+    :Date: 2024-09-02
     :License: LGPL-3.0-or-later
     """
     errorcode = 0
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
         log.info('handle file "%s"', filename)
-        output_filename = \
-            os.path.splitext(filename)[0] + '.' + args.output_format[0]
         image = cv2.imread(filename)
         if image is None:
             log.error('file "%s" cannot be read as image', filename)
@@ -61,46 +59,52 @@ def run_find_checkerboard(args):
                 'ERROR %i during handling file "%s"', zeropoint, filename)
             errorcode += zeropoint
             continue
-        if args.output_format[0] == 'json':
-            with open(output_filename, 'w', encoding='utf8') as fd:
-                json.dump(
-                    {'coordinate_system': coordinate_system.tolist(),
-                     'zeropoint': zeropoint.tolist(),
-                     'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
-                    fd, indent=args.json_indent[0])
-        if args.output_format[0] == 'mat':
-            scipy.io.savemat(
-                output_filename,
-                {'coordinate_system': coordinate_system,
-                 'zeropoint': zeropoint,
-                 'axis1': axis1, 'axis2': axis2})
+        for output_format in args.output_format:
+            output_filename = \
+                os.path.splitext(filename)[0] + '.' + output_format
+            if output_format == 'json':
+                with open(output_filename, 'w', encoding='utf8') as fd:
+                    json.dump(
+                        {'coordinate_system': coordinate_system.tolist(),
+                         'zeropoint': zeropoint.tolist(),
+                         'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
+                        fd, indent=args.json_indent[0])
+            if output_format == 'mat':
+                scipy.io.savemat(
+                    output_filename,
+                    {'coordinate_system': coordinate_system,
+                     'zeropoint': zeropoint,
+                     'axis1': axis1, 'axis2': axis2})
+            log.info('wrote result to "%s"', output_filename)
     return errorcode
 
 
 def run_create_checkerboard_image(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-23
+    :Date: 2024-09-2
     :License: LGPL-3.0-or-later
     """
     zeropoint, coordinates, image = create_checkerboard_image(
         args.m[0], args.n[0], args.size[0], args.zeropoint,
         args.integrate_method[0], args.transition_value[0], args.scale[0])
     cv2.imwrite(args.outfile[0], image)
-    output_filename = \
-        os.path.splitext(args.outfile[0])[0] + '_ground_truth' \
-        + '.' + args.output_format[0]
-    if args.output_format[0] == 'json':
-        with open(output_filename, 'w', encoding='utf8') as fd:
-            json.dump(
-                {'coordinates': coordinates.tolist(),
-                 'zeropoint': zeropoint},
-                fd, indent=args.json_indent[0])
-    if args.output_format[0] == 'mat':
-        scipy.io.savemat(
-            output_filename,
-            {'coordinates': coordinates,
-             'zeropoint': zeropoint})
+    for output_format in args.output_format:
+        output_filename = \
+            os.path.splitext(args.outfile[0])[0] + '_ground_truth' \
+            + '.' + output_format
+        if output_format == 'json':
+            with open(output_filename, 'w', encoding='utf8') as fd:
+                json.dump(
+                    {'coordinates': coordinates.tolist(),
+                     'zeropoint': zeropoint},
+                    fd, indent=args.json_indent[0])
+        if args.output_format[0] == 'mat':
+            scipy.io.savemat(
+                output_filename,
+                {'coordinates': coordinates,
+                 'zeropoint': zeropoint})
+        log.info('wrote result to "%s"', output_filename)
 
 
 def check_arg_file(data):
@@ -140,11 +144,11 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-23
+    :Date: 2024-09-02
     :License: LGPL-3.0-or-later
     """
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-07-23\n"
+    epilog += "Date: 2024-09-02\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -175,7 +179,7 @@ def my_argument_parser():
         metavar='f')
     parser_find_checkerboard.add_argument(
         '-output_format',
-        nargs=1,
+        nargs='+',
         type=str,
         choices=['json', 'mat'],
         required=False,
