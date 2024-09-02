@@ -75,7 +75,9 @@ def run_find_checkerboard(args):
                     {'coordinate_system': coordinate_system,
                      'zeropoint': zeropoint,
                      'axis1': axis1, 'axis2': axis2})
-            log.info('wrote result to "%s"', output_filename)
+            log.info('wrote result with %i good corners to "%s"',
+                     coordinate_system.shape[0],
+                     output_filename)
     return errorcode
 
 
