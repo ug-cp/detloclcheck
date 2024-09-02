@@ -85,6 +85,7 @@ def run_create_checkerboard_image(args):
     :Date: 2024-09-2
     :License: LGPL-3.0-or-later
     """
+    log = logging.getLogger('detloclcheck.run_create_checkerboard_image')
     zeropoint, coordinates, image = create_checkerboard_image(
         args.m[0], args.n[0], args.size[0], args.zeropoint,
         args.integrate_method[0], args.transition_value[0], args.scale[0])

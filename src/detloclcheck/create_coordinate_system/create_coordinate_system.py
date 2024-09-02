@@ -323,7 +323,7 @@ def create_coordinate_system(
          [255, 255, 255, 255, 255, 255]], dtype=numpy.uint8)
     markerdirection = 'L'
     if ((coordinatesmap.shape[0] < markertemplate.shape[0]) or
-        (coordinatesmap.shape[1] < markertemplate.shape[1])):
+            (coordinatesmap.shape[1] < markertemplate.shape[1])):
         # coordinatesmap is too small!
         return None, 6, None, None
     result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
