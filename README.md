@@ -43,7 +43,7 @@ On Ubuntu 22.04 the new flag `--break-system-packages` is not available and
 you should do:
 
 ```sh
-pip3 install --break-system-packages --user .
+pip3 install --user .
 ```
 
 For development you could install an editable version, e. g.:
@@ -65,7 +65,7 @@ detloclcheck find_checkerboard -log_file cam.log -run_parallel \
 
 Author: Daniel Mohr.
 
-Date: 2024-08-28 (last change).
+Date: 2024-09-02 (last change).
 
 License: LGPL-3.0-or-later
 
