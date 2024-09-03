@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-08
+:Date: 2024-09-02
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -24,7 +24,7 @@ import logging
 import cv2
 import numpy
 from detloclcheck.tools import (array2image, draw_coordinate_system,
-                                filter_blurry_corners, normed_TM_CCORR_NORMED)
+                                filter_blurry_corners, normed_tm_ccorr_normed)
 
 
 def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
@@ -87,10 +87,13 @@ def _find_better_axis(
         if max(objectpoint) > 1:
             new_axis, residuals, rank, s = numpy.linalg.lstsq(A, b, rcond=None)
         else:
-            new_axis = numpy.linalg.solve(A, b)
-            residuals = [0]
-            rank = 2
-        if (rank == 0) or (residuals[0] > 1):
+            try:
+                new_axis = numpy.linalg.solve(A, b)
+                residuals = [0]
+                rank = 2
+            except numpy.linalg.LinAlgError:
+                new_axis = None
+        if (new_axis is not None) and ((rank == 0) or (residuals[0] > 1)):
             new_axis = None
     return new_axis
 
@@ -129,6 +132,10 @@ def create_coordinate_system(
         image, coordinates, max_distance_factor_range, min_sharpness=1000,
         draw_images=(False, False, False)):
     """
+    :Author: Daniel Mohr
+    :Email: daniel.mohr@uni-greifswald.de
+    :Date: 2024-09-02 (last change).
+
     :param image: 2 dimensional numpy array describing the image
     :param coordinates: numpy array with the coordinates of the corners;
                         could be returned from
@@ -136,7 +143,7 @@ def create_coordinate_system(
 
     :return: (coordinate_system, zeropoint, axis1, axis2) on success,
              otherwise (None, error_code, None, None).
-             possible error codes: 2, 3, 4, 5
+             possible error codes: 2, 3, 4, 5, 6
     """
     log = logging.getLogger('detloclcheck.create_coordinate_system')
     centerpoint = 0.5 * numpy.array(image.shape)
@@ -315,21 +322,25 @@ def create_coordinate_system(
          [255,   0,   0,   0,   0, 255],
          [255, 255, 255, 255, 255, 255]], dtype=numpy.uint8)
     markerdirection = 'L'
-    result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
+    if ((coordinatesmap.shape[0] < markertemplate.shape[0]) or
+            (coordinatesmap.shape[1] < markertemplate.shape[1])):
+        # coordinatesmap is too small!
+        return None, 6, None, None
+    result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
     if result.max() != 1:
         markertemplate = numpy.fliplr(markertemplate)
         markerdirection = 'L fliplr'
-        result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
-        print('result', result.max())
+        result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
+        # print('result', result.max())
         if result.max() != 1:
             markertemplate = numpy.fliplr(markertemplate)
             markertemplate = numpy.flipud(markertemplate)
             markerdirection = 'L flipud'
-            result = normed_TM_CCORR_NORMED(coordinatesmap, markertemplate)
+            result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
             if result.max() != 1:
                 markertemplate = numpy.fliplr(markertemplate)
                 markerdirection = 'L flipud fliplr'
-                result = normed_TM_CCORR_NORMED(
+                result = normed_tm_ccorr_normed(
                     coordinatesmap, markertemplate)
     if result.max() == 1:
         # marker exact found
@@ -389,8 +400,8 @@ def create_coordinate_system(
         clip_rotated_image = rotated_image[i0:(1+i1), j0:(1+j1)]
         vertical_sum = clip_rotated_image.sum(axis=0)
         horizontal_sum = clip_rotated_image.sum(axis=1)
-        print('vertical_sum', vertical_sum.max())
-        print('horizontal_sum', horizontal_sum.max())
+        # print('vertical_sum', vertical_sum.max())
+        # print('horizontal_sum', horizontal_sum.max())
         if vertical_sum.max() > horizontal_sum.max():
             # axis1 is y axis and axis2 is x axis
             if markerdirection == 'L':

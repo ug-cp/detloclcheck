@@ -41,7 +41,7 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
     """
     log = logging.getLogger('detloclcheck.filter_blurry_corners')
     blurry_corners = []
-    log.debug(f'use size = {size} for filtering blurry corners')
+    log.debug('use size = %f for filtering blurry corners', size)
     for i in range(coordinates.shape[0]):
         i0 = int(round(coordinates[i, 0, 0] - size))
         i1 = int(round(coordinates[i, 0, 0] + size))
@@ -63,4 +63,6 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
             coordinates, blurry_corners, axis=0)
     log.debug(f'removed {len(blurry_corners)} blurry corners '
               f'(min_sharpness = {min_sharpness})')
+    log.debug('removed %i blurry corners (min_sharpness = %f)',
+              len(blurry_corners), min_sharpness)
     return coordinates

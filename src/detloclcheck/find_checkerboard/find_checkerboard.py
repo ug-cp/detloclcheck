@@ -6,7 +6,7 @@
            :func:`detloclcheck.find_checkerboard.find_checkerboard`.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-08
+:Date: 2024-08-28
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -45,18 +45,31 @@ def find_checkerboard(
         hit_bound=0.93, min_sharpness=100, run_parallel=False):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-01
+    :Date: 2024-08-28
     :License: LGPL-3.0-or-later
 
     find the inner checkerboard corners in the image
 
     :param image: 2 dimensional numpy array describing the image
-    :param crosssizes: list of cross sizes to test
-    :param angles: list of angles to test
+    :param crosssizes: list of cross sizes to test, default: [5, 11, 23]
+    :param angles: list of angles to test, default: [0, 45, 90, 135]
     :param hit_bound: minimal value in the template matching to be a
                       checkerboard corner
     :param min_sharpness: minimal sharpness for a good corner
 
+    Example 1:
+
+    >>> import cv2
+    >>> from detloclcheck import find_checkerboard
+    >>> image = cv2.imread('foo.png')
+    >>> gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    >>> coordinates = find_checkerboard.find_checkerboard(
+    ...    gray_image, crosssizes=[35, 55], min_sharpness=10)
+    >>> import matplotlib.pyplot
+    >>> matplotlib.pyplot.imshow(gray_image, cmap="Greys")
+    >>> matplotlib.pyplot.plot(coordinates[:, 0, 0], coordinates[:, 0, 1],
+    ...                        'r1', markersize=20)
+    >>> matplotlib.pyplot.show()
     """
     log = logging.getLogger('detloclcheck.find_checkerboard')
     if crosssizes is None:
@@ -106,6 +119,12 @@ def find_checkerboard(
     approx_coordinates = filter_blurry_corners(
         image, approx_coordinates, crosssizes[0], min_sharpness)
     n = approx_coordinates.shape[0]
+    if n < 24:
+        log.error(
+            'ERROR: only %i corners detected, '
+            'but we need at least 24 for marker detection',
+            n)
+        return None
     distances = calculate_square_distances(
         approx_coordinates[:, :, 0].reshape((n,)),
         approx_coordinates[:, :, 1].reshape((n,)),
@@ -116,10 +135,16 @@ def find_checkerboard(
     window_size = int(0.75 * minimal_distance)
     # window_size has to be small to fit in image around coordinates
     window_size = int(min(
-        window_size, approx_coordinates.min(),
-        image.shape[1] - approx_coordinates[:, :, 0].max(),
-        image.shape[0] - approx_coordinates[:, :, 1].max()))
+        window_size, approx_coordinates.min() - 1,
+        (image.shape[1] - approx_coordinates[:, :, 0]).min() - 1,
+        (image.shape[0] - approx_coordinates[:, :, 1]).min() - 1))
     log.debug('window_size calculated')
+    # for i in range(approx_coordinates.shape[0]):
+    #     if ((approx_coordinates[i, 0, 0] - window_size < 0) or
+    #         (approx_coordinates[i, 0, 1] - window_size < 0) or
+    #         (approx_coordinates[i, 0, 0] + window_size >= image.shape[1]) or
+    #         (approx_coordinates[i, 0, 1] + window_size >= image.shape[0])):
+    #         print("error", approx_coordinates[i, 0, ])
     pfqs = ParallelFind4QuadCornerSubpix(
         image, approx_coordinates, (window_size, window_size))
     coordinates = pfqs()

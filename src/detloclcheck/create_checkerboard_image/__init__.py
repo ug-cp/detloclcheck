@@ -1,6 +1,6 @@
 """
-:mod:`detloclcheck.tools`
-=========================
+:mod:`detloclcheck.create_checkerboard_image`
+=============================================
    :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
               L shape marker using template matching.
@@ -16,18 +16,17 @@ template matching.
 
 functions
 ---------
-.. currentmodule:: detloclcheck.tools
-.. autofunction:: array2image
-.. autofunction:: calculate_sharpness
-.. autofunction:: calculate_square_distances
-.. autofunction:: draw_coordinate_system
-.. autofunction:: filter_blurry_corners
-.. autofunction:: normed_tm_ccorr_normed
+.. currentmodule:: detloclcheck.create_checkerboard_image
+.. autofunction:: create_checkerboard_image
+
+submodules
+----------
+.. automodule:: detloclcheck.create_checkerboard_image.checkerboard_image_class
 
 copyright + license
 -------------------
 :Author: Daniel Mohr
-:Date: 2024-07-08
+:Date: 2024-07-09
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
@@ -46,16 +45,6 @@ copyright + license
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
-from .array2image import array2image
-from .calculate_sharpness import calculate_sharpness
-from .calculate_square_distances import calculate_square_distances
-from .draw_coordinate_system import draw_coordinate_system
-from .filter_blurry_corners import filter_blurry_corners
-from .normed_tm_ccorr_normed import normed_tm_ccorr_normed
+from .create_checkerboard_image import create_checkerboard_image
 
-__all__ = ["array2image",
-           "calculate_sharpness",
-           "calculate_square_distances",
-           "draw_coordinate_system",
-           "filter_blurry_corners",
-           "normed_tm_ccorr_normed"]
+__all__ = ["create_checkerboard_image"]

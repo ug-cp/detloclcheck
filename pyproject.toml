@@ -4,14 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "DetLocLCheck"
-version = "2024.7.9"
+version = "2024.9.2"
 authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
 description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L shape marker using template matching."
 keywords=["calibration target", "checkerboard", "detection", "localization",
           "marker", "L shape marker ", "template matching"]
 readme = "README.md"
 
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 
 dependencies = ["numpy", "scipy"]
 # dependencies = ["opencv-python", "numpy", "scipy"]

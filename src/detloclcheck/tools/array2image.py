@@ -23,7 +23,7 @@
 import cv2
 
 
-def array2image(a):
+def array2image(array):
     """
     :Author: Daniel Mohr
     :Date: 2024-07-01
@@ -32,8 +32,8 @@ def array2image(a):
     normalize an numpy array to an image
     (numpy array with dtype `cv2.CV_8UC1`)
 
-    :param a: numpy array
+    :param array: numpy array
     """
     return cv2.normalize(
-        a, None, alpha=0, beta=255,
+        array, None, alpha=0, beta=255,
         norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8UC1)

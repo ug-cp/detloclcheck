@@ -31,7 +31,7 @@
 
 import cv2
 import numpy
-from detloclcheck.tools import array2image, normed_TM_CCORR_NORMED
+from detloclcheck.tools import array2image, normed_tm_ccorr_normed
 
 from .create_template import create_template
 
@@ -58,7 +58,7 @@ def _get_map(image, crosssize, angle):
     """
     template = create_template(crosssize)
     if angle == 0:
-        result = normed_TM_CCORR_NORMED(image, template)
+        result = normed_tm_ccorr_normed(image, template)
     else:
         diagonal = int(numpy.linalg.norm(image.shape))
         pos = ((diagonal - image.shape[0]) // 2,
@@ -67,7 +67,7 @@ def _get_map(image, crosssize, angle):
         large_image[pos[0]:pos[0] + image.shape[0],
                     pos[1]:pos[1] + image.shape[1]] = image
         rotated_image = _rotate_image(large_image, angle)
-        template_map = normed_TM_CCORR_NORMED(rotated_image, template)
+        template_map = normed_tm_ccorr_normed(rotated_image, template)
         unrotated_image = _rotate_image(template_map, -angle)
         result = unrotated_image[
             pos[0]:pos[0] + image.shape[0],

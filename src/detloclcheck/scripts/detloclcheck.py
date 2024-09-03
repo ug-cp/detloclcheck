@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-09
+:Date: 2024-09-02
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -29,66 +29,85 @@ import sys
 import cv2
 import scipy.io
 
-from detloclcheck.create_coordinate_system import create_coordinate_system
-from detloclcheck.find_checkerboard import find_checkerboard
-from detloclcheck.tools import filter_blurry_corners
+from detloclcheck.create_checkerboard_image import create_checkerboard_image
+from detloclcheck.detect_localize_checkerboard import \
+    detect_localize_checkerboard
 
 
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-09
+    :Date: 2024-09-02
     :License: LGPL-3.0-or-later
     """
+    errorcode = 0
     log = logging.getLogger('detloclcheck.run_find_checkerboard')
     for filename in args.file:
-        log.info(f'handle file "{filename}"')
-        output_filename = \
-            os.path.splitext(filename)[0] + '.' + args.output_format[0]
+        log.info('handle file "%s"', filename)
         image = cv2.imread(filename)
         if image is None:
-            log.error(f'file "{filename}" cannot be read as image')
+            log.error('file "%s" cannot be read as image', filename)
             return 1
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        coordinates = find_checkerboard(
-            gray_image,
-            crosssizes=args.crosssizes,
-            angles=args.angles,
-            hit_bound=args.hit_bound[0],
-            min_sharpness=args.min_sharpness[0],
-            run_parallel=args.run_parallel)
-        if coordinates is None:
-            log.error('ERROR: no inner corners detected')
-            return 1
-        # filter blurry corners (2)
-        coordinates = filter_blurry_corners(
-            gray_image, coordinates, args.crosssizes[0], args.min_sharpness[1])
-        if coordinates.shape[0] < 24:
-            log.error(
-                'ERROR: only %i corners detected, '
-                'but we need at least 24 for marker detection',
-                coordinates.shape[0])
-            return 1
-        log.debug(f'go on with {coordinates.shape[0]} corners')
-        coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
-            gray_image, coordinates, args.max_distance_factor_range,
-            min_sharpness=args.min_sharpness[2])
+        coordinate_system, zeropoint, axis1, axis2 = \
+            detect_localize_checkerboard(
+                gray_image, args.crosssizes, args.angles, args.hit_bound[0],
+                args.min_sharpness, args.run_parallel,
+                args.max_distance_factor_range, log=None)
         if coordinate_system is None:
-            return zeropoint  # zeropoint is used as error code
-        if args.output_format[0] == 'json':
-            with open(output_filename, 'w') as fp:
+            log.error(
+                'ERROR %i during handling file "%s"', zeropoint, filename)
+            errorcode += zeropoint
+            continue
+        for output_format in args.output_format:
+            output_filename = \
+                os.path.splitext(filename)[0] + '.' + output_format
+            if output_format == 'json':
+                with open(output_filename, 'w', encoding='utf8') as fd:
+                    json.dump(
+                        {'coordinate_system': coordinate_system.tolist(),
+                         'zeropoint': zeropoint.tolist(),
+                         'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
+                        fd, indent=args.json_indent[0])
+            if output_format == 'mat':
+                scipy.io.savemat(
+                    output_filename,
+                    {'coordinate_system': coordinate_system,
+                     'zeropoint': zeropoint,
+                     'axis1': axis1, 'axis2': axis2})
+            log.info('wrote result with %i good corners to "%s"',
+                     coordinate_system.shape[0],
+                     output_filename)
+    return errorcode
+
+
+def run_create_checkerboard_image(args):
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-09-2
+    :License: LGPL-3.0-or-later
+    """
+    log = logging.getLogger('detloclcheck.run_create_checkerboard_image')
+    zeropoint, coordinates, image = create_checkerboard_image(
+        args.m[0], args.n[0], args.size[0], args.zeropoint,
+        args.integrate_method[0], args.transition_value[0], args.scale[0])
+    cv2.imwrite(args.outfile[0], image)
+    for output_format in args.output_format:
+        output_filename = \
+            os.path.splitext(args.outfile[0])[0] + '_ground_truth' \
+            + '.' + output_format
+        if output_format == 'json':
+            with open(output_filename, 'w', encoding='utf8') as fd:
                 json.dump(
-                    {'coordinate_system': coordinate_system.tolist(),
-                     'zeropoint': zeropoint.tolist(),
-                     'axis1': axis1.tolist(), 'axis2': axis2.tolist()},
-                    fp, indent=args.json_indent[0])
+                    {'coordinates': coordinates.tolist(),
+                     'zeropoint': zeropoint},
+                    fd, indent=args.json_indent[0])
         if args.output_format[0] == 'mat':
             scipy.io.savemat(
                 output_filename,
-                {'coordinate_system': coordinate_system,
-                 'zeropoint': zeropoint,
-                 'axis1': axis1, 'axis2': axis2})
-    return 0
+                {'coordinates': coordinates,
+                 'zeropoint': zeropoint})
+        log.info('wrote result to "%s"', output_filename)
 
 
 def check_arg_file(data):
@@ -98,7 +117,7 @@ def check_arg_file(data):
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.check_arg_file')
-    log.debug(f'handle file "{data}"')
+    log.debug('handle file "%s"', data)
     if not os.path.isfile(data):
         msg = f'"{data}" is not a file'
         raise argparse.ArgumentTypeError(msg)
@@ -112,11 +131,12 @@ def check_arg_crosssizes(data):
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.check_arg_crosssizes')
-    log.debug(f'check crosssize "{data}"')
+    log.debug('check crosssize "%s"', data)
     try:
         data = int(data)
     except ValueError:
         msg = f'"{data}" can not be interpreted as int'
+        # pylint: disable=raise-missing-from
         raise argparse.ArgumentTypeError(msg)
     if data % 2 == 0:
         msg = f'"{data}" is not odd'
@@ -125,8 +145,13 @@ def check_arg_crosssizes(data):
 
 
 def my_argument_parser():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-09-02
+    :License: LGPL-3.0-or-later
+    """
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-07-09\n"
+    epilog += "Date: 2024-09-02\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -157,7 +182,7 @@ def my_argument_parser():
         metavar='f')
     parser_find_checkerboard.add_argument(
         '-output_format',
-        nargs=1,
+        nargs='+',
         type=str,
         choices=['json', 'mat'],
         required=False,
@@ -185,7 +210,7 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=[15, 23],
+        default=(15, 23),
         dest='crosssizes',
         help='Set a list of cross sizes to test. You can use odd integers. '
         'This is used during template matching. default: 15, 23',
@@ -195,7 +220,7 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=[0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5],
+        default=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5),
         dest='angles',
         help='Set a list of angles to test. '
         'This is used during template matching. '
@@ -252,6 +277,121 @@ def my_argument_parser():
         action='store_true',
         dest='run_parallel',
         help='If set this flag, will try to do things in parallel.')
+    # subparser create_checkerboard_image
+    parser_create_checkerboard_image = subparsers.add_parser(
+        'create_checkerboard_image',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='For more help: detloclcheck create_checkerboard_image -h',
+        description='detloclcheck create_checkerboard_image is a python script'
+        ' to create an artificial image of a checkerboard.',
+        epilog=epilog)
+    parser_create_checkerboard_image.set_defaults(
+        func=run_create_checkerboard_image)
+    parser_create_checkerboard_image.add_argument(
+        '-outfile',
+        nargs=1,
+        type=str,
+        required=True,
+        dest='outfile',
+        help='Set the filename to write result image. '
+        'The coordinates will be written to a file with a different postfix.',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-output_format',
+        nargs=1,
+        type=str,
+        choices=['json', 'mat'],
+        required=False,
+        default=['json'],
+        dest='output_format',
+        help='Set the output format to use for the coordinates. '
+        '"json" will save the result as a json file. '
+        '"mat" will save the result as a MATLAB-style .mat file. '
+        'default: json',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-json_indent',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[None],
+        dest='json_indent',
+        help='Set the indent in the json output. On default a minimal file '
+        'size is achieved. Setting any numbers will lead to a better human '
+        'readable output with a larger file size. '
+        'default: None',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-size',
+        nargs=1,
+        type=float,
+        required=False,
+        default=[15.0],
+        dest='size',
+        help='size of a checkerboard field. default: 15.0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-scale',
+        nargs=1,
+        type=float,
+        required=False,
+        default=[1.0],
+        dest='scale',
+        help='scaling factor. default 1.0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-m',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[8],
+        dest='m',
+        help='number rows of checkerboard fields. default: 8',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-n',
+        nargs=1,
+        type=int,
+        required=False,
+        default=[8],
+        dest='n',
+        help='number columns of checkerboard fields. default: 8',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-zeropoint',
+        nargs=2,
+        type=float,
+        required=False,
+        default=None,
+        dest='zeropoint',
+        help='zeropoint. default: [middle of the image]',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-integrate_method',
+        nargs=1,
+        type=int,
+        choices=[0, 1, 2],
+        required=False,
+        default=[0],
+        dest='integrate_method',
+        help='Set the method used for integration over one pixel. '
+        '0: no integration. 1: simple Simpson\'s Rule. '
+        '2: use of scipy.integrate.nquad. '
+        'default: 0',
+        metavar='f')
+    parser_create_checkerboard_image.add_argument(
+        '-transition_value',
+        nargs=1,
+        type=int,
+        choices=range(256),
+        required=False,
+        default=[128],
+        dest='transition_value',
+        help='Set the transition value between white and black areas. '
+        'For a value of 255 the light areas in the image run out. '
+        'For a value of 0 the reverse effect is simulated. '
+        'default: 128',
+        metavar='f')
     return parser
 
 
@@ -262,22 +402,22 @@ def main():
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck')
-    ch = logging.StreamHandler()
-    ch.setFormatter(
+    stdout_handler = logging.StreamHandler()
+    stdout_handler.setFormatter(
         logging.Formatter(
             '%(asctime)s %(name)s %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S %Z'))
-    log.addHandler(ch)
+    log.addHandler(stdout_handler)
     log.setLevel(logging.DEBUG)
     parser = my_argument_parser()
     args = parser.parse_args()
     if hasattr(args, 'log_file') and (args.log_file is not None):
-        fh = logging.handlers.WatchedFileHandler(args.log_file[0])
-        fh.setFormatter(
+        file_handler = logging.handlers.WatchedFileHandler(args.log_file[0])
+        file_handler.setFormatter(
             logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s',
                               datefmt='%Y-%m-%dT%H:%M:%S_%Z'))
-        log.addHandler(fh)
-        log.debug(f'added logging to file "{args.log_file[0]}"')
+        log.addHandler(file_handler)
+        log.debug('added logging to file "%s"', args.log_file[0])
     if args.subparser_name is not None:
         log.info('start detloclcheck')
         sys.exit(args.func(args))

@@ -52,11 +52,20 @@ For development you could install an editable version, e. g.:
 pip3 install --break-system-packages -e .
 ```
 
+But this is only working from Python 3.10 on.
+
+## Example
+
+```sh
+detloclcheck find_checkerboard -log_file cam.log -run_parallel \
+    -crosssizes 35 55 -min_sharpness 25 50 100 -f *.png
+```
+
 ## copyright + license
 
 Author: Daniel Mohr.
 
-Date: 2024-06-26 (last change).
+Date: 2024-08-28 (last change).
 
 License: LGPL-3.0-or-later
 

@@ -24,7 +24,7 @@ import cv2
 import numpy
 
 
-def normed_TM_CCORR_NORMED(image, template):
+def normed_tm_ccorr_normed(image, template):
     """
     :Author: Daniel Mohr
     :Email: daniel.mohr@dlr.de, daniel.mohr@uni-greifswald.de

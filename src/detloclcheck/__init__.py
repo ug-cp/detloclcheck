@@ -16,7 +16,9 @@ template matching.
 
 submodules
 ==========
+.. automodule:: detloclcheck.create_checkerboard_image
 .. automodule:: detloclcheck.create_coordinate_system
+.. automodule:: detloclcheck.detect_localize_checkerboard
 .. automodule:: detloclcheck.find_checkerboard
 .. automodule:: detloclcheck.tools
 .. automodule:: detloclcheck.scripts
@@ -24,7 +26,7 @@ submodules
 copyright + license
 ===================
 :Author: Daniel Mohr
-:Date: 2024-07-08
+:Date: 2024-07-10
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024 Daniel Mohr
 """
