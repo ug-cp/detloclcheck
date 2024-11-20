@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+#
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 """
 :mod:`detloclcheck.create_checkerboard_image`
 =============================================
