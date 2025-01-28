@@ -248,5 +248,6 @@ pages:
     - anybadge -l "documentation as" -v html -f documentation_html.svg -c fuchsia -o
   artifacts:
     paths:
-      - document_html.svg
+      - documentation_pdf.svg
+      - documentation_html.svg
       - public
