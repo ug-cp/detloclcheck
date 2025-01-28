@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-09-02
+:Date: 2025-01-28
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -138,7 +138,7 @@ def create_coordinate_system(
     """
     :Author: Daniel Mohr
     :Email: daniel.mohr@uni-greifswald.de
-    :Date: 2024-09-02 (last change).
+    :Date: 2025-01-28 (last change).
 
     :param image: 2 dimensional numpy array describing the image
     :param coordinates: numpy array with the coordinates of the corners;
@@ -203,7 +203,7 @@ def create_coordinate_system(
         return None, 2, None, None
     log.debug('found first axis')
 
-    # now we have found 1 exis; we do not know wheather it is x or y
+    # now we have found 1 axis; we do not know wheather it is x or y
     # and we do not know the direction
     # axis1 is only from a short distance. It should be enhanced:
     enhanced_axis1 = 1
@@ -213,7 +213,7 @@ def create_coordinate_system(
     log.debug(f'actual axis: |{axis1}| = {numpy.linalg.norm(axis1)}, '
               f'|{axis2}| = {numpy.linalg.norm(axis2)}')
     while True:
-        # now we have the other exis
+        # now we have the other axis
         # we know:
         # (0,0) <-> zeropoint <-> coordinates[k, :, :]
         # (1,0) <-> coordinates[j, :, :]
@@ -332,20 +332,19 @@ def create_coordinate_system(
         return None, 6, None, None
     result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
     if result.max() != 1:
-        markertemplate = numpy.fliplr(markertemplate)
+        act_markertemplate = numpy.fliplr(markertemplate)
         markerdirection = 'L fliplr'
-        result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
+        result = normed_tm_ccorr_normed(coordinatesmap, act_markertemplate)
         # print('result', result.max())
         if result.max() != 1:
-            markertemplate = numpy.fliplr(markertemplate)
-            markertemplate = numpy.flipud(markertemplate)
+            act_markertemplate = numpy.flipud(markertemplate)
             markerdirection = 'L flipud'
-            result = normed_tm_ccorr_normed(coordinatesmap, markertemplate)
+            result = normed_tm_ccorr_normed(coordinatesmap, act_markertemplate)
             if result.max() != 1:
-                markertemplate = numpy.fliplr(markertemplate)
+                act_markertemplate = numpy.flipud(numpy.fliplr(markertemplate))
                 markerdirection = 'L flipud fliplr'
                 result = normed_tm_ccorr_normed(
-                    coordinatesmap, markertemplate)
+                    coordinatesmap, act_markertemplate)
     if result.max() == 1:
         # marker exact found
         i, j = numpy.unravel_index(result.argmax(), result.shape)
@@ -407,34 +406,51 @@ def create_coordinate_system(
         # print('vertical_sum', vertical_sum.max())
         # print('horizontal_sum', horizontal_sum.max())
         if vertical_sum.max() > horizontal_sum.max():
+            log.debug('axis1 is y axis and axis2 is x axis')
             # axis1 is y axis and axis2 is x axis
             if markerdirection == 'L':
                 axis = axis1
                 axis1 = -axis2
                 axis2 = axis
+                coo = coordinate_system[:, 1, 0].copy()
+                coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 1].copy()
+                coordinate_system[:, 1, 1] = coo
             elif markerdirection == 'L fliplr':
                 axis = axis1
                 axis1 = -axis2
                 axis2 = -axis
+                coo = coordinate_system[:, 1, 0].copy()
+                coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 1].copy()
+                coordinate_system[:, 1, 1] = -coo
             elif markerdirection == 'L flipud':
                 axis = axis1
                 axis1 = axis2
                 axis2 = axis
+                coo = coordinate_system[:, 1, 0].copy()
+                coordinate_system[:, 1, 0] = coordinate_system[:, 1, 1].copy()
+                coordinate_system[:, 1, 1] = coo
             elif markerdirection == 'L flipud fliplr':
                 axis = axis1
                 axis1 = axis2
                 axis2 = -axis
+                coo = coordinate_system[:, 1, 0].copy()
+                coordinate_system[:, 1, 0] = coordinate_system[:, 1, 1].copy()
+                coordinate_system[:, 1, 1] = -coo
         else:
+            log.debug('axis1 is x axis and axis2 is y axis')
             # axis1 is x axis and axis2 is y axis
             if markerdirection == 'L':
                 # this can be reproduced by image '11.png' and
                 # 90 degrees rotate first axis1
                 axis2 = -axis2
+                coordinate_system[:, 1, 1] = -coordinate_system[:, 1, 1]
             elif markerdirection == 'L fliplr':
                 # this can be reproduced by image '12.png' and
                 # 90 degrees rotate first axis1
                 axis1 = -axis1
                 axis2 = -axis2
+                coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 0]
+                coordinate_system[:, 1, 1] = -coordinate_system[:, 1, 1]
             elif markerdirection == 'L flipud':
                 # this can be reproduced by image '10.png' and
                 # 90 degrees rotate first axis1
@@ -443,6 +459,7 @@ def create_coordinate_system(
                 # this can be reproduced by image '08.png', '09.png' and
                 # 90 degrees rotate first axis1
                 axis1 = -axis1
+                coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 0]
     else:
         # no marker found
         log.error('ERROR: no marker found')
