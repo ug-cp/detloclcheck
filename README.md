@@ -65,8 +65,8 @@ detloclcheck find_checkerboard -log_file cam.log -run_parallel \
 
 Author: Daniel Mohr.
 
-Date: 2024-09-02 (last change).
+Date: 2025-01-28 (last change).
 
 License: LGPL-3.0-or-later
 
-Copyright (C) 2024 Daniel Mohr
+Copyright (C) 2024, 2025 Daniel Mohr
