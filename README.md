@@ -61,6 +61,40 @@ detloclcheck find_checkerboard -log_file cam.log -run_parallel \
     -crosssizes 35 55 -min_sharpness 25 50 100 -f *.png
 ```
 
+```sh
+detloclcheck create_checkerboard_image -outfile foo.png -size 23
+detloclcheck find_checkerboard -f foo.png
+detloclcheck visualize foo.json -i foo.png
+```
+
+```py
+import cv2
+import json
+
+import matplotlib.pyplot
+import numpy
+
+image_name = 'foo.png'
+data_name = 'foo.json'
+gray_image = cv2.imread(image_name, cv2.COLOR_BGR2GRAY)
+with open(data_name) as fd:
+    data = json.load(fd)
+coordinate_system = numpy.array(data['coordinate_system'])
+zeropoint = numpy.array(data['zeropoint'])
+matplotlib.pyplot.imshow(gray_image, cmap="Greys")
+matplotlib.pyplot.plot(
+    coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
+    'r2', markersize=20)
+matplotlib.pyplot.plot(zeropoint[0], zeropoint[1], 'b1', markersize=20)
+for i in range(coordinate_system.shape[0]):
+    matplotlib.pyplot.text(
+        coordinate_system[i, 0, 0], coordinate_system[i, 0, 1],
+        f'({int(coordinate_system[i, 1, 0])},'
+        f'{int(coordinate_system[i, 1, 1])})',
+        color='g', fontsize='small', rotation=45)
+matplotlib.pyplot.show()
+```
+
 ## copyright + license
 
 Author: Daniel Mohr.

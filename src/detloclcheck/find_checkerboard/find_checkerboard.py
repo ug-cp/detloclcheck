@@ -101,7 +101,7 @@ def find_checkerboard(
     log.debug('found template matching maps')
     approx_coordinates = []
     mask = numpy.ones(overall_map.shape, dtype=numpy.uint8)
-    window_half_size = max(crosssizes) // 2
+    window_half_size = max_crosssize // 2
     mask[0:(window_half_size+1), :] = 0
     mask[-(window_half_size+2):, :] = 0
     mask[:, 0:(window_half_size+1)] = 0
@@ -142,7 +142,7 @@ def find_checkerboard(
         window_size, approx_coordinates.min() - 1,
         (image.shape[1] - approx_coordinates[:, :, 0]).min() - 1,
         (image.shape[0] - approx_coordinates[:, :, 1]).min() - 1))
-    log.debug('window_size calculated')
+    log.debug('window_size %i calculated', window_size)
     # for i in range(approx_coordinates.shape[0]):
     #     if ((approx_coordinates[i, 0, 0] - window_size < 0) or
     #         (approx_coordinates[i, 0, 1] - window_size < 0) or
@@ -155,5 +155,6 @@ def find_checkerboard(
     log.debug(f'found {coordinates[1].shape[0]} corners')
     if coordinates[0]:
         return coordinates[1]
+        # return coordinates[1] - 0.5
     else:
         return None
