@@ -146,6 +146,8 @@ debian-latest:
   extends: .debian_based_test
   coverage: '/^TOTAL\s*[0-9]+\s*[0-9]+\s*([0-9]+\%)$/'
   artifacts:
+    paths:
+      - public
     reports:
       coverage_report:
         coverage_format: cobertura
@@ -228,3 +230,17 @@ opensuse_leap_latest-arm64:
   tags:
     - aarch64
   extends: .opensuse_based_test
+
+pages:
+  stage: deploy
+  image:
+    name: alpine:latest
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  dependencies:
+    - debian-latest
+  artifacts:
+    paths:
+      - document_pdf.svg
+      - manual_plecs.pdf
+      - manual_plecs_html
