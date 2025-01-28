@@ -243,8 +243,8 @@ pages:
     - date
     - apk add --no-cache pipx
     - pipx install anybadge
-    - $HOME/.local/bin/anybadge -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
-    - $HOME/.local/bin/anybadge -l "documentation as" -v html -f document_html.svg -c fuchsia -o
+    - "$HOME/.local/bin/anybadge" -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
+    - "$HOME/.local/bin/anybadge" -l "documentation as" -v html -f document_html.svg -c fuchsia -o
   artifacts:
     paths:
       - document_html.svg
