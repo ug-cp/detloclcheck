@@ -242,9 +242,10 @@ pages:
   script:
     - date
     - apk add --no-cache pipx
+    - export PATH=$PATH:"$HOME/.local/bin"
     - pipx install anybadge
-    - "$HOME/.local/bin/anybadge" -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
-    - "$HOME/.local/bin/anybadge" -l "documentation as" -v html -f document_html.svg -c fuchsia -o
+    - anybadge -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
+    - anybadge -l "documentation as" -v html -f documentation_html.svg -c fuchsia -o
   artifacts:
     paths:
       - document_html.svg
