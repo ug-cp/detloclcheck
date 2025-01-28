@@ -146,6 +146,8 @@ debian-latest:
   extends: .debian_based_test
   coverage: '/^TOTAL\s*[0-9]+\s*[0-9]+\s*([0-9]+\%)$/'
   artifacts:
+    paths:
+      - public
     reports:
       coverage_report:
         coverage_format: cobertura
@@ -228,3 +230,24 @@ opensuse_leap_latest-arm64:
   tags:
     - aarch64
   extends: .opensuse_based_test
+
+pages:
+  stage: deploy
+  image:
+    name: alpine:latest
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  dependencies:
+    - debian-latest
+  script:
+    - date
+    - apk add --no-cache pipx
+    - export PATH="$PATH":"$HOME/.local/bin"
+    - pipx install anybadge
+    - anybadge -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
+    - anybadge -l "documentation as" -v html -f documentation_html.svg -c fuchsia -o
+  artifacts:
+    paths:
+      - documentation_pdf.svg
+      - documentation_html.svg
+      - public
