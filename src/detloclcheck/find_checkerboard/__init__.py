@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -27,15 +27,15 @@ submodules
 ----------
 .. automodule:: detloclcheck.find_checkerboard.calculatetemplatematching
 .. automodule:: detloclcheck.find_checkerboard.create_template
-.. automodule:: detloclcheck.find_checkerboard.parallelfind4quadcornersubpix
+.. automodule:: detloclcheck.find_checkerboard.parallel_cornersubpix
 .. automodule:: detloclcheck.find_checkerboard.set_black_border
 
 copyright + license
 -------------------
 :Author: Daniel Mohr
-:Date: 2024-07-08
+:Date: 2025-01-29
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024, 2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
