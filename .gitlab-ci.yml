@@ -267,8 +267,7 @@ matlab:
   script:
     - sudo chown -R "$(id -u -n)":"$(id -g -n)" "$(pwd)"
     - sudo apt-get update
-    - sudo export DEBIAN_FRONTEND=noninteractive
-    - sudo apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-scipy pipx
+    - sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-scipy pipx
     - export PATH="$PATH":"$HOME/.local/bin"
     - pipx .
     - foopath="$(mktemp --directory)"
