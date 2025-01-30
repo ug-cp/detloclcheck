@@ -237,21 +237,20 @@ octave:
   image:
     name: debian:latest
   extends: .display_env
-  variables:
-    PIP_INSTALL: "pip3 install --break-system-packages --user"
   script:
     - apt-get update
-    - $APT_GET_INSTALL octave python3-numpy python3-opencv python3-pip python3-scipy
+    - $APT_GET_INSTALL octave pipx python3-numpy python3-opencv python3-scipy
     - python3 --version
-    - pip3 --version
-    - $PIP_INSTALL .
-    - export PATH="$PATH":~/.local/bin
-    - cd compatibility || exit
-    - detloclcheck create_checkerboard_image -outfile foo.png -size 23
-    - detloclcheck find_checkerboard -f foo.png -output_format mat
+    - export PATH="$PATH":"$HOME/.local/bin"
+    - pipx install .
+    - foopath="$(mktemp --directory)"
+    - cp -p compatibility/load_detloclcheck.m "$foopath"/
+    - cd "$foopath"/ || exit
     - echo "function foo" > foo.m
     - echo "load_detloclcheck('foo.mat')" >> foo.m
     - echo "end" >> foo.m
+    - detloclcheck create_checkerboard_image -outfile foo.png -size 23
+    - detloclcheck find_checkerboard -f foo.png -output_format mat
     - octave --no-history --no-window-system --eval "$LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST"
 
 matlab:
@@ -267,9 +266,10 @@ matlab:
   script:
     - sudo chown -R "$(id -u -n)":"$(id -g -n)" "$(pwd)"
     - sudo apt-get update
-    - sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-scipy pipx
+    - sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y pipx python3-numpy python3-opencv python3-scipy
+    - python3 --version
     - export PATH="$PATH":"$HOME/.local/bin"
-    - pipx .
+    - pipx install .
     - foopath="$(mktemp --directory)"
     - cp -p compatibility/load_detloclcheck.m "$foopath"/
     - cd "$foopath"/ || exit
