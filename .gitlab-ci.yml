@@ -1,6 +1,7 @@
 variables:
   DEBIAN_FRONTEND: noninteractive
   APT_GET_INSTALL: "apt-get install --no-install-recommends -q -y"
+  LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST: "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
 
 stages:
   - pre
@@ -233,6 +234,8 @@ opensuse_leap_latest-arm64:
 
 octave:
   stage: build_test
+  image:
+    name: debian:latest
   extends: .display_env
   variables:
     PIP_INSTALL: "pip3 install --break-system-packages --user"
@@ -249,11 +252,7 @@ octave:
     - echo "function foo" > foo.m
     - echo "load_detloclcheck('foo.mat')" >> foo.m
     - echo "end" >> foo.m
-    - octave --no-history --no-window-system --eval "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - public
+    - octave --no-history --no-window-system --eval "$LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST"
 
 matlab:
   stage: build_test
@@ -268,6 +267,7 @@ matlab:
   script:
     - sudo chown -R "$(id -u -n)":"$(id -g -n)" "$(pwd)"
     - sudo apt-get update
+    - export DEBIAN_FRONTEND=noninteractive
     - sudo apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-scipy pipx
     - export PATH="$PATH":"$HOME/.local/bin"
     - pipx .
@@ -279,7 +279,7 @@ matlab:
     - echo "end" >> foo.m
     - detloclcheck create_checkerboard_image -outfile foo.png -size 23
     - detloclcheck find_checkerboard -f foo.png -output_format mat
-    - matlab -batch "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
+    - matlab -batch "$LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST"
 
 pages:
   stage: deploy
