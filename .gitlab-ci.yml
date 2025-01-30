@@ -243,10 +243,12 @@ octave:
     - pip3 --version
     - $PIP_INSTALL .
     - export PATH="$PATH":~/.local/bin
-    - cd compatibility
+    - cd compatibility || exit
     - detloclcheck create_checkerboard_image -outfile foo.png -size 23
     - detloclcheck find_checkerboard -f foo.png -output_format mat
-    - echo -e "function foo\nload_detloclcheck('foo.mat')\nend\n" > foo.m
+    - echo "function foo" > foo.m
+    - echo "load_detloclcheck('foo.mat')" >> foo.m
+    - echo "end" >> foo.m
     - octave --no-history --no-window-system --eval "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
   artifacts:
     expire_in: 1 hrs
@@ -264,15 +266,17 @@ matlab:
     - ug-cp
   extends: .display_env
   script:
-    - sudo chown -R $(id -u -n):$(id -g -n) $(pwd)
+    - sudo chown -R "$(id -u -n)":"$(id -g -n)" "$(pwd)"
     - sudo apt-get update
-    - sudo $APT_GET_INSTALL python3-numpy python3-opencv python3-scipy pipx
+    - sudo apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-scipy pipx
     - export PATH="$PATH":"$HOME/.local/bin"
     - pipx .
     - foopath="$(mktemp --directory)"
     - cp -p compatibility/load_detloclcheck.m "$foopath"/
-    - cd "$foopath"/
-    - echo -e "function foo\nload_detloclcheck('foo.mat')\nend\n" > foo.m
+    - cd "$foopath"/ || exit
+    - echo "function foo" > foo.m
+    - echo "load_detloclcheck('foo.mat')" >> foo.m
+    - echo "end" >> foo.m
     - detloclcheck create_checkerboard_image -outfile foo.png -size 23
     - detloclcheck find_checkerboard -f foo.png -output_format mat
     - matlab -batch "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
