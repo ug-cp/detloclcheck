@@ -26,6 +26,8 @@ def calculate_square_distances(x0, y0, x1, y1):
     yd = ((numpy.ones((y1.shape[0], 1)) * y0) -
           (numpy.ones((y0.shape[0], 1)) * y1).transpose())
     return numpy.square(xd) + numpy.square(yd)
+
+
 def coordinates_root_mean_square_error(coordinates, coordinate_system):
     dist = calculate_square_distances(
         coordinates[:, 0], coordinates[:, 1],
@@ -40,6 +42,7 @@ def coordinates_root_mean_square_error(coordinates, coordinate_system):
             numpy.sqrt(square_distance_sum /
                        coordinates.shape[0])
     return root_mean_square_error
+
 
 class TestCheck_detect_localize_checkerboard(unittest.TestCase):
     """
