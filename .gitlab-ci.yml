@@ -231,6 +231,52 @@ opensuse_leap_latest-arm64:
     - aarch64
   extends: .opensuse_based_test
 
+octave:
+  stage: build_test
+  extends: .display_env
+  variables:
+    PIP_INSTALL: "pip3 install --break-system-packages --user"
+  script:
+    - apt-get update
+    - $APT_GET_INSTALL octave python3-numpy python3-opencv python3-pip python3-scipy
+    - python3 --version
+    - pip3 --version
+    - $PIP_INSTALL .
+    - export PATH="$PATH":~/.local/bin
+    - cd compatibility
+    - detloclcheck create_checkerboard_image -outfile foo.png -size 23
+    - detloclcheck find_checkerboard -f foo.png -output_format mat
+    - echo -e "function foo\nload_detloclcheck('foo.mat')\nend\n" > foo.m
+    - octave --no-history --no-window-system --eval "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - public
+
+matlab:
+  stage: build_test
+  image:
+    name: mathworks/matlab:latest
+    entrypoint: [""]
+  tags:
+    - amd64
+    - docker
+    - ug-cp
+  extends: .display_env
+  script:
+    - sudo chown -R $(id -u -n):$(id -g -n) $(pwd)
+    - sudo apt-get update
+    - sudo $APT_GET_INSTALL python3-numpy python3-opencv python3-scipy pipx
+    - export PATH="$PATH":"$HOME/.local/bin"
+    - pipx .
+    - foopath="$(mktemp --directory)"
+    - cp -p compatibility/load_detloclcheck.m "$foopath"/
+    - cd "$foopath"/
+    - echo -e "function foo\nload_detloclcheck('foo.mat')\nend\n" > foo.m
+    - detloclcheck create_checkerboard_image -outfile foo.png -size 23
+    - detloclcheck find_checkerboard -f foo.png -output_format mat
+    - matlab -batch "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
+
 pages:
   stage: deploy
   image:
