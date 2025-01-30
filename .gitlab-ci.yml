@@ -237,14 +237,12 @@ octave:
   image:
     name: debian:latest
   extends: .display_env
-  variables:
-    PIP_INSTALL: "pip3 install --break-system-packages --user"
   script:
     - apt-get update
-    - $APT_GET_INSTALL octave python3-numpy python3-opencv python3-pip python3-scipy
+    - $APT_GET_INSTALL octave pix python3-numpy python3-opencv python3-scipy
     - python3 --version
     - export PATH="$PATH":"$HOME/.local/bin"
-    - $PIP_INSTALL .
+    - pipx install --system-site-packages .
     - foopath="$(mktemp --directory)"
     - cp -p compatibility/load_detloclcheck.m "$foopath"/
     - cd "$foopath"/ || exit
@@ -265,15 +263,13 @@ matlab:
     - docker
     - ug-cp
   extends: .display_env
-  variables:
-    PIP_INSTALL: "pip3 install --break-system-packages --user"
   script:
     - sudo chown -R "$(id -u -n)":"$(id -g -n)" "$(pwd)"
     - sudo apt-get update
-    - sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y python3-numpy python3-opencv python3-pip python3-scipy
+    - sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y pipx python3-numpy python3-opencv python3-scipy
     - python3 --version
     - export PATH="$PATH":"$HOME/.local/bin"
-    - $PIP_INSTALL .
+    - pipx install --system-site-packages .
     - foopath="$(mktemp --directory)"
     - cp -p compatibility/load_detloclcheck.m "$foopath"/
     - cd "$foopath"/ || exit
