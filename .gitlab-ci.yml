@@ -239,7 +239,7 @@ octave:
   extends: .display_env
   script:
     - apt-get update
-    - $APT_GET_INSTALL octave pix python3-numpy python3-opencv python3-scipy
+    - $APT_GET_INSTALL octave pipx python3-numpy python3-opencv python3-scipy
     - python3 --version
     - export PATH="$PATH":"$HOME/.local/bin"
     - pipx install --system-site-packages .
