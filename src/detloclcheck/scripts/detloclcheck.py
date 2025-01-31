@@ -157,11 +157,11 @@ def run_visualize(args):
                 args.image_file_name[fid], cv2.COLOR_BGR2GRAY)
             matplotlib.pyplot.imshow(gray_image, cmap="Greys")
         matplotlib.pyplot.plot(
-            coordinate_system[:, 0, 0],  # pylint: disable=E0606
-            coordinate_system[:, 0, 1],  # pylint: disable=E0606
+            coordinate_system[:, 0, 0],
+            coordinate_system[:, 0, 1],
             'r2', markersize=20)
         matplotlib.pyplot.plot(
-            zeropoint[0], zeropoint[1],  # pylint: disable=E0606
+            zeropoint[0], zeropoint[1],
             'b1', markersize=20)
         for i in range(coordinate_system.shape[0]):
             matplotlib.pyplot.text(

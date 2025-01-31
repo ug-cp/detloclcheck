@@ -41,7 +41,7 @@ def simpsons_rule(f, x1, x2, y1, y2):
     :Author: Daniel Mohr
     :Email: daniel.mohr@dlr.de
     :Date: 2016-04-17
-    :License: GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007.
+    :License: LGPL-3.0-or-later
 
     Integrate the function f over the area [x1,x2] x [y1,y2] by using
     Simpson's Rule.

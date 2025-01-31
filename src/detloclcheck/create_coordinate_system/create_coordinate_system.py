@@ -27,14 +27,15 @@ import logging
 
 import cv2
 import numpy
-from detloclcheck.tools import (array2image, draw_coordinate_system,
-                                filter_blurry_corners, normed_tm_ccorr_normed)
+from detloclcheck.tools import (array2image, calculate_square_distances,
+                                draw_coordinate_system, filter_blurry_corners,
+                                normed_tm_ccorr_normed)
 
 
 def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
     coordinate_system = numpy.zeros((coordinates.shape[0], 2, 2))
     coordinate_system[:, 0, :] = coordinates[:, 0, :]
-    A = numpy.vstack((axis1, axis2)).transpose()
+    A = numpy.vstack((axis1, axis2)).transpose()  # pylint: disable=C0103
     for i in range(coordinates.shape[0]):
         b = coordinates[i, 0, :] - zeropoint
         coordinate_system[i, 1, :] = numpy.linalg.solve(A, b).round()
@@ -89,7 +90,7 @@ def _find_better_axis(
                 A[2*(j-1):2*(j-1)+2, :] = j * numpy.eye(2)
                 b[2*(j-1):2*(j-1)+2] = coordinates[index, 0, :] - zeropoint
         if max(objectpoint) > 1:
-            new_axis, residuals, rank, s = numpy.linalg.lstsq(A, b, rcond=None)
+            new_axis, residuals, rank, _ = numpy.linalg.lstsq(A, b, rcond=None)
         else:
             try:
                 new_axis = numpy.linalg.solve(A, b)
@@ -100,36 +101,6 @@ def _find_better_axis(
         if (new_axis is not None) and ((rank == 0) or (residuals[0] > 1)):
             new_axis = None
     return new_axis
-
-
-def calculate_square_distances(x0, y0, x1, y1):
-    """
-    :Author: Daniel Mohr
-    :Email: daniel.mohr@dlr.de
-    :Date: 2018-02-12 (last change).
-    :License: GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007.
-
-    calculate the squared distances between all given
-    points (x0,y0) and (x1,y1)
-
-    :param x0: numpy array (vector) with the x coordinates in a column vector
-    :param y0: numpy array (vector) with the y coordinates in a column vector
-    :param x1: numpy array (vector) with the x coordinates in a column vector
-    :param y1: numpy array (vector) with the y coordinates in a column vector
-
-    :returns: return a matrix A with all squared distances
-              A[i,j] is the distance between (x0[j],y0[j]) and (x1[i],y1[i])
-    """
-    # calculate x-distances
-    # (numpy.ones((x1.shape[0],1)) * x0)
-    # numpy.tile(x0,x1.shape[0]).reshape((x1.shape[0],x0.shape[0]))
-    xd = ((numpy.ones((x1.shape[0], 1)) * x0) -
-          (numpy.ones((x0.shape[0], 1)) * x1).transpose())
-    # calculate y-distances
-    yd = ((numpy.ones((y1.shape[0], 1)) * y0) -
-          (numpy.ones((y0.shape[0], 1)) * y1).transpose())
-    # calculate square of distances and return it
-    return numpy.square(xd) + numpy.square(yd)
 
 
 def create_coordinate_system(
@@ -186,13 +157,13 @@ def create_coordinate_system(
                 j = distances_to_index.argmin()
                 zeropoint = coordinates[k, :, :].reshape((2,))
                 zeropoint_index = k
-                log.debug(f'zeropoint {zeropoint}')
+                log.debug('zeropoint %s', zeropoint)
                 axis1 = (coordinates[j, :, :] -
                          coordinates[k, :, :]).reshape((2,))
                 if ((zeropoint + axis1 <= 0).any() or
                         (zeropoint + axis1 >= image.shape).any()):
                     axis1 = -axis1  # pylint: disable=E1130
-                log.debug(f'axis1: |{axis1}| = {numpy.linalg.norm(axis1)}')
+                log.debug('axis1: |%s| = %f', axis1, numpy.linalg.norm(axis1))
                 break
             # print('bad', axis1dist[1:5], 'not in', rel_distance_interval)
             tmp_distances[index] = numpy.inf
@@ -210,8 +181,9 @@ def create_coordinate_system(
     enhanced_axis2 = 0
     zeropoint_search_index = 0
     axis2 = numpy.dot(numpy.array([[0, -1], [1, 0]]), axis1)
-    log.debug(f'actual axis: |{axis1}| = {numpy.linalg.norm(axis1)}, '
-              f'|{axis2}| = {numpy.linalg.norm(axis2)}')
+    log.debug('actual axis: |%s| = %f, |%s| = %f',
+              axis1, numpy.linalg.norm(axis1),
+              axis2, numpy.linalg.norm(axis2))
     while True:
         # now we have the other axis
         # we know:
@@ -221,7 +193,8 @@ def create_coordinate_system(
         res = _find_better_axis(coordinates, zeropoint, axis1, axis2, (0, 1))
         if res is not None:
             axis2 = res
-            log.debug(f'better axis2: |{axis2}| = {numpy.linalg.norm(axis2)}')
+            log.debug('better axis2: |%s| = %f',
+                      axis2, numpy.linalg.norm(axis2))
             enhanced_axis2 += 1
         # now find a better axis1 and axis2
         # for i in range(2, 7):
@@ -231,8 +204,8 @@ def create_coordinate_system(
                 coordinates, zeropoint, axis1, axis2, (i, 0), 1.0/i)
             if res is not None:
                 axis1 = res
-                log.debug(f'better axis1 ({i}): '
-                          f'|{axis1}| = {numpy.linalg.norm(axis1)}')
+                log.debug('better axis1 (%i): |%s| = %f',
+                          i, axis1, numpy.linalg.norm(axis1))
                 enhanced_axis1 += 1
             else:
                 not_found += 1
@@ -240,8 +213,8 @@ def create_coordinate_system(
                 coordinates, zeropoint, axis1, axis2, (0, i), 1.0/i)
             if res is not None:
                 axis2 = res
-                log.debug(f'better axis2 ({i}): '
-                          f'|{axis2}| = {numpy.linalg.norm(axis1)}')
+                log.debug('better axis2 (%i): |%s| = %f',
+                          i, axis2, numpy.linalg.norm(axis2))
                 enhanced_axis2 += 1
             else:
                 not_found += 1
@@ -249,8 +222,8 @@ def create_coordinate_system(
                 break
         if (enhanced_axis1 < 3) or (enhanced_axis2 < 3):
             # try another zeropoint
-            log.debug(
-                f'try another zeropoint ({enhanced_axis1}, {enhanced_axis2})')
+            log.debug('try another zeropoint (%i, %i)',
+                      enhanced_axis1, enhanced_axis2)
             zeropoint = \
                 coordinates[zeropoint_search_index, :, :].reshape((2,))
             zeropoint_index = zeropoint_search_index
@@ -285,10 +258,12 @@ def create_coordinate_system(
     A = numpy.vstack((axis1, axis2)).transpose()  # pylint: disable=C0103
     while len(unassigned_indizes) > 0:
         distances_to_assigend = distances[assigned_indizes, :]
-        assigend_index, unassigned_index = numpy.unravel_index(
-            distances_to_assigend.argmin(), distances_to_assigend.shape)
+        assigend_index, unassigned_index = \
+            numpy.unravel_index(  # pylint: disable=W0632
+                distances_to_assigend.argmin(),
+                distances_to_assigend.shape)
         assigend_index = assigned_indizes[assigend_index] \
-            # pylint: disable=E1126
+            # pylint: disable=invalid-sequence-index
         b = coordinates[unassigned_index, 0, :] - \
             coordinates[assigend_index, 0, :]
         ij = coordinate_system[assigend_index, 1, :] + \
@@ -348,9 +323,10 @@ def create_coordinate_system(
                     coordinatesmap, act_markertemplate)
     if result.max() == 1:
         # marker exact found
-        i, j = numpy.unravel_index(result.argmax(), result.shape)
-        log.debug(
-            f'preliminary marker found at ({j},{i}) with {markerdirection}')
+        i, j = numpy.unravel_index(  # pylint: disable=W0632
+            result.argmax(), result.shape)
+        log.debug('preliminary marker found at (%i,%i) with %s',
+                  j, i, markerdirection)
         if markerdirection == 'L fliplr':
             i += coordinate_system[:, 1, 1].min().astype(int) - 1
             j += coordinate_system[:, 1, 0].min().astype(int) - 1
@@ -367,7 +343,7 @@ def create_coordinate_system(
             # this should not happen
             log.error('ERROR')
             return None, 4, None, None
-        log.debug(f'marker found at ({j},{i}) with {markerdirection}')
+        log.debug('marker found at (%i,%i) with %s', j, i, markerdirection)
         # adapt coordinate system
         for k in range(coordinate_system.shape[0]):
             if ((coordinate_system[k, 1, 1] == i) and
@@ -394,8 +370,10 @@ def create_coordinate_system(
                     pos[1]:pos[1] + clip_image.shape[1]] = clip_image
         (height, width) = large_image.shape
         rotate_center = (width / 2, height / 2)
-        M = cv2.getRotationMatrix2D(rotate_center, angle, 1)
-        rotated_image = cv2.warpAffine(large_image, M, large_image.shape)
+        transformation_matrix = cv2.getRotationMatrix2D(
+            rotate_center, angle, 1)
+        rotated_image = cv2.warpAffine(
+            large_image, transformation_matrix, large_image.shape)
         clip_half_length = 3*numpy.linalg.norm(axis1)
         i0 = int(round(rotated_image.shape[0]//2-clip_half_length))
         i1 = int(round(rotated_image.shape[0]//2+clip_half_length))
@@ -410,30 +388,22 @@ def create_coordinate_system(
             log.debug('axis1 is y axis and axis2 is x axis')
             # axis1 is y axis and axis2 is x axis
             if markerdirection == 'L':
-                axis = axis1
-                axis1 = -axis2
-                axis2 = axis
+                axis1, axis2 = -axis2, axis1
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = coo
             elif markerdirection == 'L fliplr':
-                axis = axis1
-                axis1 = -axis2
-                axis2 = -axis  # pylint: disable=invalid-unary-operand-type
+                axis1, axis2 = -axis2, -axis1  # pylint: disable=E1130
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = -coo
             elif markerdirection == 'L flipud':
-                axis = axis1
-                axis1 = axis2
-                axis2 = axis
+                axis1, axis2 = axis2, axis1
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = coo
             elif markerdirection == 'L flipud fliplr':
-                axis = axis1
-                axis1 = axis2
-                axis2 = -axis  # pylint: disable=invalid-unary-operand-type
+                axis1, axis2 = axis2, -axis1  # pylint: disable=E1130
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = -coo
@@ -465,8 +435,8 @@ def create_coordinate_system(
         # no marker found
         log.error('ERROR: no marker found')
         return (None, 5, None, None)
-    log.debug(f'final axis: |{axis1}| = {numpy.linalg.norm(axis1)}, '
-              f'|{axis2}| = {numpy.linalg.norm(axis2)}')
+    log.debug('final axis: |%s| = %f, |%s| = %f',
+              axis1, numpy.linalg.norm(axis1), axis2, numpy.linalg.norm(axis2))
     if draw_images[1]:
         cv2.imwrite(
             'ooo.png',
@@ -478,7 +448,7 @@ def create_coordinate_system(
     size = 0.4 * (numpy.linalg.norm(axis1) + numpy.linalg.norm(axis2))
     coordinate_system = filter_blurry_corners(
         image, coordinate_system, size, min_sharpness)
-    log.debug(f'keep {coordinate_system.shape[0]} good corners')
+    log.debug('keep %i good corners', coordinate_system.shape[0])
     if draw_images[2]:
         cv2.imwrite(
             'oooo.png',
