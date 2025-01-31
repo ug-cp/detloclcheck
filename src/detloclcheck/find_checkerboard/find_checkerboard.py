@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -10,9 +10,9 @@
            :func:`detloclcheck.find_checkerboard.find_checkerboard`.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-08-28
+:Date: 2025-01-29
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024, 2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
@@ -40,16 +40,17 @@ from detloclcheck.tools import (calculate_square_distances,
 
 from .calculatetemplatematching import CalculateTemplateMatching
 from .create_template import create_template
-from .parallelfind4quadcornersubpix import ParallelFind4QuadCornerSubpix
+from .parallel_cornersubpix import ParallelCornerSubPix
 from .set_black_border import _set_black_border
 
 
 def find_checkerboard(
         image, crosssizes=None, angles=None,
-        hit_bound=0.93, min_sharpness=100, run_parallel=False):
+        hit_bound=0.93, min_sharpness=100, run_parallel=False,
+        criteria_max_count=42, criteria_epsilon=0.001):
     """
     :Author: Daniel Mohr
-    :Date: 2024-08-28
+    :Date: 2025-01-29
     :License: LGPL-3.0-or-later
 
     find the inner checkerboard corners in the image
@@ -60,6 +61,11 @@ def find_checkerboard(
     :param hit_bound: minimal value in the template matching to be a
                       checkerboard corner
     :param min_sharpness: minimal sharpness for a good corner
+    :param run_parallel: if set to True will run in parallel
+    :param criteria_max_count: parameter for :func:`cv2.cornerSubPix`
+                               to define the maximal count of iterations
+    :param criteria_epsilon: parameter for :func:`cv2.cornerSubPix` to
+                             minimal corner position move between 2 steps
 
     Example 1:
 
@@ -101,7 +107,7 @@ def find_checkerboard(
     log.debug('found template matching maps')
     approx_coordinates = []
     mask = numpy.ones(overall_map.shape, dtype=numpy.uint8)
-    window_half_size = max(crosssizes) // 2
+    window_half_size = max_crosssize // 2
     mask[0:(window_half_size+1), :] = 0
     mask[-(window_half_size+2):, :] = 0
     mask[:, 0:(window_half_size+1)] = 0
@@ -136,24 +142,15 @@ def find_checkerboard(
         approx_coordinates[:, :, 1].reshape((n,)))
     numpy.fill_diagonal(distances, numpy.inf)  # ignore 0 distances
     minimal_distance = numpy.sqrt(distances.min())
-    window_size = int(0.75 * minimal_distance)
+    window_size = int(0.5 * 0.75 * minimal_distance)
     # window_size has to be small to fit in image around coordinates
     window_size = int(min(
         window_size, approx_coordinates.min() - 1,
         (image.shape[1] - approx_coordinates[:, :, 0]).min() - 1,
         (image.shape[0] - approx_coordinates[:, :, 1]).min() - 1))
-    log.debug('window_size calculated')
-    # for i in range(approx_coordinates.shape[0]):
-    #     if ((approx_coordinates[i, 0, 0] - window_size < 0) or
-    #         (approx_coordinates[i, 0, 1] - window_size < 0) or
-    #         (approx_coordinates[i, 0, 0] + window_size >= image.shape[1]) or
-    #         (approx_coordinates[i, 0, 1] + window_size >= image.shape[0])):
-    #         print("error", approx_coordinates[i, 0, ])
-    pfqs = ParallelFind4QuadCornerSubpix(
+    log.debug('window_size %i calculated', window_size)
+    pfcsp = ParallelCornerSubPix(
         image, approx_coordinates, (window_size, window_size))
-    coordinates = pfqs()
-    log.debug(f'found {coordinates[1].shape[0]} corners')
-    if coordinates[0]:
-        return coordinates[1]
-    else:
-        return None
+    coordinates = pfcsp()
+    log.debug(f'found {coordinates.shape[0]} corners')
+    return coordinates

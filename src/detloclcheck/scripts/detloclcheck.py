@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-09-02
+:Date: 2025-01-28
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -27,6 +27,7 @@ import argparse
 import json
 import logging
 import logging.handlers
+import numpy
 import os
 import sys
 
@@ -112,6 +113,62 @@ def run_create_checkerboard_image(args):
                 {'coordinates': coordinates,
                  'zeropoint': zeropoint})
         log.info('wrote result to "%s"', output_filename)
+
+
+def run_visualize(args):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-28
+    :License: LGPL-3.0-or-later
+    """
+    import matplotlib.pyplot
+    log = logging.getLogger('detloclcheck.run_visualize')
+    if args.dosubplot:
+        ncolumns = int(numpy.sqrt(len(args.data_file_name)))
+        nrows = int(numpy.ceil(len(args.data_file_name) / ncolumns))
+        assert ncolumns * nrows >= len(args.data_file_name)
+    for id, data_file_name in enumerate(args.data_file_name):
+        if args.dosubplot:
+            matplotlib.pyplot.subplot(
+                nrows, ncolumns, 1 + id)
+        visualize_image = False
+        if ((args.image_file_name is not None) and
+                (id < len(args.image_file_name))):
+            visualize_image = True
+            log.debug('visualize "%s" with with"%s"',
+                      data_file_name, args.image_file_name[id])
+        else:
+            log.debug('visualize "%s"', data_file_name)
+        _, file_extension = os.path.splitext(data_file_name)
+        if file_extension.lower() == '.json':
+            with open(data_file_name) as fd:
+                data = json.load(fd)
+                coordinate_system = numpy.array(data['coordinate_system'])
+                zeropoint = numpy.array(data['zeropoint'])
+        elif file_extension.lower() == '.mat':
+            data = scipy.io.loadmat(data_file_name)
+            coordinate_system = data['coordinate_system']
+            zeropoint = numpy.reshape(data['zeropoint'], (2,))
+        log.debug('axis1: %s', data['axis1'])
+        log.debug('axis2: %s', data['axis2'])
+        if visualize_image:
+            gray_image = cv2.imread(
+                args.image_file_name[id], cv2.COLOR_BGR2GRAY)
+            matplotlib.pyplot.imshow(gray_image, cmap="Greys")
+        matplotlib.pyplot.plot(
+            coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
+            'r2', markersize=20)
+        matplotlib.pyplot.plot(zeropoint[0], zeropoint[1], 'b1', markersize=20)
+        for i in range(coordinate_system.shape[0]):
+            matplotlib.pyplot.text(
+                coordinate_system[i, 0, 0], coordinate_system[i, 0, 1],
+                f'({int(coordinate_system[i, 1, 0])},'
+                f'{int(coordinate_system[i, 1, 1])})',
+                color='g', fontsize='small', rotation=45)
+        if not args.dosubplot:
+            matplotlib.pyplot.show()
+    if args.dosubplot:
+        matplotlib.pyplot.show()
 
 
 def check_arg_file(data):
@@ -396,6 +453,38 @@ def my_argument_parser():
         'For a value of 0 the reverse effect is simulated. '
         'default: 128',
         metavar='f')
+    parser_visualize = subparsers.add_parser(
+        'visualize',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='For more help: detloclcheck visualize -h',
+        description='detloclcheck visualize is a python script'
+        ' to visualize the data found by detloclcheck find_checkerboard.',
+        epilog=epilog)
+    parser_visualize.set_defaults(
+        func=run_visualize)
+    parser_visualize.add_argument(
+        dest='data_file_name',
+        nargs='+',
+        type=str,
+        metavar='data',
+        help='Name of the data file(s) to visualize.'
+        'This could be the of detloclcheck find_checkerboard and a'
+        'json or a mat file.')
+    parser_visualize.add_argument(
+        '-image_file_name',
+        nargs='+',
+        type=str,
+        required=False,
+        dest='image_file_name',
+        metavar='img',
+        help='Name of the image file(s) to visualize.')
+    parser_visualize.add_argument(
+        '-subplot',
+        default=False,
+        required=False,
+        action='store_true',
+        dest='dosubplot',
+        help='If set this flag, will plot in subplots.')
     return parser
 
 
