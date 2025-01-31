@@ -27,11 +27,11 @@ import argparse
 import json
 import logging
 import logging.handlers
-import numpy
 import os
 import sys
 
 import cv2
+import numpy
 import scipy.io
 
 from detloclcheck.create_checkerboard_image import create_checkerboard_image
@@ -121,27 +121,28 @@ def run_visualize(args):
     :Date: 2025-01-28
     :License: LGPL-3.0-or-later
     """
+    # pylint: disable=import-outside-toplevel
     import matplotlib.pyplot
     log = logging.getLogger('detloclcheck.run_visualize')
     if args.dosubplot:
         ncolumns = int(numpy.sqrt(len(args.data_file_name)))
         nrows = int(numpy.ceil(len(args.data_file_name) / ncolumns))
         assert ncolumns * nrows >= len(args.data_file_name)
-    for id, data_file_name in enumerate(args.data_file_name):
+    for fid, data_file_name in enumerate(args.data_file_name):
         if args.dosubplot:
             matplotlib.pyplot.subplot(
-                nrows, ncolumns, 1 + id)
+                nrows, ncolumns, 1 + fid)
         visualize_image = False
         if ((args.image_file_name is not None) and
-                (id < len(args.image_file_name))):
+                (fid < len(args.image_file_name))):
             visualize_image = True
             log.debug('visualize "%s" with with"%s"',
-                      data_file_name, args.image_file_name[id])
+                      data_file_name, args.image_file_name[fid])
         else:
             log.debug('visualize "%s"', data_file_name)
         _, file_extension = os.path.splitext(data_file_name)
         if file_extension.lower() == '.json':
-            with open(data_file_name) as fd:
+            with open(data_file_name, 'w', encoding='utf8') as fd:
                 data = json.load(fd)
                 coordinate_system = numpy.array(data['coordinate_system'])
                 zeropoint = numpy.array(data['zeropoint'])
@@ -153,7 +154,7 @@ def run_visualize(args):
         log.debug('axis2: %s', data['axis2'])
         if visualize_image:
             gray_image = cv2.imread(
-                args.image_file_name[id], cv2.COLOR_BGR2GRAY)
+                args.image_file_name[fid], cv2.COLOR_BGR2GRAY)
             matplotlib.pyplot.imshow(gray_image, cmap="Greys")
         matplotlib.pyplot.plot(
             coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],

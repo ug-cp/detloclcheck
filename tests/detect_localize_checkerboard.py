@@ -23,21 +23,19 @@ import unittest
 
 import numpy
 
-
-def calculate_square_distances(x0, y0, x1, y1):
-    xd = ((numpy.ones((x1.shape[0], 1)) * x0) -
-          (numpy.ones((x0.shape[0], 1)) * x1).transpose())
-    yd = ((numpy.ones((y1.shape[0], 1)) * y0) -
-          (numpy.ones((y0.shape[0], 1)) * y1).transpose())
-    return numpy.square(xd) + numpy.square(yd)
+from detloclcheck.tools import calculate_square_distances
 
 
 def coordinates_root_mean_square_error(coordinates, coordinate_system):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-30
+    """
     dist = calculate_square_distances(
         coordinates[:, 0], coordinates[:, 1],
         coordinate_system[:, 0, 0], coordinate_system[:, 0, 1])
     square_distance_sum = 0.0
-    for i in range(coordinates.shape[0]):
+    for _ in range(coordinates.shape[0]):
         index = numpy.unravel_index(dist.argmin(), dist.shape)
         square_distance_sum += dist[index]
         dist[:, index[1]] = numpy.inf
@@ -48,16 +46,17 @@ def coordinates_root_mean_square_error(coordinates, coordinate_system):
     return root_mean_square_error
 
 
-class TestCheck_detect_localize_checkerboard(unittest.TestCase):
+class TestCheckDetectLocalizeCheckerboard(unittest.TestCase):
     """
     :Author: Daniel Mohr
     :Date: 2025-01-31
 
     env python3 detect_localize_checkerboard.py \
-        TestCheck_detect_localize_checkerboard
-    pytest-3 -k TestCheck_detect_localize_checkerboard \
+        TestCheckDetectLocalizeCheckerboard
+    pytest-3 -k TestCheckDetectLocalizeCheckerboard \
         detect_localize_checkerboard.py
     """
+    # pylint: disable=import-outside-toplevel
 
     def test_detect_localize_checkerboard_0a(self):
         """
@@ -70,7 +69,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             detect_localize_checkerboard
         ground_truth_zeropoint, coordinates, image = \
             create_checkerboard_image(8, 8, 15)
-        coordinate_system, zeropoint, axis1, axis2 = \
+        coordinate_system, zeropoint, _, _ = \
             detect_localize_checkerboard(
                 image, crosssizes=(11,),
                 angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
@@ -98,7 +97,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             ground_truth_zeropoint, coordinates, image = \
                 create_checkerboard_image(
                     8, 8, 15, zeropoint=setzeropoint, integrate_method=0)
-            coordinate_system, zeropoint, axis1, axis2 = \
+            coordinate_system, zeropoint, _, _ = \
                 detect_localize_checkerboard(
                     image, crosssizes=(11,),
                     angles=angles)
@@ -121,7 +120,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             detect_localize_checkerboard
         ground_truth_zeropoint, coordinates, image = create_checkerboard_image(
             8, 8, 15, integrate_method=1)
-        coordinate_system, zeropoint, axis1, axis2 = \
+        coordinate_system, zeropoint, _, _ = \
             detect_localize_checkerboard(
                 image, crosssizes=(11,),
                 angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
@@ -164,7 +163,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             ground_truth_zeropoint, coordinates, image = \
                 create_checkerboard_image(
                     8, 8, 15, zeropoint=setzeropoint, integrate_method=1)
-            coordinate_system, zeropoint, axis1, axis2 = \
+            coordinate_system, zeropoint, _, _ = \
                 detect_localize_checkerboard(
                     image, crosssizes=(11,),
                     angles=angles)
@@ -186,7 +185,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             detect_localize_checkerboard
         ground_truth_zeropoint, coordinates, image = create_checkerboard_image(
             8, 8, 15, integrate_method=2)
-        coordinate_system, zeropoint, axis1, axis2 = \
+        coordinate_system, zeropoint, _, _ = \
             detect_localize_checkerboard(
                 image, crosssizes=(11,),
                 angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))

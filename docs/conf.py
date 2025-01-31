@@ -14,7 +14,9 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-from recommonmark.parser import CommonMarkParser
+# pylint: disable=missing-module-docstring,invalid-name
+
+from recommonmark.parser import CommonMarkParser  # pylint: disable=W0611
 source_suffix = {
     '.rst': 'restructuredtext',
     '.txt': 'restructuredtext',
@@ -24,11 +26,11 @@ source_suffix = {
 # -- Project information -----------------------------------------------------
 
 project = 'DetLocLCheck'
-copyright = '2024, Daniel Mohr'
+copyright = '2024-2025, Daniel Mohr'  # pylint: disable=redefined-builtin
 author = 'Daniel Mohr'
 
 # The full version, including alpha/beta/rc tags
-release = '2024.7.1'
+release = '2025.1.31'
 
 
 # -- General configuration ---------------------------------------------------

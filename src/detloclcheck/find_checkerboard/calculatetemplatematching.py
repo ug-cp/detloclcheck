@@ -50,8 +50,8 @@ def _rotate_image(image, angle):
     """
     (height, width) = image.shape
     rotate_center = (width / 2, height / 2)
-    M = cv2.getRotationMatrix2D(rotate_center, angle, 1)
-    return cv2.warpAffine(image, M, (width, height))
+    transformation_matrix = cv2.getRotationMatrix2D(rotate_center, angle, 1)
+    return cv2.warpAffine(image, transformation_matrix, (width, height))
 
 
 def _get_map(image, crosssize, angle):
@@ -80,6 +80,7 @@ def _get_map(image, crosssize, angle):
     return result
 
 
+# pylint: disable=too-few-public-methods
 class CalculateTemplateMatching():
     """
     :Author: Daniel Mohr

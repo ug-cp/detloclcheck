@@ -150,7 +150,9 @@ def find_checkerboard(
         (image.shape[0] - approx_coordinates[:, :, 1]).min() - 1))
     log.debug('window_size %i calculated', window_size)
     pfcsp = ParallelCornerSubPix(
-        image, approx_coordinates, (window_size, window_size))
+        image, approx_coordinates, (window_size, window_size),
+        criteria_max_count=criteria_max_count,
+        criteria_epsilon=criteria_epsilon)
     coordinates = pfcsp()
-    log.debug(f'found {coordinates.shape[0]} corners')
+    log.debug('found %i corners', coordinates.shape[0])
     return coordinates

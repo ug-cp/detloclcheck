@@ -63,6 +63,11 @@ def simpsons_rule(f, x1, x2, y1, y2):
 
 
 class CheckerboardImageClass():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-09
+    :License: LGPL-3.0-or-later
+    """
     def __init__(self, size, zeropoint,
                  integrate_method=0, transition_value=128):
         """
@@ -97,6 +102,11 @@ class CheckerboardImageClass():
         self.transition_value = transition_value
 
     def value(self, x, y):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+        """
         xy = (x, y)
         v = (xy - self.zeropoint) / self.size
         if (-2 <= v[1]) and (v[1] <= -1) and (-3 <= v[0]) and (v[0] <= 2):
@@ -118,14 +128,19 @@ class CheckerboardImageClass():
         return 0
 
     def __call__(self, x, y):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+        """
         if self.integrate_method == 0:
             return self.value(x, y)
-        elif self.integrate_method == 1:
+        if self.integrate_method == 1:  # elif
             return simpsons_rule(
                 self.value,
                 x - 0.5, x + 0.5,
                 y - 0.5, y + 0.5)
-        elif self.integrate_method == 2:
+        if self.integrate_method == 2:  # elif
             v, _ = scipy.integrate.nquad(
                 self.value, [[x - 0.5, x + 0.5], [y - 0.5, y + 0.5]])
             return v

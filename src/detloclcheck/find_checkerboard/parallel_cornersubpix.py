@@ -37,7 +37,13 @@ import cv2
 import numpy
 
 
+# pylint: disable=too-few-public-methods
 class ParallelCornerSubPix():
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-29
+    :License: LGPL-3.0-or-later
+    """
     def __init__(self, image, coordinates, window_size,
                  zero_zone=(-1, -1),
                  criteria_max_count=42,

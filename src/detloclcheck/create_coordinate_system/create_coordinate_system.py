@@ -191,7 +191,7 @@ def create_coordinate_system(
                          coordinates[k, :, :]).reshape((2,))
                 if ((zeropoint + axis1 <= 0).any() or
                         (zeropoint + axis1 >= image.shape).any()):
-                    axis1 = -axis1
+                    axis1 = -axis1  # pylint: disable=E1130
                 log.debug(f'axis1: |{axis1}| = {numpy.linalg.norm(axis1)}')
                 break
             # print('bad', axis1dist[1:5], 'not in', rel_distance_interval)
@@ -261,7 +261,7 @@ def create_coordinate_system(
                 return None, 3, None, None
             if ((zeropoint + axis1 <= 0).any() or
                     (zeropoint + axis1 >= image.shape).any()):
-                axis1 = -axis1
+                axis1 = -axis1  # pylint: disable=invalid-unary-operand-type
                 axis2 = numpy.dot(numpy.array([[0, -1], [1, 0]]), axis1)
             enhanced_axis1 = 1
             enhanced_axis2 = 0
@@ -287,7 +287,8 @@ def create_coordinate_system(
         distances_to_assigend = distances[assigned_indizes, :]
         assigend_index, unassigned_index = numpy.unravel_index(
             distances_to_assigend.argmin(), distances_to_assigend.shape)
-        assigend_index = assigned_indizes[assigend_index]
+        assigend_index = assigned_indizes[assigend_index] \
+            # pylint: disable=E1126
         b = coordinates[unassigned_index, 0, :] - \
             coordinates[assigend_index, 0, :]
         ij = coordinate_system[assigend_index, 1, :] + \
@@ -418,7 +419,7 @@ def create_coordinate_system(
             elif markerdirection == 'L fliplr':
                 axis = axis1
                 axis1 = -axis2
-                axis2 = -axis
+                axis2 = -axis  # pylint: disable=invalid-unary-operand-type
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = -coo
@@ -432,7 +433,7 @@ def create_coordinate_system(
             elif markerdirection == 'L flipud fliplr':
                 axis = axis1
                 axis1 = axis2
-                axis2 = -axis
+                axis2 = -axis  # pylint: disable=invalid-unary-operand-type
                 coo = coordinate_system[:, 1, 0].copy()
                 coordinate_system[:, 1, 0] = coordinate_system[:, 1, 1].copy()
                 coordinate_system[:, 1, 1] = -coo
@@ -447,7 +448,7 @@ def create_coordinate_system(
             elif markerdirection == 'L fliplr':
                 # this can be reproduced by image '12.png' and
                 # 90 degrees rotate first axis1
-                axis1 = -axis1
+                axis1 = -axis1  # pylint: disable=invalid-unary-operand-type
                 axis2 = -axis2
                 coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 0]
                 coordinate_system[:, 1, 1] = -coordinate_system[:, 1, 1]
@@ -458,7 +459,7 @@ def create_coordinate_system(
             elif markerdirection == 'L flipud fliplr':
                 # this can be reproduced by image '08.png', '09.png' and
                 # 90 degrees rotate first axis1
-                axis1 = -axis1
+                axis1 = -axis1  # pylint: disable=invalid-unary-operand-type
                 coordinate_system[:, 1, 0] = -coordinate_system[:, 1, 0]
     else:
         # no marker found

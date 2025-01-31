@@ -32,12 +32,17 @@ class TestCheckArgFile(unittest.TestCase):
     """
 
     def test_import(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-06-26
+        """
+        # pylint: disable=import-outside-toplevel
         from detloclcheck.scripts.detloclcheck import check_arg_file
         with self.assertRaises(argparse.ArgumentTypeError):
             check_arg_file('foo')
         for filename in ['LICENSE.md', '../LICENSE.md']:
             if os.path.exists(filename):
-                data = check_arg_file(filename)  # noqa: F841
+                _ = check_arg_file(filename)  # noqa: F841
 
 
 if __name__ == '__main__':

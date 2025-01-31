@@ -22,16 +22,17 @@ import tempfile
 import unittest
 import os
 
+# pylint: disable=unused-import
 try:
     from scripts_detloclcheck_check_arg_file \
         import TestCheckArgFile  # noqa: F401
     from detect_localize_checkerboard \
-        import TestCheck_detect_localize_checkerboard  # noqa: F401
+        import TestCheckDetectLocalizeCheckerboard  # noqa: F401
 except ImportError:
     from tests.scripts_detloclcheck_check_arg_file \
         import TestCheckArgFile  # noqa: F401
     from tests.detect_localize_checkerboard \
-        import TestCheck_detect_localize_checkerboard  # noqa: F401
+        import TestCheckDetectLocalizeCheckerboard  # noqa: F401
 
 
 class TestImport(unittest.TestCase):
@@ -44,6 +45,11 @@ class TestImport(unittest.TestCase):
     """
 
     def test_import(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-10
+        """
+        # pylint: disable=import-outside-toplevel
         import detloclcheck  # noqa: F401
         import detloclcheck.create_checkerboard_image  # noqa: F401
         import detloclcheck.create_coordinate_system  # noqa: F401
