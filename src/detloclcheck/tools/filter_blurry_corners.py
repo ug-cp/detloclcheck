@@ -39,9 +39,9 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
 
     filter blurry corners in an image of a checkerboard
 
-    :image: 2 dimensional numpy array describing the image
-    :coordinates: coordinates of the inner corners of the checkerboard
-    :size: int to desribe the window for sharpness calculation
+    :param image: 2 dimensional numpy array describing the image
+    :param coordinates: coordinates of the inner corners of the checkerboard
+    :param size: int to desribe the window for sharpness calculation
     """
     log = logging.getLogger('detloclcheck.filter_blurry_corners')
     blurry_corners = []
@@ -51,9 +51,8 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
         i1 = int(round(coordinates[i, 0, 0] + size))
         j0 = int(round(coordinates[i, 0, 1] - size))
         j1 = int(round(coordinates[i, 0, 1] + size))
-        if ((i0 >= 0) and (i1 >= 0) and (j0 >= 0) and (j1 >= 0) and
-            (i0 < image.shape[1]) and (i1 < image.shape[1]) and
-                (j0 < image.shape[0]) and (j1 < image.shape[0])):
+        if ((0 <= i0 < image.shape[1]) and (0 <= i1 < image.shape[1]) and
+                (0 <= j0 < image.shape[0]) and (0 <= j1 < image.shape[0])):
             clip = image[j0:j1, i0:i1]
             sharpness = calculate_sharpness(clip)
             if sharpness < min_sharpness:
@@ -65,8 +64,6 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
     if len(blurry_corners) > 0:
         coordinates = numpy.delete(
             coordinates, blurry_corners, axis=0)
-    log.debug(f'removed {len(blurry_corners)} blurry corners '
-              f'(min_sharpness = {min_sharpness})')
     log.debug('removed %i blurry corners (min_sharpness = %f)',
               len(blurry_corners), min_sharpness)
     return coordinates

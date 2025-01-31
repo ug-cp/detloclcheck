@@ -41,7 +41,7 @@ def simpsons_rule(f, x1, x2, y1, y2):
     :Author: Daniel Mohr
     :Email: daniel.mohr@dlr.de
     :Date: 2016-04-17
-    :License: GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007.
+    :License: LGPL-3.0-or-later
 
     Integrate the function f over the area [x1,x2] x [y1,y2] by using
     Simpson's Rule.
@@ -63,9 +63,30 @@ def simpsons_rule(f, x1, x2, y1, y2):
 
 
 class CheckerboardImageClass():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-09
+    :License: LGPL-3.0-or-later
+    """
     def __init__(self, size, zeropoint,
                  integrate_method=0, transition_value=128):
         """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+
+        :param size: size of a checkerboard field
+        :param zeropoint: zeropoint in image indizes (floats are OK)
+        :param integrate_method: Set the method used for integration over one
+                                 pixel:
+                                 0: no integration
+                                 1: simple Simpson\'s Rule
+                                 2: use of scipy.integrate.nquad
+        :param transition_value: Set the transition value between white and
+                                 black areas. For a value of 255 the light
+                                 areas in the image run out. For a value of
+                                 0 the reverse effect is simulated.
+
         Example:
 
         from detloclcheck.create_checkerboard_image.checkerboard_image_class \
@@ -81,6 +102,11 @@ class CheckerboardImageClass():
         self.transition_value = transition_value
 
     def value(self, x, y):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+        """
         xy = (x, y)
         v = (xy - self.zeropoint) / self.size
         if (-2 <= v[1]) and (v[1] <= -1) and (-3 <= v[0]) and (v[0] <= 2):
@@ -102,14 +128,19 @@ class CheckerboardImageClass():
         return 0
 
     def __call__(self, x, y):
+        """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+        """
         if self.integrate_method == 0:
             return self.value(x, y)
-        elif self.integrate_method == 1:
+        if self.integrate_method == 1:  # elif
             return simpsons_rule(
                 self.value,
                 x - 0.5, x + 0.5,
                 y - 0.5, y + 0.5)
-        elif self.integrate_method == 2:
+        if self.integrate_method == 2:  # elif
             v, _ = scipy.integrate.nquad(
                 self.value, [[x - 0.5, x + 0.5], [y - 0.5, y + 0.5]])
             return v

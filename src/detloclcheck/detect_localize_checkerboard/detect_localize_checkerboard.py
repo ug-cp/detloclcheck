@@ -103,7 +103,7 @@ def detect_localize_checkerboard(
             'but we need at least 24 for marker detection',
             coordinates.shape[0])
         return None, 7, None, None
-    log.debug(f'go on with {coordinates.shape[0]} corners')
+    log.debug('go on with %i corners', coordinates.shape[0])
     coordinate_system, zeropoint, axis1, axis2 = create_coordinate_system(
         image, coordinates, max_distance_factor_range,
         min_sharpness=min_sharpness[2])

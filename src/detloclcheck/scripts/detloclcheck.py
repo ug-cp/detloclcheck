@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-28
+:Date: 2025-01-31
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -27,11 +27,11 @@ import argparse
 import json
 import logging
 import logging.handlers
-import numpy
 import os
 import sys
 
 import cv2
+import numpy
 import scipy.io
 
 from detloclcheck.create_checkerboard_image import create_checkerboard_image
@@ -89,7 +89,7 @@ def run_find_checkerboard(args):
 def run_create_checkerboard_image(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-2
+    :Date: 2024-09-02
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_create_checkerboard_image')
@@ -121,27 +121,28 @@ def run_visualize(args):
     :Date: 2025-01-28
     :License: LGPL-3.0-or-later
     """
+    # pylint: disable=import-outside-toplevel
     import matplotlib.pyplot
     log = logging.getLogger('detloclcheck.run_visualize')
     if args.dosubplot:
         ncolumns = int(numpy.sqrt(len(args.data_file_name)))
         nrows = int(numpy.ceil(len(args.data_file_name) / ncolumns))
         assert ncolumns * nrows >= len(args.data_file_name)
-    for id, data_file_name in enumerate(args.data_file_name):
+    for fid, data_file_name in enumerate(args.data_file_name):
         if args.dosubplot:
             matplotlib.pyplot.subplot(
-                nrows, ncolumns, 1 + id)
+                nrows, ncolumns, 1 + fid)
         visualize_image = False
         if ((args.image_file_name is not None) and
-                (id < len(args.image_file_name))):
+                (fid < len(args.image_file_name))):
             visualize_image = True
             log.debug('visualize "%s" with with"%s"',
-                      data_file_name, args.image_file_name[id])
+                      data_file_name, args.image_file_name[fid])
         else:
             log.debug('visualize "%s"', data_file_name)
         _, file_extension = os.path.splitext(data_file_name)
         if file_extension.lower() == '.json':
-            with open(data_file_name) as fd:
+            with open(data_file_name, 'w', encoding='utf8') as fd:
                 data = json.load(fd)
                 coordinate_system = numpy.array(data['coordinate_system'])
                 zeropoint = numpy.array(data['zeropoint'])
@@ -153,12 +154,15 @@ def run_visualize(args):
         log.debug('axis2: %s', data['axis2'])
         if visualize_image:
             gray_image = cv2.imread(
-                args.image_file_name[id], cv2.COLOR_BGR2GRAY)
+                args.image_file_name[fid], cv2.COLOR_BGR2GRAY)
             matplotlib.pyplot.imshow(gray_image, cmap="Greys")
         matplotlib.pyplot.plot(
-            coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
+            coordinate_system[:, 0, 0],
+            coordinate_system[:, 0, 1],
             'r2', markersize=20)
-        matplotlib.pyplot.plot(zeropoint[0], zeropoint[1], 'b1', markersize=20)
+        matplotlib.pyplot.plot(
+            zeropoint[0], zeropoint[1],
+            'b1', markersize=20)
         for i in range(coordinate_system.shape[0]):
             matplotlib.pyplot.text(
                 coordinate_system[i, 0, 0], coordinate_system[i, 0, 1],
@@ -208,7 +212,7 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-02
+    :Date: 2025-01-31
     :License: LGPL-3.0-or-later
     """
     epilog = "Author: Daniel Mohr\n"
@@ -271,10 +275,10 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=(15, 23),
+        default=(11, 23),
         dest='crosssizes',
         help='Set a list of cross sizes to test. You can use odd integers. '
-        'This is used during template matching. default: 15, 23',
+        'This is used during template matching. default: 11, 23',
         metavar='s')
     parser_find_checkerboard.add_argument(
         '-angles',
@@ -425,7 +429,7 @@ def my_argument_parser():
         required=False,
         default=None,
         dest='zeropoint',
-        help='zeropoint. default: [middle of the image]',
+        help='zeropoint in opencv coordinate. default: [middle of the image]',
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-integrate_method',

@@ -37,7 +37,13 @@ import cv2
 import numpy
 
 
+# pylint: disable=too-few-public-methods
 class ParallelFind4QuadCornerSubpix():
+    """
+    :Author: Daniel Mohr
+    :Date: 2024-07-08
+    :License: LGPL-3.0-or-later
+    """
     def __init__(self, image, coordinates, window_size):
         """
         :Author: Daniel Mohr
