@@ -105,7 +105,7 @@ def create_checkerboard_image(
                 xcoo = zeropoint[0] + x * size
                 ycoo = zeropoint[1] + y * size
                 if ((3 < xcoo) and (3 + xcoo < image_size[1]) and
-                    (3 < ycoo) and (3 + ycoo < image_size[1])):
+                        (3 < ycoo) and (3 + ycoo < image_size[1])):
                     coordinates.append((xcoo, ycoo))
     return zeropoint, numpy.array(coordinates), cv2.resize(
         image,
