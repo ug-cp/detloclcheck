@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-28
+:Date: 2025-01-31
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -208,7 +208,7 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-02
+    :Date: 2025-01-31
     :License: LGPL-3.0-or-later
     """
     epilog = "Author: Daniel Mohr\n"
@@ -271,7 +271,7 @@ def my_argument_parser():
         nargs="+",
         type=check_arg_crosssizes,
         required=False,
-        default=(15, 23),
+        default=(11, 23),
         dest='crosssizes',
         help='Set a list of cross sizes to test. You can use odd integers. '
         'This is used during template matching. default: 15, 23',
