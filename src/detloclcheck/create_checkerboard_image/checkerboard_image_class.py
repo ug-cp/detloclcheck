@@ -66,6 +66,22 @@ class CheckerboardImageClass():
     def __init__(self, size, zeropoint,
                  integrate_method=0, transition_value=128):
         """
+        :Author: Daniel Mohr
+        :Date: 2024-07-09
+        :License: LGPL-3.0-or-later
+
+        :param size: size of a checkerboard field
+        :param zeropoint: zeropoint in image indizes (floats are OK)
+        :param integrate_method: Set the method used for integration over one
+                                 pixel:
+                                 0: no integration
+                                 1: simple Simpson\'s Rule
+                                 2: use of scipy.integrate.nquad
+        :param transition_value: Set the transition value between white and
+                                 black areas. For a value of 255 the light
+                                 areas in the image run out. For a value of
+                                 0 the reverse effect is simulated.
+
         Example:
 
         from detloclcheck.create_checkerboard_image.checkerboard_image_class \

@@ -39,9 +39,9 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
 
     filter blurry corners in an image of a checkerboard
 
-    :image: 2 dimensional numpy array describing the image
-    :coordinates: coordinates of the inner corners of the checkerboard
-    :size: int to desribe the window for sharpness calculation
+    :param image: 2 dimensional numpy array describing the image
+    :param coordinates: coordinates of the inner corners of the checkerboard
+    :param size: int to desribe the window for sharpness calculation
     """
     log = logging.getLogger('detloclcheck.filter_blurry_corners')
     blurry_corners = []

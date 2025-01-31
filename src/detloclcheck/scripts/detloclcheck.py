@@ -89,7 +89,7 @@ def run_find_checkerboard(args):
 def run_create_checkerboard_image(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-2
+    :Date: 2024-09-02
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_create_checkerboard_image')
@@ -425,7 +425,7 @@ def my_argument_parser():
         required=False,
         default=None,
         dest='zeropoint',
-        help='zeropoint. default: [middle of the image]',
+        help='zeropoint in opencv coordinate. default: [middle of the image]',
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-integrate_method',
