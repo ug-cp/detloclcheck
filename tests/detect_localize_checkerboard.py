@@ -131,7 +131,7 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             create_checkerboard_image
         from detloclcheck.detect_localize_checkerboard import \
             detect_localize_checkerboard
-        angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5)
+        angles = (0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5)
         # due to small checkerboard size a smaller subpixel
         # movement is not detectable
         for (setzeropoint, delta) in (([59.5, 59.5], (0.002, 0.00005)),
