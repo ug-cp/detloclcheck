@@ -4,7 +4,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-30
+:Date: 2025-01-31
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -13,6 +13,10 @@ You can run this file directly::
 
   env python3 detect_localize_checkerboard.py
   pytest-3 detect_localize_checkerboard.py
+
+  env python3 detect_localize_checkerboard.py \
+    TestCheck_detect_localize_checkerboard.test_detect_localize_checkerboard_3
+
 """
 
 import unittest
@@ -47,7 +51,7 @@ def coordinates_root_mean_square_error(coordinates, coordinate_system):
 class TestCheck_detect_localize_checkerboard(unittest.TestCase):
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-30
+    :Date: 2025-01-31
 
     env python3 detect_localize_checkerboard.py \
         TestCheck_detect_localize_checkerboard
@@ -85,8 +89,8 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             create_checkerboard_image
         from detloclcheck.detect_localize_checkerboard import \
             detect_localize_checkerboard
-        ground_truth_zeropoint, coordinates, image = \
-            create_checkerboard_image(8, 8, 15, integrate_method=1)
+        ground_truth_zeropoint, coordinates, image = create_checkerboard_image(
+            8, 8, 15, integrate_method=1)
         coordinate_system, zeropoint, axis1, axis2 = \
             detect_localize_checkerboard(
                 image, crosssizes=(11,),
@@ -106,8 +110,8 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
             create_checkerboard_image
         from detloclcheck.detect_localize_checkerboard import \
             detect_localize_checkerboard
-        ground_truth_zeropoint, coordinates, image = \
-            create_checkerboard_image(8, 8, 15, integrate_method=2)
+        ground_truth_zeropoint, coordinates, image = create_checkerboard_image(
+            8, 8, 15, integrate_method=2)
         coordinate_system, zeropoint, axis1, axis2 = \
             detect_localize_checkerboard(
                 image, crosssizes=(11,),
@@ -117,6 +121,37 @@ class TestCheck_detect_localize_checkerboard(unittest.TestCase):
         root_mean_square_error = coordinates_root_mean_square_error(
             coordinates, coordinate_system)
         self.assertLess(root_mean_square_error, 0.02)
+
+    def test_detect_localize_checkerboard_3(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2025-01-31
+        """
+        from detloclcheck.create_checkerboard_image import \
+            create_checkerboard_image
+        from detloclcheck.detect_localize_checkerboard import \
+            detect_localize_checkerboard
+        angles=(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5)
+        # due to small checkerboard size a smaller subpixel
+        # movement is not detectable
+        for (setzeropoint, delta) in (([59.5, 59.5], (0.002, 0.00005)),
+                                      ([59.5, 59.6], (0.02, 0.004)),
+                                      ([59.5, 60.0], (0.07, 0.0002)),
+                                      ([59.5, 60.1], (0.3, 0.3)),
+                                      ([59.5, 60.5], (0.002, 0.00005))):
+            ground_truth_zeropoint, coordinates, image = \
+                create_checkerboard_image(
+                    8, 8, 15, zeropoint=setzeropoint, integrate_method=1)
+            coordinate_system, zeropoint, axis1, axis2 = \
+                detect_localize_checkerboard(
+                    image, crosssizes=(11,),
+                    angles=angles)
+            self.assertLess(
+                numpy.linalg.norm(ground_truth_zeropoint-zeropoint),
+                delta[1])
+            root_mean_square_error = coordinates_root_mean_square_error(
+                coordinates, coordinate_system)
+            self.assertLess(root_mean_square_error, delta[0])
 
 
 if __name__ == '__main__':

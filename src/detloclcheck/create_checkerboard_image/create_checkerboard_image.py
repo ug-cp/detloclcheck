@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-10
+:Date: 2025-07-31
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024, 2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
@@ -35,7 +35,7 @@ def create_checkerboard_image(
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-23
+    :Date: 2025-01-31
     :License: LGPL-3.0-or-later
 
     Example 1:
@@ -86,7 +86,7 @@ def create_checkerboard_image(
         image_size,
         dtype=numpy.uint8)
     checkerboard_image = CheckerboardImageClass(
-        size, zeropoint,
+        size, (zeropoint[1], zeropoint[0]),
         integrate_method, transition_value)
     for i in range(image_size[0]):
         for j in range(image_size[1]):
@@ -102,8 +102,11 @@ def create_checkerboard_image(
                               (-2, -1), (-1, -1), (0, -1), (1, -1),
                               (-2, 0), (-1, 0),
                               (-2, 1), (-1, 1)]:
-                coordinates.append(
-                    (zeropoint[0] + x * size, zeropoint[1] + y * size))
+                xcoo = zeropoint[0] + x * size
+                ycoo = zeropoint[1] + y * size
+                if ((3 < xcoo) and (3 + xcoo < image_size[1]) and
+                    (3 < ycoo) and (3 + ycoo < image_size[1])):
+                    coordinates.append((xcoo, ycoo))
     return zeropoint, numpy.array(coordinates), cv2.resize(
         image,
         (int(scale*image.shape[1]), int(scale*image.shape[0])),
