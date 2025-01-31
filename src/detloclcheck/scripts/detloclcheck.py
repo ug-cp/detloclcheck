@@ -274,7 +274,7 @@ def my_argument_parser():
         default=(11, 23),
         dest='crosssizes',
         help='Set a list of cross sizes to test. You can use odd integers. '
-        'This is used during template matching. default: 15, 23',
+        'This is used during template matching. default: 11, 23',
         metavar='s')
     parser_find_checkerboard.add_argument(
         '-angles',
