@@ -52,7 +52,7 @@ def filter_blurry_corners(image, coordinates, size, min_sharpness):
         j0 = int(round(coordinates[i, 0, 1] - size))
         j1 = int(round(coordinates[i, 0, 1] + size))
         if ((0 <= i0 < image.shape[1]) and (0 <= i1 < image.shape[1]) and
-            (0 <= j0 < image.shape[0]) and (0 <= j1< image.shape[0])):
+                (0 <= j0 < image.shape[0]) and (0 <= j1 < image.shape[0])):
             clip = image[j0:j1, i0:i1]
             sharpness = calculate_sharpness(clip)
             if sharpness < min_sharpness:

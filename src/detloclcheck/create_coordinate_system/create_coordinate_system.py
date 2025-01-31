@@ -51,7 +51,7 @@ def _find_better_axis(
         coordinate_system = _cal_coordinate_system(
             coordinates, zeropoint, axis1, axis2)
         indizes = [None] * max(objectpoint)
-        A = numpy.zeros((2 * max(objectpoint), 2))
+        A = numpy.zeros((2 * max(objectpoint), 2))  # pylint: disable=C0103
         b = numpy.zeros((2 * max(objectpoint), ))
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (j, 0)
@@ -64,7 +64,7 @@ def _find_better_axis(
                 indizes[j-1] = index
                 A[2*(j-1):2*(j-1)+2, :] = j * numpy.eye(2)
                 b[2*(j-1):2*(j-1)+2] = coordinates[index, 0, :] - zeropoint
-        new_axis, residuals, rank, s = numpy.linalg.lstsq(A, b, rcond=None)
+        new_axis, residuals, rank, _ = numpy.linalg.lstsq(A, b, rcond=None)
         if (rank == 0) or (residuals[0] > 1):
             new_axis = None
     else:
@@ -75,7 +75,7 @@ def _find_better_axis(
         coordinate_system = _cal_coordinate_system(
             coordinates, zeropoint, axis1, axis2)
         indizes = [None] * max(objectpoint)
-        A = numpy.zeros((2 * max(objectpoint), 2))
+        A = numpy.zeros((2 * max(objectpoint), 2))  # pylint: disable=C0103
         b = numpy.zeros((2 * max(objectpoint), ))
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (0, j)
@@ -282,7 +282,7 @@ def create_coordinate_system(
         coordinate_system[:, 0, 1].reshape((n,)))
     distances[:, zeropoint_index] = numpy.inf
     numpy.fill_diagonal(distances, numpy.inf)  # ignore known 0 distances
-    A = numpy.vstack((axis1, axis2)).transpose()
+    A = numpy.vstack((axis1, axis2)).transpose()  # pylint: disable=C0103
     while len(unassigned_indizes) > 0:
         distances_to_assigend = distances[assigned_indizes, :]
         assigend_index, unassigned_index = numpy.unravel_index(
