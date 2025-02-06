@@ -107,6 +107,7 @@ class CheckerboardImageClass():
         :Date: 2024-07-09
         :License: LGPL-3.0-or-later
         """
+        # pylint: disable=too-many-return-statements
         xy = (x, y)
         v = (xy - self.zeropoint) / self.size
         if (-2 <= v[1]) and (v[1] <= -1) and (-3 <= v[0]) and (v[0] <= 2):
@@ -144,3 +145,4 @@ class CheckerboardImageClass():
             v, _ = scipy.integrate.nquad(
                 self.value, [[x - 0.5, x + 0.5], [y - 0.5, y + 0.5]])
             return v
+        return None

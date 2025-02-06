@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-10
+:Date: 2025-02-06
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -28,11 +28,15 @@ try:
         import TestCheckArgFile  # noqa: F401
     from detect_localize_checkerboard \
         import TestCheckDetectLocalizeCheckerboard  # noqa: F401
+    from checkerboard_image_class \
+        import TestCheckerboardImageClass  # noqa: F401
 except ImportError:
     from tests.scripts_detloclcheck_check_arg_file \
         import TestCheckArgFile  # noqa: F401
     from tests.detect_localize_checkerboard \
         import TestCheckDetectLocalizeCheckerboard  # noqa: F401
+    from tests.checkerboard_image_class \
+        import TestCheckerboardImageClass  # noqa: F401
 
 
 class TestImport(unittest.TestCase):
@@ -205,8 +209,7 @@ class TestScriptsExecutable(unittest.TestCase):
         :Author: Daniel Mohr
         :Date: 2024-07-23
 
-        env python3 main.py \
-        TestScriptsExecutable.test_detloclcheck_0
+        env python3 main.py TestScriptsExecutable.test_detloclcheck_0
         """
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -234,8 +237,7 @@ class TestScriptsExecutable(unittest.TestCase):
         :Author: Daniel Mohr
         :Date: 2024-07-23
 
-        env python3 main.py \
-        TestScriptsExecutable.test_detloclcheck_0
+        env python3 main.py TestScriptsExecutable.test_detloclcheck_1
         """
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:

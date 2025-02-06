@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #    yaml2script.py
-#    Copyright (C) 2024  Daniel Mohr
+#    Copyright (C) 2024-2025  Daniel Mohr
 #    Version: 0.1.0
 #
 # This script tries to extract the scripts from a '.gitlab-ci.yml' file.
@@ -17,7 +17,7 @@ def main():
     if len(sys.argv) != 3:
         print('yaml2script [filename] [job name]')
         sys.exit(1)
-    with open(sys.argv[1]) as fd:
+    with open(sys.argv[1], encoding='utf8') as fd:
         data = yaml.load(fd, Loader=yaml.SafeLoader)
     script = {}
     if 'extends' in data[sys.argv[2]]:

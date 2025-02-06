@@ -81,6 +81,7 @@ def find_checkerboard(
     ...                        'r1', markersize=20)
     >>> matplotlib.pyplot.show()
     """
+    # pylint: disable=too-many-locals, too-many-statements
     log = logging.getLogger('detloclcheck.find_checkerboard')
     if crosssizes is None:
         crosssizes = [5, 11, 23]

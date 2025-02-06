@@ -30,6 +30,50 @@ import numpy
 from .checkerboard_image_class import CheckerboardImageClass
 
 
+def _create_image(image_size, size, zeropoint,
+                  integrate_method, transition_value):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-31
+    :License: LGPL-3.0-or-later
+    """
+    image = numpy.zeros(
+        image_size,
+        dtype=numpy.uint8)
+    checkerboard_image = CheckerboardImageClass(
+        size, (zeropoint[1], zeropoint[0]),
+        integrate_method, transition_value)
+    for i in range(image_size[0]):
+        for j in range(image_size[1]):
+            image[i, j] = int(checkerboard_image(i, j))
+    return image
+
+
+def _create_coordinates(image_size, size, zeropoint):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-31
+    :License: LGPL-3.0-or-later
+    """
+    coordinates = []
+    x0 = int(numpy.ceil((0 - zeropoint[0]) / size))
+    x1 = int(numpy.floor((image_size[0] - zeropoint[0]) / size))
+    y0 = int(numpy.ceil((0 - zeropoint[1]) / size))
+    y1 = int(numpy.floor((image_size[1] - zeropoint[1]) / size))
+    for x in range(x0, x1):
+        for y in range(y0, y1):
+            if (x, y) not in [(-2, -2), (-1, -2), (0, -2), (1, -2),
+                              (-2, -1), (-1, -1), (0, -1), (1, -1),
+                              (-2, 0), (-1, 0),
+                              (-2, 1), (-1, 1)]:
+                xcoo = zeropoint[0] + x * size
+                ycoo = zeropoint[1] + y * size
+                if ((3 < xcoo) and (3 + xcoo < image_size[1]) and
+                        (3 < ycoo) and (3 + ycoo < image_size[1])):
+                    coordinates.append((xcoo, ycoo))
+    return coordinates
+
+
 def create_checkerboard_image(
         width, height, size,
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
@@ -37,6 +81,23 @@ def create_checkerboard_image(
     :Author: Daniel Mohr
     :Date: 2025-01-31
     :License: LGPL-3.0-or-later
+
+    :param width: number of checkerboard fields in x direction
+    :param height: number of checkerboard fields in y direction
+    :param size: size of a checkerboard field
+    :param zeropoint: zeropoint in image indizes (floats are OK)
+    :param integrate_method: Set the method used for integration over one
+                             pixel:
+                             0: no integration
+                             1: simple Simpson\'s Rule
+                             2: use of scipy.integrate.nquad
+    :param transition_value: Set the transition value between white and
+                             black areas. For a value of 255 the light
+                             areas in the image run out. For a value of
+                             0 the reverse effect is simulated.
+    :param scale: scaling factor
+
+    :return: (zeropoint, coordinates, image)
 
     Example 1:
 
@@ -82,31 +143,9 @@ def create_checkerboard_image(
                   int(numpy.ceil(height*size)))
     if zeropoint is None:
         zeropoint = (image_size[0]/2 - 0.5, image_size[1]/2 - 0.5)
-    image = numpy.zeros(
-        image_size,
-        dtype=numpy.uint8)
-    checkerboard_image = CheckerboardImageClass(
-        size, (zeropoint[1], zeropoint[0]),
-        integrate_method, transition_value)
-    for i in range(image_size[0]):
-        for j in range(image_size[1]):
-            image[i, j] = int(checkerboard_image(i, j))
-    coordinates = []
-    x0 = int(numpy.ceil((0 - zeropoint[0]) / size))
-    x1 = int(numpy.floor((image_size[0] - zeropoint[0]) / size))
-    y0 = int(numpy.ceil((0 - zeropoint[1]) / size))
-    y1 = int(numpy.floor((image_size[1] - zeropoint[1]) / size))
-    for x in range(x0, x1):
-        for y in range(y0, y1):
-            if (x, y) not in [(-2, -2), (-1, -2), (0, -2), (1, -2),
-                              (-2, -1), (-1, -1), (0, -1), (1, -1),
-                              (-2, 0), (-1, 0),
-                              (-2, 1), (-1, 1)]:
-                xcoo = zeropoint[0] + x * size
-                ycoo = zeropoint[1] + y * size
-                if ((3 < xcoo) and (3 + xcoo < image_size[1]) and
-                        (3 < ycoo) and (3 + ycoo < image_size[1])):
-                    coordinates.append((xcoo, ycoo))
+    image = _create_image(image_size, size, zeropoint,
+                          integrate_method, transition_value)
+    coordinates = _create_coordinates(image_size, size, zeropoint)
     return zeropoint, numpy.array(coordinates), cv2.resize(
         image,
         (int(scale*image.shape[1]), int(scale*image.shape[0])),
