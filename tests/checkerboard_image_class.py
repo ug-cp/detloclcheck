@@ -39,20 +39,29 @@ class TestCheckerboardImageClass(unittest.TestCase):
         """
         from detloclcheck.create_checkerboard_image.checkerboard_image_class \
             import simpsons_rule
-
-        def f(x, y): return 0
+        def f(x, y):
+            # pylint: disable=unused-argument
+            return 0
         result = simpsons_rule(f, 0, 1, 0, 1)
         self.assertAlmostEqual(result, 0.0)
-        def f(x, y): return 1
+        def f(x, y):
+            # pylint: disable=unused-argument,function-redefined
+            return 1
         result = simpsons_rule(f, 0, 1, 0, 1)
         self.assertAlmostEqual(result, 1.0)
-        def f(x, y): return 1
+        def f(x, y):
+            # pylint: disable=unused-argument,function-redefined
+            return 1
         result = simpsons_rule(f, 0, 10, 0, 5)
         self.assertAlmostEqual(result, 50.0)
-        def f(x, y): return y + 0.1 * x
+        def f(x, y):
+            # pylint: disable=function-redefined
+            return y + 0.1 * x
         result = simpsons_rule(f, 0, 10, 0, 5)
         self.assertAlmostEqual(result, 150.0)
-        def f(x, y): return y + 0.1 * x + x * y
+        def f(x, y):
+            # pylint: disable=function-redefined
+            return y + 0.1 * x + x * y
         result = simpsons_rule(f, 0, 10, 0, 5)
         self.assertAlmostEqual(result, 775.0)
 
@@ -62,23 +71,33 @@ class TestCheckerboardImageClass(unittest.TestCase):
         :Date: 2025-02-06
         """
         from scipy.integrate import nquad
-        def f(x, y): return 1
+        def f(x, y):
+            # pylint: disable=unused-argument
+            return 1
         result, error = nquad(f, [[0, 1], [0, 1]])
         self.assertAlmostEqual(result, 1.0)
         self.assertLess(error, 1e-7)
-        def f(x, y): return 0
+        def f(x, y):
+            # pylint: disable=unused-argument,function-redefined
+            return 0
         result, error = nquad(f, [[0, 1], [0, 1]])
         self.assertAlmostEqual(result, 0.0)
         self.assertLess(error, 1e-7)
-        def f(x, y): return 1
+        def f(x, y):
+            # pylint: disable=unused-argument,function-redefined
+            return 1
         result, error = nquad(f, [[0, 10], [0, 5]])
         self.assertAlmostEqual(result, 50.0)
         self.assertLess(error, 1e-7)
-        def f(x, y): return y + 0.1 * x
+        def f(x, y):
+            # pylint: disable=function-redefined
+            return y + 0.1 * x
         result, error = nquad(f, [[0, 10], [0, 5]])
         self.assertAlmostEqual(result, 150.0)
         self.assertLess(error, 1e-7)
-        def f(x, y): return y + 0.1 * x + x * y
+        def f(x, y):
+            # pylint: disable=function-redefined
+            return y + 0.1 * x + x * y
         result, error = nquad(f, [[0, 10], [0, 5]])
         self.assertAlmostEqual(result, 775.0)
         self.assertLess(error, 1e-7)

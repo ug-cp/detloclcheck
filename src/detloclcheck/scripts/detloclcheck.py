@@ -150,6 +150,7 @@ def run_visualize(args):
             data = scipy.io.loadmat(data_file_name)
             coordinate_system = data['coordinate_system']
             zeropoint = numpy.reshape(data['zeropoint'], (2,))
+        # pylint: disable=possibly-used-before-assignment
         log.debug('axis1: %s', data['axis1'])
         log.debug('axis2: %s', data['axis2'])
         if visualize_image:
