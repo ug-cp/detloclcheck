@@ -1,7 +1,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-02-06
+:Date: 2025-02-20
 :License: LGPL-3.0-or-later
 
 aggregation of tests
@@ -65,7 +65,7 @@ class TestImport(unittest.TestCase):
 class TestScriptsExecutable(unittest.TestCase):
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-10
+    :Date: 2025-02-20
 
     env python3 main.py TestScriptsExecutable
     pytest-3 -k TestScriptsExecutable main.py
@@ -78,7 +78,7 @@ class TestScriptsExecutable(unittest.TestCase):
         :Date: 2024-06-25
 
         env python3 main.py \
-        TestScriptsExecutable.test_detloclcheck_find_checkerboard_executable
+          TestScriptsExecutable.test_detloclcheck_executable_1
         """
         cpi = subprocess.run(
             "detloclcheck",
@@ -94,7 +94,7 @@ class TestScriptsExecutable(unittest.TestCase):
         :Date: 2024-06-25
 
         env python3 main.py \
-        TestScriptsExecutable.test_detloclcheck_find_checkerboard_executable
+          TestScriptsExecutable.test_detloclcheck_executable_2
         """
         cpi = subprocess.run(
             "detloclcheck -h",
@@ -107,6 +107,23 @@ class TestScriptsExecutable(unittest.TestCase):
         # check end of help output
         self.assertTrue(cpi.stdout.strip().endswith(
             b'License: LGPL-3.0-or-later'))
+
+    def test_detloclcheck_executable_3(self):
+        """
+        :Author: Daniel Mohr
+        :Date: 2025-02-20
+
+        env python3 main.py \
+          TestScriptsExecutable.test_detloclcheck_executable_3
+        """
+        cpi = subprocess.run(
+            "detloclcheck version",
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            shell=True, timeout=self.subprocess_timeout, check=True)
+        # check at least minimal help output
+        self.assertTrue(len(cpi.stdout) >= 23)
+        # check begin of help output
+        self.assertTrue(cpi.stdout.startswith(b'DetLocLCheck version '))
 
     def test_detloclcheck_find_checkerboard_executable(self):
         """
