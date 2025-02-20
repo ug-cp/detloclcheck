@@ -544,6 +544,7 @@ def main():
         if (args.subparser_name != 'version'):
             log.info('start detloclcheck %s',
                      importlib.metadata.version('DetLocLCheck'))
+            log.info("started as/with: %s", " ".join(sys.argv))
         sys.exit(args.func(args))
     else:
         parser.print_help()
