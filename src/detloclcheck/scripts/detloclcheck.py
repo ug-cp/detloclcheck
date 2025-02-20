@@ -143,7 +143,7 @@ def run_visualize(args):
             log.debug('visualize "%s"', data_file_name)
         _, file_extension = os.path.splitext(data_file_name)
         if file_extension.lower() == '.json':
-            with open(data_file_name, 'w', encoding='utf8') as fd:
+            with open(data_file_name, 'r', encoding='utf8') as fd:
                 data = json.load(fd)
                 coordinate_system = numpy.array(data['coordinate_system'])
                 zeropoint = numpy.array(data['zeropoint'])
@@ -489,8 +489,8 @@ def my_argument_parser():
         nargs='+',
         type=str,
         metavar='data',
-        help='Name of the data file(s) to visualize.'
-        'This could be the of detloclcheck find_checkerboard and a'
+        help='Name of the data file(s) to visualize. '
+        'This could be the of detloclcheck find_checkerboard and a '
         'json or a mat file.')
     parser_visualize.add_argument(
         '-image_file_name',
