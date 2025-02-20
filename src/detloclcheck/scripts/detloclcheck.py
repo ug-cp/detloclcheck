@@ -184,7 +184,8 @@ def run_version(args):
     :License: LGPL-3.0-or-later
     """
     print(
-        'DetLocLCheck version %s' % importlib.metadata.version('DetLocLCheck'))
+        'DetLocLCheck version %s' %
+        importlib.metadata.version(__package__.split('.')[0]))
 
 
 def check_arg_file(data):
@@ -227,15 +228,15 @@ def my_argument_parser():
     :Date: 2025-02-20
     :License: LGPL-3.0-or-later
     """
-    epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2025-02-20\n"
-    epilog += "DetLocLCheck Version: "
-    epilog += importlib.metadata.version('DetLocLCheck') + "\n"
-    epilog += "License: LGPL-3.0-or-later"
-    epilog += "\n\n"
-    epilog += "Example:\n\n"
+    epilog = "Example:\n\n"
     epilog += "detloclcheck create_checkerboard_image -outfile foo.png\n"
     epilog += "detloclcheck find_checkerboard -f foo.png\n\n"
+    epilog += "Author: Daniel Mohr\n"
+    epilog += "Date: 2025-02-20\n"
+    epilog += "DetLocLCheck Version: "
+    epilog += importlib.metadata.version(__package__.split('.')[0]) + "\n"
+    epilog += "License: LGPL-3.0-or-later"
+    epilog += "\n\n"
     parser = argparse.ArgumentParser(
         description='detloclcheck is a python script.',
         epilog=epilog,
@@ -543,7 +544,7 @@ def main():
     if args.subparser_name is not None:
         if (args.subparser_name != 'version'):
             log.info('start detloclcheck %s',
-                     importlib.metadata.version('DetLocLCheck'))
+                     importlib.metadata.version(__package__.split('.')[0]))
             log.info("started as/with: %s", " ".join(sys.argv))
         sys.exit(args.func(args))
     else:

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
