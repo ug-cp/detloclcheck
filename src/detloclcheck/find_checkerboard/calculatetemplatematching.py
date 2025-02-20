@@ -76,7 +76,7 @@ def _get_map(image, crosssize, angle):
         result = unrotated_image[
             pos[0]:pos[0] + image.shape[0],
             pos[1]:pos[1] + image.shape[1]]
-    cv2.imwrite('template.png', array2image(template))
+    # cv2.imwrite('template.png', array2image(template))
     return result
 
 

@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-31
+:Date: 2025-02-20
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -24,6 +24,7 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import importlib.metadata
 import json
 import logging
 import logging.handlers
@@ -176,6 +177,16 @@ def run_visualize(args):
         matplotlib.pyplot.show()
 
 
+def run_version(args):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-28
+    :License: LGPL-3.0-or-later
+    """
+    print(
+        'DetLocLCheck version %s' % importlib.metadata.version('DetLocLCheck'))
+
+
 def check_arg_file(data):
     """
     :Author: Daniel Mohr
@@ -218,8 +229,13 @@ def my_argument_parser():
     """
     epilog = "Author: Daniel Mohr\n"
     epilog += "Date: 2025-02-20\n"
+    epilog += "DetLocLCheck Version: "
+    epilog += importlib.metadata.version('DetLocLCheck') + "\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
+    epilog += "Example:\n\n"
+    epilog += "detloclcheck create_checkerboard_image -outfile foo.png\n"
+    epilog += "detloclcheck find_checkerboard -f foo.png\n\n"
     parser = argparse.ArgumentParser(
         description='detloclcheck is a python script.',
         epilog=epilog,
@@ -490,13 +506,21 @@ def my_argument_parser():
         action='store_true',
         dest='dosubplot',
         help='If set this flag, will plot in subplots.')
+    parser_version = subparsers.add_parser(
+        'version',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='return version of detloclcheck',
+        description='display version information of detloclcheck',
+        epilog=epilog)
+    parser_version.set_defaults(
+        func=run_version)
     return parser
 
 
 def main():
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-01
+    :Date: 2025-02-20
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck')
@@ -517,7 +541,9 @@ def main():
         log.addHandler(file_handler)
         log.debug('added logging to file "%s"', args.log_file[0])
     if args.subparser_name is not None:
-        log.info('start detloclcheck')
+        if (args.subparser_name != 'version'):
+            log.info('start detloclcheck %s',
+                     importlib.metadata.version('DetLocLCheck'))
         sys.exit(args.func(args))
     else:
         parser.print_help()
