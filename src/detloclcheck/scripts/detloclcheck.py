@@ -213,11 +213,11 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-31
+    :Date: 2025-02-20
     :License: LGPL-3.0-or-later
     """
     epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-09-02\n"
+    epilog += "Date: 2025-02-20\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -364,7 +364,7 @@ def my_argument_parser():
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-output_format',
-        nargs=1,
+        nargs='+',
         type=str,
         choices=['json', 'mat'],
         required=False,
