@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-07-31
+:Date: 2025-02-11
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024, 2025 Daniel Mohr
 """
@@ -79,7 +79,7 @@ def create_checkerboard_image(
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-31
+    :Date: 2025-02-21
     :License: LGPL-3.0-or-later
 
     :param width: number of checkerboard fields in x direction
@@ -142,7 +142,7 @@ def create_checkerboard_image(
     image_size = (int(numpy.ceil(width*size)),
                   int(numpy.ceil(height*size)))
     if zeropoint is None:
-        zeropoint = (image_size[0]/2 - 0.5, image_size[1]/2 - 0.5)
+        zeropoint = (image_size[1]/2 - 0.5, image_size[0]/2 - 0.5)
     image = _create_image(image_size, size, zeropoint,
                           integrate_method, transition_value)
     coordinates = _create_coordinates(image_size, size, zeropoint)
