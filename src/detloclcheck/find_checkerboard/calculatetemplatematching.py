@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -35,7 +35,7 @@
 
 import cv2
 import numpy
-from detloclcheck.tools import array2image, normed_tm_ccorr_normed
+from detloclcheck.tools import normed_tm_ccorr_normed
 
 from .create_template import create_template
 
@@ -76,7 +76,8 @@ def _get_map(image, crosssize, angle):
         result = unrotated_image[
             pos[0]:pos[0] + image.shape[0],
             pos[1]:pos[1] + image.shape[1]]
-    cv2.imwrite('template.png', array2image(template))
+    # from detloclcheck.tools import array2image
+    # cv2.imwrite('template.png', array2image(template))
     return result
 
 

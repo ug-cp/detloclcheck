@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -30,9 +30,9 @@ submodules
 copyright + license
 ===================
 :Author: Daniel Mohr
-:Date: 2024-07-10
+:Date: 2025-02-20
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024-2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
@@ -48,3 +48,7 @@ copyright + license
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
+
+import importlib.metadata
+
+__version__ = importlib.metadata.version(__package__)

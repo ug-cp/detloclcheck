@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-31
+:Date: 2025-02-20
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -24,6 +24,7 @@
 # along with DetLocLCheck. If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
+import importlib.metadata
 import json
 import logging
 import logging.handlers
@@ -142,7 +143,7 @@ def run_visualize(args):
             log.debug('visualize "%s"', data_file_name)
         _, file_extension = os.path.splitext(data_file_name)
         if file_extension.lower() == '.json':
-            with open(data_file_name, 'w', encoding='utf8') as fd:
+            with open(data_file_name, 'r', encoding='utf8') as fd:
                 data = json.load(fd)
                 coordinate_system = numpy.array(data['coordinate_system'])
                 zeropoint = numpy.array(data['zeropoint'])
@@ -150,6 +151,7 @@ def run_visualize(args):
             data = scipy.io.loadmat(data_file_name)
             coordinate_system = data['coordinate_system']
             zeropoint = numpy.reshape(data['zeropoint'], (2,))
+        # pylint: disable=possibly-used-before-assignment
         log.debug('axis1: %s', data['axis1'])
         log.debug('axis2: %s', data['axis2'])
         if visualize_image:
@@ -173,6 +175,17 @@ def run_visualize(args):
             matplotlib.pyplot.show()
     if args.dosubplot:
         matplotlib.pyplot.show()
+
+
+def run_version(args):
+    """
+    :Author: Daniel Mohr
+    :Date: 2025-01-28
+    :License: LGPL-3.0-or-later
+    """
+    print(
+        'DetLocLCheck version %s' %
+        importlib.metadata.version(__package__.split('.')[0]))
 
 
 def check_arg_file(data):
@@ -212,11 +225,17 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-31
+    :Date: 2025-02-20
     :License: LGPL-3.0-or-later
     """
-    epilog = "Author: Daniel Mohr\n"
-    epilog += "Date: 2024-09-02\n"
+    epilog = "Example:\n\n"
+    epilog += "detloclcheck create_checkerboard_image -outfile foo.png\n"
+    epilog += "detloclcheck find_checkerboard -f foo.png\n"
+    epilog += "detloclcheck visualize foo.json -i foo.png\n\n"
+    epilog += "Author: Daniel Mohr\n"
+    epilog += "Date: 2025-02-20\n"
+    epilog += "DetLocLCheck Version: "
+    epilog += importlib.metadata.version(__package__.split('.')[0]) + "\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -363,7 +382,7 @@ def my_argument_parser():
         metavar='f')
     parser_create_checkerboard_image.add_argument(
         '-output_format',
-        nargs=1,
+        nargs='+',
         type=str,
         choices=['json', 'mat'],
         required=False,
@@ -471,8 +490,8 @@ def my_argument_parser():
         nargs='+',
         type=str,
         metavar='data',
-        help='Name of the data file(s) to visualize.'
-        'This could be the of detloclcheck find_checkerboard and a'
+        help='Name of the data file(s) to visualize. '
+        'This could be the of detloclcheck find_checkerboard and a '
         'json or a mat file.')
     parser_visualize.add_argument(
         '-image_file_name',
@@ -489,13 +508,21 @@ def my_argument_parser():
         action='store_true',
         dest='dosubplot',
         help='If set this flag, will plot in subplots.')
+    parser_version = subparsers.add_parser(
+        'version',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='return version of detloclcheck',
+        description='display version information of detloclcheck',
+        epilog=epilog)
+    parser_version.set_defaults(
+        func=run_version)
     return parser
 
 
 def main():
     """
     :Author: Daniel Mohr
-    :Date: 2024-07-01
+    :Date: 2025-02-20
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck')
@@ -516,7 +543,10 @@ def main():
         log.addHandler(file_handler)
         log.debug('added logging to file "%s"', args.log_file[0])
     if args.subparser_name is not None:
-        log.info('start detloclcheck')
+        if (args.subparser_name != 'version'):
+            log.info('start detloclcheck %s',
+                     importlib.metadata.version(__package__.split('.')[0]))
+            log.info("started as/with: %s", " ".join(sys.argv))
         sys.exit(args.func(args))
     else:
         parser.print_help()

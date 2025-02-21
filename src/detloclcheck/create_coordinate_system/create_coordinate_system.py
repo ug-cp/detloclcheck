@@ -44,16 +44,17 @@ def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
 
 def _find_better_axis(
         coordinates, zeropoint, axis1, axis2, objectpoint, factor=1):
+    # pylint: disable=too-many-locals, too-many-branches
+    # zeropoint[0] + (1 0) * naxis = coordinates[?, 0, 0]
+    # zeropoint[1] + (0 1) * naxis = coordinates[?, 0, 1]
+    # zeropoint[0] + (2 0) * naxis = coordinates[?, 0, 0]
+    # zeropoint[1] + (0 2) * naxis = coordinates[?, 0, 1]
+    coordinate_system = _cal_coordinate_system(
+        coordinates, zeropoint, axis1, axis2)
+    indizes = [None] * max(objectpoint)
+    A = numpy.zeros((2 * max(objectpoint), 2))  # pylint: disable=C0103
+    b = numpy.zeros((2 * max(objectpoint), ))
     if objectpoint[1] == 0:
-        # zeropoint[0] + (1 0) * naxis = coordinates[?, 0, 0]
-        # zeropoint[1] + (0 1) * naxis = coordinates[?, 0, 1]
-        # zeropoint[0] + (2 0) * naxis = coordinates[?, 0, 0]
-        # zeropoint[1] + (0 2) * naxis = coordinates[?, 0, 1]
-        coordinate_system = _cal_coordinate_system(
-            coordinates, zeropoint, axis1, axis2)
-        indizes = [None] * max(objectpoint)
-        A = numpy.zeros((2 * max(objectpoint), 2))  # pylint: disable=C0103
-        b = numpy.zeros((2 * max(objectpoint), ))
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (j, 0)
             index = None
@@ -69,15 +70,6 @@ def _find_better_axis(
         if (rank == 0) or (residuals[0] > 1):
             new_axis = None
     else:
-        # zeropoint[0] + (1 0) * naxis = coordinates[?, 0, 0]
-        # zeropoint[1] + (0 1) * naxis = coordinates[?, 0, 1]
-        # zeropoint[0] + (2 0) * naxis = coordinates[?, 0, 0]
-        # zeropoint[1] + (0 2) * naxis = coordinates[?, 0, 1]
-        coordinate_system = _cal_coordinate_system(
-            coordinates, zeropoint, axis1, axis2)
-        indizes = [None] * max(objectpoint)
-        A = numpy.zeros((2 * max(objectpoint), 2))  # pylint: disable=C0103
-        b = numpy.zeros((2 * max(objectpoint), ))
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (0, j)
             index = None
