@@ -1,4 +1,4 @@
-# README: DetLocLCheck -- Detection, Localization, Checkerboard, L marker
+# DetLocLCheck -- Detection, Localization, Checkerboard, L marker
 
 ## intro
 
@@ -6,9 +6,20 @@
 Checkerboard calibration target containing L shape marker using
 template matching.
 
+`DetLocLCheck` is a software tool designed for the Detection and Localization
+of Checkerboard calibration targets containing L-shape markers.
+This tool utilizes template matching for initial detection,
+followed by refinement using OpenCV's
+[`cornerSubPix`](https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga354e0d7c86d0d9da75de9b9701a9a87e)
+function to achieve subpixel accuracy.
+Finally, world coordinates are assigned to the detected markers.
+
+![Example image of a checkerboard calibration target containing L shape marker](checkerboard_example_image.png)
+
 ## install
 
-Before you install `DetLocLCheck` you have to provide the dependencies.
+Before installing `DetLocLCheck`, ensure that the required dependencies
+are met:
 
 We need at least the following Debian packages:
 
@@ -16,22 +27,23 @@ We need at least the following Debian packages:
 * `python3-opencv` ([opencv.org](https://opencv.org))
 * `python3-pip` ([pip.pypa.io](https://pip.pypa.io/))
 
-On Ubuntu 22.04 do not install (these versions are too old!):
+Important: On Ubuntu 22.04, do not install `python3-hatchling` and `python3-pathspec` as they are too old.
 
-* `python3-hatchling`
-* `python3-pathspec`
+Note that `numpy` is defined as a dependency in `pyproject.toml`, but we
+strongly recommend using the package from your operating system's package
+management system.
 
-`numpy` is defined as dependency in `pyproject.toml`. But we strongly
-recommend to use the package from the package management system of your
-operating system.
+Similarly, `opencv-python` is not defined as a dependency in `pyproject.toml`.
+The reason is that `pip` ignores the package from the package management
+system from the operating system. As before we strongly recommend to use
+the package from the package management system of your operating system.
 
-`opencv-python` is not defined as dependency in `pyproject.toml`. The reason
-is that `pip` ignores the package from the package management system from the
-operating system. As before we strongly recommend to use the package from the
-package management system of your operating system.
+If you still want to install `opencv-python` using pip, use the following
+command (not recommended!):
 
-If you really want not to use it from your package management system you can
-install it like `pip3 install opencv-python`. But this is not recommended!
+```sh
+pip3 install opencv-python
+```
 
 The recommended way to install `DetLocLCheck` is:
 
@@ -52,20 +64,31 @@ For development you could install an editable version, e. g.:
 pip3 install --break-system-packages -e .
 ```
 
-But this is only working from Python 3.10 on.
+This method only works with Python 3.10 and later.
 
 ## Example
+
+Here are some examples of using `DetLocLCheck`:
+
+Find and detect checkerboards in multiple images and handle the images in parallel:
 
 ```sh
 detloclcheck find_checkerboard -log_file cam.log -run_parallel \
     -crosssizes 35 55 -min_sharpness 25 50 100 -f *.png
 ```
 
+Create example data, do the detection, and visualize the result:
+
 ```sh
 detloclcheck create_checkerboard_image -outfile foo.png -size 23
 detloclcheck find_checkerboard -f foo.png
 detloclcheck visualize foo.json -i foo.png
 ```
+
+![Example image of the result of detloclcheck visualize](foo_visualized.png)
+
+You can also use the Python module `detloclcheck` instead of the
+command-line interface:
 
 ```py
 import cv2
@@ -99,7 +122,7 @@ matplotlib.pyplot.show()
 
 Author: Daniel Mohr.
 
-Date: 2025-01-28 (last change).
+Date: 2025-02-21 (last change).
 
 License: LGPL-3.0-or-later
 
