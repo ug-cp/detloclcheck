@@ -27,7 +27,8 @@ We need at least the following Debian packages:
 * `python3-opencv` ([opencv.org](https://opencv.org))
 * `python3-pip` ([pip.pypa.io](https://pip.pypa.io/))
 
-Important: On Ubuntu 22.04, do not install `python3-hatchling` and `python3-pathspec` as they are too old.
+Important: On Ubuntu 22.04, do not install `python3-hatchling` and
+`python3-pathspec` as they are too old.
 
 Note that `numpy` is defined as a dependency in `pyproject.toml`, but we
 strongly recommend using the package from your operating system's package
