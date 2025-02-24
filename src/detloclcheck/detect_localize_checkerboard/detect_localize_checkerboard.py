@@ -66,10 +66,10 @@ def detect_localize_checkerboard(
              otherwise (None, error_code, None, None).
              possible error codes: 1, 2, 3, 4, 5, 6, 7
     Notes:
-    This function uses :func:`detloclcheck.find_checkerboard.find_checkerboard` 
+    This function uses :func:`detloclcheck.find_checkerboard.find_checkerboard`
     to detect the checkerboard and then
-    :func:`detloclcheck.tools.filter_blurry_corners` 
-    to filter out blurry corners. Finally, :func:`create_coordinate_system` 
+    :func:`detloclcheck.tools.filter_blurry_corners`
+    to filter out blurry corners. Finally, :func:`create_coordinate_system`
     is used to obtain the world coordinates.
 
     Example 1:
