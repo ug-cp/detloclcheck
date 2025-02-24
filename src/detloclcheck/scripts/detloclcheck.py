@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-02-20
+:Date: 2025-02-24
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -43,7 +43,7 @@ from detloclcheck.detect_localize_checkerboard import \
 def run_find_checkerboard(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-02
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
     errorcode = 0
@@ -57,9 +57,12 @@ def run_find_checkerboard(args):
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         coordinate_system, zeropoint, axis1, axis2 = \
             detect_localize_checkerboard(
-                gray_image, args.crosssizes, args.angles, args.hit_bound[0],
-                args.min_sharpness, args.run_parallel,
-                args.max_distance_factor_range, log=None)
+                gray_image, args.crosssizes, args.angles,
+                hit_bound=args.hit_bound[0],
+                min_sharpness=args.min_sharpness,
+                run_parallel=args.run_parallel,
+                max_distance_factor_range=args.max_distance_factor_range,
+                log=None)
         if coordinate_system is None:
             log.error(
                 'ERROR %i during handling file "%s"', zeropoint, filename)
@@ -90,13 +93,14 @@ def run_find_checkerboard(args):
 def run_create_checkerboard_image(args):
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-02
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck.run_create_checkerboard_image')
     zeropoint, coordinates, image = create_checkerboard_image(
-        args.m[0], args.n[0], args.size[0], args.zeropoint,
-        args.integrate_method[0], args.transition_value[0], args.scale[0])
+        args.m[0], args.n[0], args.size[0],
+        zeropoint=args.zeropoint, integrate_method=args.integrate_method[0],
+        transition_value=args.transition_value[0], scale=args.scale[0])
     cv2.imwrite(args.outfile[0], image)
     for output_format in args.output_format:
         output_filename = \
@@ -177,15 +181,14 @@ def run_visualize(args):
         matplotlib.pyplot.show()
 
 
-def run_version(args):
+def run_version(_):
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-28
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
-    print(
-        'DetLocLCheck version %s' %
-        importlib.metadata.version(__package__.split('.')[0]))
+    version = importlib.metadata.version(__package__.split(".", maxsplit=1)[0])
+    print(f'DetLocLCheck version {version}')
 
 
 def check_arg_file(data):
@@ -225,7 +228,7 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2025-02-20
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
     epilog = "Example:\n\n"
@@ -235,7 +238,8 @@ def my_argument_parser():
     epilog += "Author: Daniel Mohr\n"
     epilog += "Date: 2025-02-20\n"
     epilog += "DetLocLCheck Version: "
-    epilog += importlib.metadata.version(__package__.split('.')[0]) + "\n"
+    epilog += importlib.metadata.version(
+        __package__.split('.', maxsplit=1)[0]) + "\n"
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
@@ -522,7 +526,7 @@ def my_argument_parser():
 def main():
     """
     :Author: Daniel Mohr
-    :Date: 2025-02-20
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
     log = logging.getLogger('detloclcheck')
@@ -543,9 +547,10 @@ def main():
         log.addHandler(file_handler)
         log.debug('added logging to file "%s"', args.log_file[0])
     if args.subparser_name is not None:
-        if (args.subparser_name != 'version'):
+        if args.subparser_name != 'version':
             log.info('start detloclcheck %s',
-                     importlib.metadata.version(__package__.split('.')[0]))
+                     importlib.metadata.version(
+                         __package__.split('.', maxsplit=1)[0]))
             log.info("started as/with: %s", " ".join(sys.argv))
         sys.exit(args.func(args))
     else:

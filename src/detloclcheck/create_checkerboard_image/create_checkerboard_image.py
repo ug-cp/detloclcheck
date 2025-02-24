@@ -75,11 +75,11 @@ def _create_coordinates(image_size, size, zeropoint):
 
 
 def create_checkerboard_image(
-        width, height, size,
+        width, height, size, *,
         zeropoint=None, integrate_method=0, transition_value=128, scale=1.0):
     """
     :Author: Daniel Mohr
-    :Date: 2025-02-21
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
 
     :param width: number of checkerboard fields in x direction

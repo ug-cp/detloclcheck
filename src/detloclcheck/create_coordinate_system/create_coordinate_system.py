@@ -43,7 +43,7 @@ def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
 
 
 def _find_better_axis(
-        coordinates, zeropoint, axis1, axis2, objectpoint, factor=1):
+        coordinates, zeropoint, axis1, axis2, objectpoint, *, factor=1):
     # pylint: disable=too-many-locals, too-many-branches
     # zeropoint[0] + (1 0) * naxis = coordinates[?, 0, 0]
     # zeropoint[1] + (0 1) * naxis = coordinates[?, 0, 1]
@@ -96,8 +96,8 @@ def _find_better_axis(
 
 
 def create_coordinate_system(
-        image, coordinates, max_distance_factor_range, min_sharpness=1000,
-        draw_images=(False, False, False)):
+        image, coordinates, max_distance_factor_range, *,
+        min_sharpness=1000, draw_images=(False, False, False)):
     """
     :Author: Daniel Mohr
     :Email: daniel.mohr@uni-greifswald.de
@@ -193,7 +193,7 @@ def create_coordinate_system(
         for i in range(2, 4):
             not_found = 0
             res = _find_better_axis(
-                coordinates, zeropoint, axis1, axis2, (i, 0), 1.0/i)
+                coordinates, zeropoint, axis1, axis2, (i, 0), factor=1.0/i)
             if res is not None:
                 axis1 = res
                 log.debug('better axis1 (%i): |%s| = %f',
@@ -202,7 +202,7 @@ def create_coordinate_system(
             else:
                 not_found += 1
             res = _find_better_axis(
-                coordinates, zeropoint, axis1, axis2, (0, i), 1.0/i)
+                coordinates, zeropoint, axis1, axis2, (0, i), factor=1.0/i)
             if res is not None:
                 axis2 = res
                 log.debug('better axis2 (%i): |%s| = %f',
