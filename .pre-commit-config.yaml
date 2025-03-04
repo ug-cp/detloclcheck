@@ -35,3 +35,10 @@ repos:
     rev: v0.44.0
     hooks:
       - id: markdownlint
+  - repo: https://gitlab.com/yaml2script/yaml2script
+    rev: 0.1.4
+    hooks:
+      - id: yaml2script-all
+        additional_dependencies:
+          - shellcheck-py
+        args: [-parameter_check_command=-e SC1091]
