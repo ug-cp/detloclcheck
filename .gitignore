@@ -7,6 +7,8 @@ docs/LICENSE.LESSER.md
 docs/LICENSE.md
 docs/README.md
 docs/_build/
+docs/checkerboard_example_image.png
+docs/foo_visualized.png
 docs/test_coverage_report/
 manual_detloclcheck.pdf
 manual_detloclcheck/
