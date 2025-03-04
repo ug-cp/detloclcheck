@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-02-24
+:Date: 2025-02-25
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -184,11 +184,12 @@ def run_visualize(args):
 def run_version(_):
     """
     :Author: Daniel Mohr
-    :Date: 2025-02-24
+    :Date: 2025-02-25
     :License: LGPL-3.0-or-later
     """
     version = importlib.metadata.version(__package__.split(".", maxsplit=1)[0])
     print(f'DetLocLCheck version {version}')
+    return sys.exit(0)
 
 
 def check_arg_file(data):

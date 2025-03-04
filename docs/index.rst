@@ -3,8 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DetLocLCheck's documentation!
-========================================
+DetLocLCheck's documentation
+============================
+
+``DetLocLCheck`` is a software tool for Detection and Localization of a
+Checkerboard calibration target containing L shape marker using template
+matching.
+
+``DetLocLCheck`` is a software tool designed for the Detection and
+Localization of Checkerboard calibration targets containing L-shape
+markers. This tool utilizes template matching for initial detection,
+followed by refinement using OpenCV’s
+`cornerSubPix <https://docs.opencv.org/4.x/dd/d1a/group__imgproc__feature.html#ga354e0d7c86d0d9da75de9b9701a9a87e>`__
+function to achieve subpixel accuracy. Finally, world coordinates are
+assigned to the detected markers.
+
+.. figure:: checkerboard_example_image.png
+   :alt: Example image of a checkerboard calibration target containing L shape marker
+
+   Example image of a checkerboard calibration target containing L shape marker
 
 .. toctree::
    :maxdepth: 2
