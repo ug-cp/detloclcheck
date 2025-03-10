@@ -123,7 +123,7 @@ matplotlib.pyplot.show()
 
 Author: Daniel Mohr.
 
-Date: 2025-02-21 (last change).
+Date: 2025-03-10 (last change).
 
 License: LGPL-3.0-or-later
 
