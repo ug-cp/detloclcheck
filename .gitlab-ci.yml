@@ -2,13 +2,22 @@ variables:
   DEBIAN_FRONTEND: noninteractive
   APT_GET_INSTALL: "apt-get install --no-install-recommends -q -y"
   LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST: "load_detloclcheck('foo.mat'); assert(ismember('axis1', who)); assert(ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(ismember('zeropoint', who)); clear; foo; assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(~ismember('coordinate_system', who)); assert(~ismember('zeropoint', who)); load_detloclcheck('foo.mat', 'coordinate_system'); assert(~ismember('axis1', who)); assert(~ismember('axis2', who)); assert(ismember('coordinate_system', who)); assert(~ismember('zeropoint', who));"
+  DESCRIPTION: README.md
+  PDFMANUAL: manual_detloclcheck.pdf
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/$TAG"
+  PDFMANUALURL: "$PACKAGE_REGISTRY_URL/$PDFMANUAL"
 
 stages:
   - pre
   - build_test
+  - create_release
   - deploy
 
 .display_env:
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: on_success
   before_script:
     - date
     - uname -a
@@ -57,7 +66,7 @@ ruff:
     - ruff check --select NPY201 --fix --diff || echo "!!! todo !!!"
     - ruff check --select NPY201 --output-format=full
 
-.debian_based_test:
+.debian_based_test: &debian_based_test
   stage: build_test
   extends: .display_env
   variables:
@@ -131,13 +140,23 @@ ruff:
     - python3 --version
 
 debian-latest:
+  stage: build_test
   image:
     name: debian:latest
-  extends: .debian_based_test
+  extends: .display_env
+  script:
+    - *debian_based_test
+    - ./create_doc pdf
+    # upload pdf manual
+    - |
+        curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$PDFMANUAL" "$PDFMANUALURL"
+    - echo "TAG=$(detloclcheck version | cut -d ' ' -f 3)" > variables.env
+    - cat variables.env
   coverage: '/^TOTAL\s*[0-9]+\s*[0-9]+\s*([0-9]+\%)$/'
   artifacts:
     paths:
       - public
+      - manual_detloclcheck.pdf
     reports:
       coverage_report:
         coverage_format: cobertura
@@ -271,11 +290,41 @@ matlab:
     - detloclcheck find_checkerboard -f foo.png -output_format mat
     - matlab -batch "$LOAD_DETLOCLCHECK_OCTAVE_MATLAB_TEST"
 
+release_job:
+  stage: create_release
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  image:
+    # https://docs.gitlab.com/ee/user/project/releases/release_cicd_examples.html#create-release-metadata-in-a-custom-script
+    registry.gitlab.com/gitlab-org/release-cli:latest
+  extends: .display_env
+  script:
+    - echo "running release_job for $TAG"
+    - wget "https://zenodo.org/badge/DOI/10.5281/zenodo.15002509.svg"
+  release:
+    name: 'detloclcheck v$TAG'
+    description: '$DESCRIPTION'
+    tag_name: '$TAG'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: $PDFMANUAL
+          filepath: /$PDFMANUAL
+          url: $PDFMANUALURL
+          link_type: other
+  artifacts:
+    paths:
+      - "zenodo.15002509.svg"
+
 pages:
   stage: deploy
   image:
     name: alpine:latest
   rules:
+    - if: $CI_COMMIT_TAG
+      when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   dependencies:
     - debian-latest
