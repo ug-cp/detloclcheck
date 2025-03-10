@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-02-25
+:Date: 2025-03-10
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -118,12 +118,13 @@ def run_create_checkerboard_image(args):
                 {'coordinates': coordinates,
                  'zeropoint': zeropoint})
         log.info('wrote result to "%s"', output_filename)
+    return 0
 
 
 def run_visualize(args):
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-28
+    :Date: 2025-03-10
     :License: LGPL-3.0-or-later
     """
     # pylint: disable=import-outside-toplevel
@@ -155,13 +156,16 @@ def run_visualize(args):
             data = scipy.io.loadmat(data_file_name)
             coordinate_system = data['coordinate_system']
             zeropoint = numpy.reshape(data['zeropoint'], (2,))
-        # pylint: disable=possibly-used-before-assignment
+        else:
+            log.error('ERROR: do not understand file extension "%s"',
+                      file_extension)
+            return 1
         log.debug('axis1: %s', data['axis1'])
         log.debug('axis2: %s', data['axis2'])
         if visualize_image:
             gray_image = cv2.imread(
                 args.image_file_name[fid], cv2.COLOR_BGR2GRAY)
-            matplotlib.pyplot.imshow(gray_image, cmap="Greys")
+            matplotlib.pyplot.imshow(gray_image, cmap="gray")
         matplotlib.pyplot.plot(
             coordinate_system[:, 0, 0],
             coordinate_system[:, 0, 1],
@@ -179,6 +183,7 @@ def run_visualize(args):
             matplotlib.pyplot.show()
     if args.dosubplot:
         matplotlib.pyplot.show()
+    return 0
 
 
 def run_version(_):
@@ -189,7 +194,7 @@ def run_version(_):
     """
     version = importlib.metadata.version(__package__.split(".", maxsplit=1)[0])
     print(f'DetLocLCheck version {version}')
-    return sys.exit(0)
+    return 0
 
 
 def check_arg_file(data):
@@ -229,7 +234,7 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2025-02-24
+    :Date: 2025-03-10
     :License: LGPL-3.0-or-later
     """
     epilog = "Example:\n\n"
@@ -237,7 +242,7 @@ def my_argument_parser():
     epilog += "detloclcheck find_checkerboard -f foo.png\n"
     epilog += "detloclcheck visualize foo.json -i foo.png\n\n"
     epilog += "Author: Daniel Mohr\n"
-    epilog += "Date: 2025-02-20\n"
+    epilog += "Date: 2025-03-10\n"
     epilog += "DetLocLCheck Version: "
     epilog += importlib.metadata.version(
         __package__.split('.', maxsplit=1)[0]) + "\n"
@@ -540,6 +545,7 @@ def main():
     log.setLevel(logging.DEBUG)
     parser = my_argument_parser()
     args = parser.parse_args()
+    file_handler = None
     if hasattr(args, 'log_file') and (args.log_file is not None):
         file_handler = logging.handlers.WatchedFileHandler(args.log_file[0])
         file_handler.setFormatter(
@@ -553,10 +559,14 @@ def main():
                      importlib.metadata.version(
                          __package__.split('.', maxsplit=1)[0]))
             log.info("started as/with: %s", " ".join(sys.argv))
-        sys.exit(args.func(args))
+        exit_status = args.func(args)
     else:
         parser.print_help()
-        sys.exit(1)
+        exit_status = 1
+    if file_handler is not None:
+        file_handler.flush()
+    stdout_handler.flush()
+    sys.exit(exit_status)
 
 
 if __name__ == "__main__":
