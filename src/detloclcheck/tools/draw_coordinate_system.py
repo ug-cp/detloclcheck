@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-07-08
+:Date: 2025-02-24
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024, 2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
@@ -29,11 +29,11 @@ import numpy
 
 
 def draw_coordinate_system(
-        image, zeropoint, axis1, axis2, coordinate_system, factor=2):
+        image, zeropoint, axis1, axis2, coordinate_system, *, factor=2):
     """
     :Author: Daniel Mohr
     :Email: ddaniel.mohr@uni-greifswald.de
-    :Date: 2024-07-01
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
     ooimagescale = max(1, int(factor * 100/numpy.linalg.norm(axis1)))

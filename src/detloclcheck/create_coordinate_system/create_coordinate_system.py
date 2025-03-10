@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-28
+:Date: 2025-03-10
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -43,8 +43,12 @@ def _cal_coordinate_system(coordinates, zeropoint, axis1, axis2):
 
 
 def _find_better_axis(
-        coordinates, zeropoint, axis1, axis2, objectpoint, factor=1):
-    # pylint: disable=too-many-locals, too-many-branches
+        coordinates, zeropoint, axis1, axis2, objectpoint):
+    """
+    :Author: Daniel Mohr
+    :Email: daniel.mohr@uni-greifswald.de
+    :Date: 2025-03-10 (last change).
+    """
     # zeropoint[0] + (1 0) * naxis = coordinates[?, 0, 0]
     # zeropoint[1] + (0 1) * naxis = coordinates[?, 0, 1]
     # zeropoint[0] + (2 0) * naxis = coordinates[?, 0, 0]
@@ -57,12 +61,13 @@ def _find_better_axis(
     if objectpoint[1] == 0:
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (j, 0)
-            index = None
-            for i in range(coordinates.shape[0]):
-                if (coordinate_system[i, 1, :] == objctpnt).all():
-                    index = i
-                    break
-            if index is not None:
+            # `==` is the comparison for numpy, therefore we must disable
+            # linter checks for that:
+            # pylint: disable=singleton-comparison
+            index = numpy.where(
+                (coordinate_system[:, 1, :] == objctpnt).all(axis=1) == True)  # noqa: E712
+            if index[0].shape[0] > 0:
+                index = index[0][0]
                 indizes[j-1] = index
                 A[2*(j-1):2*(j-1)+2, :] = j * numpy.eye(2)
                 b[2*(j-1):2*(j-1)+2] = coordinates[index, 0, :] - zeropoint
@@ -72,12 +77,13 @@ def _find_better_axis(
     else:
         for j in range(1, 1+max(objectpoint)):
             objctpnt = (0, j)
-            index = None
-            for i in range(coordinates.shape[0]):
-                if (coordinate_system[i, 1, :] == objctpnt).all():
-                    index = i
-                    break
-            if index is not None:
+            # `==` is the comparison for numpy, therefore we must disable
+            # linter checks for that:
+            # pylint: disable=singleton-comparison
+            index = numpy.where(
+                (coordinate_system[:, 1, :] == objctpnt).all(axis=1) == True)  # noqa: E712
+            if index[0].shape[0] > 0:
+                index = index[0][0]
                 indizes[j-1] = index
                 A[2*(j-1):2*(j-1)+2, :] = j * numpy.eye(2)
                 b[2*(j-1):2*(j-1)+2] = coordinates[index, 0, :] - zeropoint
@@ -96,12 +102,12 @@ def _find_better_axis(
 
 
 def create_coordinate_system(
-        image, coordinates, max_distance_factor_range, min_sharpness=1000,
-        draw_images=(False, False, False)):
+        image, coordinates, max_distance_factor_range, *,
+        min_sharpness=1000, draw_images=(False, False, False)):
     """
     :Author: Daniel Mohr
     :Email: daniel.mohr@uni-greifswald.de
-    :Date: 2025-01-28 (last change).
+    :Date: 2025-03-10 (last change).
 
     :param image: 2 dimensional numpy array describing the image
     :param coordinates: numpy array with the coordinates of the corners;
@@ -112,6 +118,7 @@ def create_coordinate_system(
              otherwise (None, error_code, None, None).
              possible error codes: 2, 3, 4, 5, 6
     """
+    # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     log = logging.getLogger('detloclcheck.create_coordinate_system')
     centerpoint = 0.5 * numpy.array(image.shape)
     n = coordinates.shape[0]
@@ -193,7 +200,7 @@ def create_coordinate_system(
         for i in range(2, 4):
             not_found = 0
             res = _find_better_axis(
-                coordinates, zeropoint, axis1, axis2, (i, 0), 1.0/i)
+                coordinates, zeropoint, axis1, axis2, (i, 0))
             if res is not None:
                 axis1 = res
                 log.debug('better axis1 (%i): |%s| = %f',
@@ -202,7 +209,7 @@ def create_coordinate_system(
             else:
                 not_found += 1
             res = _find_better_axis(
-                coordinates, zeropoint, axis1, axis2, (0, i), 1.0/i)
+                coordinates, zeropoint, axis1, axis2, (0, i))
             if res is not None:
                 axis2 = res
                 log.debug('better axis2 (%i): |%s| = %f',
@@ -337,11 +344,13 @@ def create_coordinate_system(
             return None, 4, None, None
         log.debug('marker found at (%i,%i) with %s', j, i, markerdirection)
         # adapt coordinate system
-        for k in range(coordinate_system.shape[0]):
-            if ((coordinate_system[k, 1, 1] == i) and
-                    (coordinate_system[k, 1, 0] == j)):
-                zeropoint = coordinate_system[k, 0, :].reshape((2,))
-                break
+        # `==` is the comparison for numpy, therefore we must disable
+        # linter checks for that:
+        # pylint: disable=singleton-comparison
+        index = numpy.where(
+                (coordinate_system[:, 1, :] == (j, i)).all(axis=1) == True)  # noqa: E712
+        if index[0].shape[0] > 0:
+            zeropoint = coordinate_system[index[0][0], 0, :].reshape((2,))
         coordinate_system[:, 1, 1] -= i
         coordinate_system[:, 1, 0] -= j
         # now we have to decide which one is x and which one is y

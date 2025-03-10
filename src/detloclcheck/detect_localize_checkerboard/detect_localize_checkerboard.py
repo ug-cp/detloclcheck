@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024 Daniel Mohr <daniel.mohr@uni-greifswald.de>
+# SPDX-FileCopyrightText: 2024-2025 Daniel Mohr <daniel.mohr@uni-greifswald.de>
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -10,9 +10,9 @@
               L shape marker using template matching.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2024-09-02
+:Date: 2025-02-24
 :License: LGPL-3.0-or-later
-:Copyright: (C) 2024 Daniel Mohr
+:Copyright: (C) 2024, 2025 Daniel Mohr
 """
 # This file is part of DetLocLCheck.
 #
@@ -37,19 +37,40 @@ from detloclcheck.tools import filter_blurry_corners
 
 
 def detect_localize_checkerboard(
-        image, crosssizes, angles,
+        image, crosssizes, angles, *,
         hit_bound=0.93, min_sharpness=(100, 500, 1000), run_parallel=False,
         max_distance_factor_range=(
             1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.),
         log=None):
     """
     :Author: Daniel Mohr
-    :Date: 2024-09-02
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
+
+    Detect and localize a checkerboard in an image.
+
+    :param image: numpy array, the input image
+    :param crosssizes: tuple, size of the crosses in the checkerboard
+    :param angles: tuple, a guess of the angle(s) of the crosses
+                   in the checkerboard
+    :param hit_bound: the hit bound
+    :param min_sharpness: tuple, the minimum sharpness at different steps.
+                          The first low values allow detection of the
+                          zero point, and the last value defines which
+                          crosses should be used in the end.
+    :param run_parallel: whether to run the detection in parallel
+    :param max_distance_factor_range: the maximum distance factor range
+    :param log: a logger instance
 
     :return: (coordinate_system, zeropoint, axis1, axis2) on success,
              otherwise (None, error_code, None, None).
              possible error codes: 1, 2, 3, 4, 5, 6, 7
+    Notes:
+    This function uses :func:`detloclcheck.find_checkerboard.find_checkerboard`
+    to detect the checkerboard and then
+    :func:`detloclcheck.tools.filter_blurry_corners`
+    to filter out blurry corners. Finally, :func:`create_coordinate_system`
+    is used to obtain the world coordinates.
 
     Example 1:
 

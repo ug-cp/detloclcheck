@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-01-29
+:Date: 2025-02-24
 :License: LGPL-3.0-or-later
 :Copyright: (C) 2024, 2025 Daniel Mohr
 
@@ -41,16 +41,16 @@ import numpy
 class ParallelCornerSubPix():
     """
     :Author: Daniel Mohr
-    :Date: 2025-01-29
+    :Date: 2025-02-24
     :License: LGPL-3.0-or-later
     """
-    def __init__(self, image, coordinates, window_size,
+    def __init__(self, image, coordinates, window_size, *,
                  zero_zone=(-1, -1),
                  criteria_max_count=42,
                  criteria_epsilon=0.001):
         """
         :Author: Daniel Mohr
-        :Date: 2025-01-29
+        :Date: 2025-02-24
         :License: LGPL-3.0-or-later
 
         runs :func:`cv2.cornerSubPix` parallel using
