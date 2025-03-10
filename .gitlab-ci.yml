@@ -147,6 +147,7 @@ debian-latest:
     - *debian_based_test
     - ./create_doc pdf
     # upload pdf manual
+    - $APT_GET_INSTALL curl
     - |
         curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "$PDFMANUAL" "$PDFMANUALURL"
     - echo "TAG=$(detloclcheck version | cut -d ' ' -f 3)" > variables.env
