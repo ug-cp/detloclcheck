@@ -119,6 +119,12 @@ for i in range(coordinate_system.shape[0]):
 matplotlib.pyplot.show()
 ```
 
+## Citation
+
+If you are using detloclcheck, please make it clear by citing:
+
+Mohr, D. (2025). detloclcheck. Zenodo. https://doi.org/10.5281/zenodo.15002509
+
 ## copyright + license
 
 Author: Daniel Mohr.

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: detloclcheck
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Daniel
+    family-names: Mohr
+    orcid: https://orcid.org/0000-0002-9382-6586
+    affiliation: Institute of Physics, University of Greifswald, Greifswald, Germany
+enhofen, Germany
+identifiers:
+  - description: The concept DOI of the work.
+    type: doi
+    value: 10.5281/zenodo.15002509
+repository-code: tbd
+url: tbd
+abstract: |-
+  DetLocLCheck is a software tool for the detection and localization of checkerboard calibration targets containing L-shape markers using template matching. It utilizes OpenCV's cornerSubPix function to achieve subpixel accuracy. The tool can be installed using pip and requires dependencies such as numpy and opencv-python. DetLocLCheck can be used to detect checkerboards in multiple images and assign world coordinates to the detected markers. It also allows for parallel processing and visualization of the results. The tool is licensed under LGPL-3.0-or-later and is suitable for applications in computer vision and robotics.
+keywords:
+  - camera calibration
+  - checkerboard
+  - L-shaped marker
+  - template matching
+  - OpenCV
+  - computer vision
+  - calibration target
+  - marker localization
+license: GPL-3.0-or-later
+doi: 10.5281/zenodo.14962489
