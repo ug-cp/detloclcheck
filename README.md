@@ -1,3 +1,13 @@
+---
+author: Daniel Mohr
+date: 2025-03-12
+license: LGPL-3.0-or-later
+home: https://gitlab.com/ug-cp/detloclcheck
+documentation: https://ug-cp.gitlab.io/detloclcheck
+latest_release: https://gitlab.com/ug-cp/detloclcheck/-/releases/permalink/latest
+doi: https://doi.org/10.5281/zenodo.15002509
+---
+
 # DetLocLCheck -- Detection, Localization, Checkerboard, L marker
 
 ## intro
@@ -125,12 +135,14 @@ If you are using detloclcheck, please make it clear by citing:
 
 Mohr, D. (2025). detloclcheck. Zenodo. https://doi.org/10.5281/zenodo.15002509
 
+If you are using a specific version, please use the corresponding DOI.
+
 ## copyright + license
 
 Author: Daniel Mohr.
 
-Date: 2025-03-10 (last change).
+Date: 2025-03-12 (last change).
 
 License: LGPL-3.0-or-later
 
-Copyright (C) 2024, 2025 Daniel Mohr
+Copyright (C) 2024-2025 Daniel Mohr

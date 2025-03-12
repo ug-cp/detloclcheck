@@ -70,6 +70,12 @@ ruff:
 
 .debian_based_test:
   stage: build_test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   extends: .display_env
   script: &debian_based_test
     - apt-get update
@@ -99,6 +105,12 @@ ruff:
 
 .almalinux_based_test:
   stage: build_test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   extends: .display_env
   variables:
     PIP_INSTALL: "pip3 install --user"
@@ -120,6 +132,12 @@ ruff:
 
 .opensuse_based_test:
   stage: build_test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   extends: .display_env
   variables:
     PIP_INSTALL: "pip3 install --user"
@@ -172,6 +190,12 @@ debian-latest-arm64:
 
 ubuntu-20.04:
   stage: build_test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   image:
     name: ubuntu:20.04
   extends: .display_env
@@ -243,6 +267,12 @@ opensuse_leap_latest-arm64:
 
 octave:
   stage: build_test
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   image:
     name: debian:latest
   extends: .display_env
@@ -302,7 +332,7 @@ release_job:
   rules:
     - if: $CI_COMMIT_TAG
       when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_SERVER_HOST == "gitlab.com"
   image:
     # https://docs.gitlab.com/ee/user/project/releases/release_cicd_examples.html#create-release-metadata-in-a-custom-script
     registry.gitlab.com/gitlab-org/release-cli:latest
@@ -347,3 +377,20 @@ pages:
       - documentation_pdf.svg
       - documentation_html.svg
       - public
+
+trigger_deploy2zenodo:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_SERVER_HOST == "gitlab.com"
+  variables:
+    TAG: $TAG
+    TAG_COMMIT_SHA: $CI_COMMIT_SHA
+    TAG_COMMIT_TIMESTAMP: $CI_COMMIT_TIMESTAMP
+  trigger:
+    project: daniel_mohr/deploy_detloclcheck_to_zenodo
+    strategy: depend
+    forward:
+      yaml_variables: true
+      pipeline_variables: false
