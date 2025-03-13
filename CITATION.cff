@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: detloclcheck
+title: DetLocLCheck
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 authors:
@@ -24,5 +24,5 @@ keywords:
   - computer vision
   - calibration target
   - marker localization
-license: GPL-3.0-or-later
+license: LGPL-3.0-or-later
 doi: 10.5281/zenodo.15002509
