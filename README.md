@@ -13,10 +13,6 @@ doi: https://doi.org/10.5281/zenodo.15002509
 
 ## intro
 
-`DetLocLCheck` is a software tool for Detection and Localization of a
-Checkerboard calibration target containing L shape marker using
-template matching.
-
 `DetLocLCheck` is a software tool designed for the Detection and Localization
 of Checkerboard calibration targets containing L-shape markers.
 This tool utilizes template matching for initial detection,
@@ -25,7 +21,7 @@ followed by refinement using OpenCV's
 function to achieve subpixel accuracy.
 Finally, world coordinates are assigned to the detected markers.
 
-![Example image of a checkerboard calibration target containing L shape marker](checkerboard_example_image.png)
+![Example image of a checkerboard calibration target containing L-shape marker](checkerboard_example_image.png)
 
 ## install
 
@@ -60,20 +56,20 @@ pip3 install opencv-python
 The recommended way to install `DetLocLCheck` is:
 
 ```sh
-pip3 install --break-system-packages --user .
+pip3 install --break-system-packages --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
 ```
 
 On Ubuntu 22.04 the new flag `--break-system-packages` is not available and
 you should do:
 
 ```sh
-pip3 install --user .
+pip3 install --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
 ```
 
 For development you could install an editable version, e. g.:
 
 ```sh
-pip3 install --break-system-packages -e .
+pip3 install --break-system-packages -e https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
 ```
 
 This method only works with Python 3.10 and later.
@@ -100,7 +96,7 @@ detloclcheck visualize foo.json -i foo.png
 ![Example image of the result of detloclcheck visualize](foo_visualized.png)
 
 You can also use the Python module `detloclcheck` instead of the
-command-line interface:
+command-line interface.
 
 ```py
 import cv2

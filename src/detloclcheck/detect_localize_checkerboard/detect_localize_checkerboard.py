@@ -7,7 +7,7 @@
 =============================================================================
    :synopsis: :mod:`detloclcheck` is a python module for Detection and
               Localization of a Checkerboard calibration target containing
-              L shape marker using template matching.
+              L-shape marker using template matching.
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
 :Date: 2025-02-24
