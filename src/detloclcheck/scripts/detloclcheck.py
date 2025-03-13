@@ -249,7 +249,7 @@ def my_argument_parser():
     epilog += "License: LGPL-3.0-or-later"
     epilog += "\n\n"
     parser = argparse.ArgumentParser(
-        description='detloclcheck is a python script.',
+        description='DetLocLCheck is a python script.',
         epilog=epilog,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     # subparsers
@@ -501,7 +501,7 @@ def my_argument_parser():
         type=str,
         metavar='data',
         help='Name of the data file(s) to visualize. '
-        'This could be the of detloclcheck find_checkerboard and a '
+        'This could be the output of detloclcheck find_checkerboard and a '
         'json or a mat file.')
     parser_visualize.add_argument(
         '-image_file_name',
@@ -521,8 +521,8 @@ def my_argument_parser():
     parser_version = subparsers.add_parser(
         'version',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='return version of detloclcheck',
-        description='display version information of detloclcheck',
+        help='return version of DetLocLCheck',
+        description='display version information of DetLocLCheck',
         epilog=epilog)
     parser_version.set_defaults(
         func=run_version)

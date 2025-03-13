@@ -100,18 +100,18 @@ command-line interface.
 
 ```py
 import cv2
-import json
 
 import matplotlib.pyplot
-import numpy
+
+from detloclcheck.detect_localize_checkerboard import \
+    detect_localize_checkerboard
 
 image_name = 'foo.png'
-data_name = 'foo.json'
 gray_image = cv2.imread(image_name, cv2.COLOR_BGR2GRAY)
-with open(data_name) as fd:
-    data = json.load(fd)
-coordinate_system = numpy.array(data['coordinate_system'])
-zeropoint = numpy.array(data['zeropoint'])
+coordinate_system, zeropoint, axis1, axis2 = \
+    detect_localize_checkerboard(
+        gray_image, (11, 23),
+        (0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
 matplotlib.pyplot.imshow(gray_image, cmap="Greys")
 matplotlib.pyplot.plot(
     coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
