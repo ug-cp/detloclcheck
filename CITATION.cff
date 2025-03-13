@@ -7,7 +7,6 @@ authors:
     family-names: Mohr
     orcid: https://orcid.org/0000-0002-9382-6586
     affiliation: Institute of Physics, University of Greifswald, Greifswald, Germany
-enhofen, Germany
 identifiers:
   - description: The concept DOI of the work.
     type: doi
@@ -26,4 +25,4 @@ keywords:
   - calibration target
   - marker localization
 license: GPL-3.0-or-later
-doi: 10.5281/zenodo.14962489
+doi: 10.5281/zenodo.15002509
