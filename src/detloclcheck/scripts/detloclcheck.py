@@ -263,7 +263,7 @@ def my_argument_parser():
         help='For more help: detloclcheck find_checkerboard -h',
         description='detloclcheck find_checkerboard is a python script for '
         'detection and localization of a checkerboard calibration target '
-        'containing L shape marker using template matching.',
+        'containing L-shape marker using template matching.',
         epilog=epilog)
     parser_find_checkerboard.set_defaults(func=run_find_checkerboard)
     parser_find_checkerboard.add_argument(

@@ -6,9 +6,9 @@ build-backend = "hatchling.build"
 name = "DetLocLCheck"
 version = "0.1.0"
 authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
-description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L shape marker using template matching."
+description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L-shape marker using template matching."
 keywords=["calibration target", "checkerboard", "detection", "localization",
-          "marker", "L shape marker ", "template matching"]
+          "marker", "L-shape marker ", "template matching"]
 readme = "README.md"
 
 requires-python = ">=3.9"

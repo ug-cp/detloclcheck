@@ -6,10 +6,6 @@
 DetLocLCheck's documentation
 ============================
 
-``DetLocLCheck`` is a software tool for Detection and Localization of a
-Checkerboard calibration target containing L shape marker using template
-matching.
-
 ``DetLocLCheck`` is a software tool designed for the Detection and
 Localization of Checkerboard calibration targets containing L-shape
 markers. This tool utilizes template matching for initial detection,
@@ -19,9 +15,9 @@ function to achieve subpixel accuracy. Finally, world coordinates are
 assigned to the detected markers.
 
 .. figure:: checkerboard_example_image.png
-   :alt: Example image of a checkerboard calibration target containing L shape marker
+   :alt: Example image of a checkerboard calibration target containing L-shape marker
 
-   Example image of a checkerboard calibration target containing L shape marker
+   Example image of a checkerboard calibration target containing L-shape marker
 
 .. toctree::
    :maxdepth: 2
