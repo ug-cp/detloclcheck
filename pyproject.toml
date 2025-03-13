@@ -7,8 +7,9 @@ name = "DetLocLCheck"
 version = "0.1.0"
 authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
 description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L-shape marker using template matching."
-keywords=["calibration target", "checkerboard", "detection", "localization",
-          "marker", "L-shape marker ", "template matching"]
+keywords=["camera calibration", "checkerboard", "L-shape marker ",
+          "template matching", "OpenCV", "computer vision",
+	  "calibration target", "marker localization"]
 readme = "README.md"
 
 requires-python = ">=3.9"
@@ -19,6 +20,12 @@ dependencies = ["numpy", "scipy"]
 [project.license]
 file = "LICENSE.md"
 name = "LGPL-3.0-or-later"
+
+[project.urls]
+homepage = "https://gitlab.com/projects/67934434"
+documentation = "https://ug-cp.gitlab.io/detloclcheck"
+repository = "https://gitlab.com/ug-cp/detloclcheck.git"
+download = "https://gitlab.com/ug-cp/detloclcheck/-/releases/permalink/latest"
 
 [project.scripts]
 detloclcheck = "detloclcheck.scripts.detloclcheck:main"

@@ -111,7 +111,7 @@ gray_image = cv2.imread(image_name, cv2.COLOR_BGR2GRAY)
 coordinate_system, zeropoint, axis1, axis2 = \
     detect_localize_checkerboard(
         gray_image, (11, 23),
-	(0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
+        (0.0,  22.5,  45.0,  67.5,  90.0, 112.5, 135.0, 157.5))
 matplotlib.pyplot.imshow(gray_image, cmap="Greys")
 matplotlib.pyplot.plot(
     coordinate_system[:, 0, 0], coordinate_system[:, 0, 1],
