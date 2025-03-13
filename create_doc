@@ -13,7 +13,8 @@ function create_pdf() {
 function create_html() {
     skipcp=$1
     if [ "$skipcp" != "true" ]; then
-	cp -p README.md LICENSE.md LICENSE.LESSER.md checkerboard_example_image.png foo_visualized.png docs/
+	sed '/^---$/,/^---$/d' README.md > docs/README.md
+	cp -p LICENSE.md LICENSE.LESSER.md checkerboard_example_image.png foo_visualized.png docs/
     fi
     if [ -f docs/test_coverage_report/index.html ]; then
 	rm docs/test_coverage_report/index.html
