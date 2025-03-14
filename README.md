@@ -129,7 +129,7 @@ matplotlib.pyplot.show()
 
 If you are using detloclcheck, please make it clear by citing:
 
-Mohr, D. (2025). detloclcheck. Zenodo. https://doi.org/10.5281/zenodo.15002509
+Mohr, D. (2025). DetLocLCheck. Zenodo. https://doi.org/10.5281/zenodo.15002509
 
 If you are using a specific version, please use the corresponding DOI.
 
