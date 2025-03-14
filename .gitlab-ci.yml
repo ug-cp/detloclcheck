@@ -372,11 +372,17 @@ pages:
     - pipx install anybadge
     - anybadge -l "documentation as" -v pdf -f documentation_pdf.svg -c orange -o
     - anybadge -l "documentation as" -v html -f documentation_html.svg -c fuchsia -o
+    - anybadge -l "home" -v detloclcheck -f home.svg -c darkblue -o
+    - anybadge -l "mirror" -v detloclcheck -f mirror.svg -c brown -o
+    - wget "https://zenodo.org/badge/DOI/10.5281/zenodo.15002509.svg"
   artifacts:
     paths:
       - documentation_pdf.svg
       - documentation_html.svg
+      - home.svg
+      - mirror.svg
       - public
+      - "zenodo.15002509.svg"
 
 trigger_deploy2zenodo:
   stage: deploy

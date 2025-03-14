@@ -1,6 +1,5 @@
 ---
 author: Daniel Mohr
-date: 2025-03-13
 license: LGPL-3.0-or-later
 home: https://gitlab.com/ug-cp/detloclcheck
 mirror: https://github.com/ug-cp/detloclcheck
@@ -96,7 +95,7 @@ detloclcheck visualize foo.json -i foo.png
 ![Example image of the result of detloclcheck visualize](foo_visualized.png)
 
 You can also use the Python module `detloclcheck` instead of the
-command-line interface.
+command-line interface:
 
 ```py
 import cv2
@@ -138,7 +137,7 @@ If you are using a specific version, please use the corresponding DOI.
 
 Author: Daniel Mohr.
 
-Date: 2025-03-13 (last change).
+Date: 2025-03-14 (last change).
 
 License: LGPL-3.0-or-later
 
