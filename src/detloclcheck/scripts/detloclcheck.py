@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-03-10
+:Date: 2025-04-11
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -124,7 +124,7 @@ def run_create_checkerboard_image(args):
 def run_visualize(args):
     """
     :Author: Daniel Mohr
-    :Date: 2025-03-10
+    :Date: 2025-04-11
     :License: LGPL-3.0-or-later
     """
     # pylint: disable=import-outside-toplevel
@@ -166,6 +166,9 @@ def run_visualize(args):
             gray_image = cv2.imread(
                 args.image_file_name[fid], cv2.COLOR_BGR2GRAY)
             matplotlib.pyplot.imshow(gray_image, cmap="gray")
+        if coordinate_system.shape[0] == 0:
+            log.warning('no data to plot, skipping!')
+            continue
         matplotlib.pyplot.plot(
             coordinate_system[:, 0, 0],
             coordinate_system[:, 0, 1],
@@ -234,7 +237,7 @@ def check_arg_crosssizes(data):
 def my_argument_parser():
     """
     :Author: Daniel Mohr
-    :Date: 2025-03-10
+    :Date: 2025-04-11
     :License: LGPL-3.0-or-later
     """
     epilog = "Example:\n\n"
@@ -242,7 +245,7 @@ def my_argument_parser():
     epilog += "detloclcheck find_checkerboard -f foo.png\n"
     epilog += "detloclcheck visualize foo.json -i foo.png\n\n"
     epilog += "Author: Daniel Mohr\n"
-    epilog += "Date: 2025-03-10\n"
+    epilog += "Date: 2025-04-11\n"
     epilog += "DetLocLCheck Version: "
     epilog += importlib.metadata.version(
         __package__.split('.', maxsplit=1)[0]) + "\n"
