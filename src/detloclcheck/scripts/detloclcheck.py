@@ -127,7 +127,7 @@ def run_visualize(args):
     :Date: 2025-04-11
     :License: LGPL-3.0-or-later
     """
-    # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel,too-many-branches,too-many-locals
     import matplotlib.pyplot
     log = logging.getLogger('detloclcheck.run_visualize')
     if args.dosubplot:
