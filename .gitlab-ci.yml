@@ -33,7 +33,7 @@ pre-commit:
   script:
     - apk add --no-cache git npm pre-commit
     - pre-commit --version
-    - pre-commit run --all-files
+    - pre-commit run --all-files --show-diff-on-failure
 
 pycodestyle:
   stage: pre
