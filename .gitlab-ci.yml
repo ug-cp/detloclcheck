@@ -143,12 +143,13 @@ ruff:
     PIP_INSTALL: "pip3 install --user"
     PIP_UNINSTALL: "pip3 uninstall --yes"
   script:
-    - zypper --non-interactive install git python311-hatchling python311-numpy python311-opencv python311-pip python3-scipy python311-pytest python311-pytest-cov python311-pytest-xdist
-    - $PIP_INSTALL .
+    - zypper --non-interactive install git python311 python311-pip
     - export PATH="$PATH":~/.local/bin
+    - $PIP_INSTALL .[opencv-python-headless]
     - detloclcheck -h
     - detloclcheck create_checkerboard_image -h
     - detloclcheck find_checkerboard -h
+    - $PIP_INSTALL .[test,opencv-python-headless]
     - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
     - $PIP_UNINSTALL DetLocLCheck
     - $PIP_INSTALL -e .

@@ -33,6 +33,8 @@ detloclcheck = "detloclcheck.scripts.detloclcheck:main"
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov", "pytest-xdist"]
 docs = ["sphinx", "sphinx-argparse"]
+opencv-python = ["opencv-python"]
+opencv-python-headless = ["opencv-python-headless"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/conf.py" = ["F401"]

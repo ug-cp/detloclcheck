@@ -55,23 +55,35 @@ pip3 install opencv-python
 The recommended way to install `DetLocLCheck` is:
 
 ```sh
-pip3 install --break-system-packages --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
+pip3 install --break-system-packages --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.1/detloclcheck-0.1.1.zip
 ```
 
 On Ubuntu 22.04 the new flag `--break-system-packages` is not available and
 you should do:
 
 ```sh
-pip3 install --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
+pip3 install --user https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.1/detloclcheck-0.1.1.zip
 ```
 
 For development you could install an editable version, e. g.:
 
 ```sh
-pip3 install --break-system-packages -e https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.0/detloclcheck-0.1.0.zip
+pip3 install --break-system-packages -e https://gitlab.com/ug-cp/detloclcheck/-/archive/0.1.1/detloclcheck-0.1.1.zip
 ```
 
 This method only works with Python 3.10 and later.
+
+If you really want to use the latest package via `pip` you can get the repo and do:
+
+```sh
+pip3 install --user .[opencv-python]
+```
+
+Or for the headless version of opencv:
+
+```sh
+pip3 install --user .[opencv-python-headless]
+```
 
 ## Example
 
@@ -137,7 +149,7 @@ If you are using a specific version, please use the corresponding DOI.
 
 Author: Daniel Mohr.
 
-Date: 2025-03-14 (last change).
+Date: 2025-07-16 (last change).
 
 License: LGPL-3.0-or-later
 
