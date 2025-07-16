@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "DetLocLCheck"
-version = "0.1.1"
+version = "0.1.2"
 authors = [{name="Daniel Mohr", email="daniel.mohr@uni-greifswald.de"}]
 description = "`DetLocLCheck` is a software tool for Detection and Localization of a Checkerboard calibration target containing L-shape marker using template matching."
 keywords=["camera calibration", "checkerboard", "L-shape marker ",
@@ -32,7 +32,9 @@ detloclcheck = "detloclcheck.scripts.detloclcheck:main"
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov", "pytest-xdist"]
-docs = ["sphinx", "sphinx-argparse"]
+docs = ["recommonmark", "sphinx", "sphinx-argparse"]
+opencv-python = ["opencv-python"]
+opencv-python-headless = ["opencv-python-headless"]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/conf.py" = ["F401"]

@@ -33,7 +33,7 @@ pre-commit:
   script:
     - apk add --no-cache git npm pre-commit
     - pre-commit --version
-    - pre-commit run --all-files
+    - pre-commit run --all-files --show-diff-on-failure
 
 pycodestyle:
   stage: pre
@@ -85,6 +85,8 @@ ruff:
     - $PIP_INSTALL .
     - ls -lah "$HOME"/.local/lib/*/site-packages/
     - export PATH="$PATH":~/.local/bin
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
     - detloclcheck find_checkerboard -h
     - $PIP_UNINSTALL DetLocLCheck
     - ls -lah "$HOME"/.local/lib/*/site-packages/
@@ -121,6 +123,8 @@ ruff:
     - dnf install -y epel-release
     - dnf config-manager --set-enabled crb
     - dnf install -y python3-opencv python3-pytest-cov python3-pytest-xdist
+    - python3 --version
+    - pip3 --version
     - $PIP_INSTALL .
     - export PATH="$PATH":~/.local/bin
     - detloclcheck -h
@@ -143,18 +147,21 @@ ruff:
     PIP_INSTALL: "pip3 install --user"
     PIP_UNINSTALL: "pip3 uninstall --yes"
   script:
-    - zypper --non-interactive install git python311-hatchling python311-numpy python311-opencv python311-pip python3-scipy python311-pytest python311-pytest-cov python311-pytest-xdist
-    - $PIP_INSTALL .
+    - zypper --non-interactive install git python311 python311-pip
+    - python3.11 --version
+    - pip3 --version
     - export PATH="$PATH":~/.local/bin
+    - $PIP_INSTALL ".[opencv-python-headless]"
     - detloclcheck -h
     - detloclcheck create_checkerboard_image -h
     - detloclcheck find_checkerboard -h
+    - $PIP_INSTALL ".[test]"
     - pytest --numprocesses=auto --cov=detloclcheck --no-cov-on-fail --cov-report=html:coverage_report/ --cov-report=term:skip-covered --verbose tests/main.py
     - $PIP_UNINSTALL DetLocLCheck
     - $PIP_INSTALL -e .
     - detloclcheck -h
     - $PIP_UNINSTALL DetLocLCheck
-    - python3 --version
+    - python3.11 --version
 
 debian-latest:
   stage: build_test
@@ -180,6 +187,48 @@ debian-latest:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
+
+debian-latest-venv-pip-latest:
+  stage: build_test
+  image:
+    name: debian:latest
+  variables:
+    PIP_INSTALL: "pip3 install"
+    PIP_UNINSTALL: "pip3 uninstall --yes"
+    VENV_PATH: "$HOME/.venv_DetLocLCheck"
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
+  extends: .display_env
+  script:
+    - apt-get update
+    - $APT_GET_INSTALL python3-pip python3-venv
+    - python3 --version
+    - pip3 --version
+    - python3 -m venv --upgrade-deps "$VENV_PATH"
+    - . "$VENV_PATH"/bin/activate
+    - pip3 --version
+    - $PIP_INSTALL ".[opencv-python-headless]"
+    - pip3 list --local
+    - detloclcheck -h
+    - detloclcheck create_checkerboard_image -h
+    - detloclcheck find_checkerboard -h
+    - $PIP_INSTALL ".[test]"
+    - pip3 list --local
+    - pytest --numprocesses=auto --cov=detloclcheck --cov-report=html:coverage_report/ --cov-report=term --cov-report=xml --verbose tests/main.py
+    - $APT_GET_INSTALL latexmk texlive-latex-extra texlive-latex-recommended make rsync tex-gyre
+    - $PIP_INSTALL ".[docs]"
+    - pip3 list --local
+    - ./create_doc
+    - $PIP_UNINSTALL DetLocLCheck
+    - deactivate
+  artifacts:
+    paths:
+      - manual_detloclcheck
+      - manual_detloclcheck.pdf
 
 debian-latest-arm64:
   image:

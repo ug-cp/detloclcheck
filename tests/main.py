@@ -17,8 +17,8 @@ Or you can run only one test, e. g.::
   pytest-3 -k TestScriptsExecutable main.py
 """
 
-import subprocess
-import tempfile
+import subprocess  # nosec B404
+import tempfile  # nosec B404
 import unittest
 import os
 
@@ -80,7 +80,7 @@ class TestScriptsExecutable(unittest.TestCase):
         env python3 main.py \
           TestScriptsExecutable.test_detloclcheck_executable_1
         """
-        cpi = subprocess.run(
+        cpi = subprocess.run(  # nosec B602, B607
             "detloclcheck",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True, timeout=self.subprocess_timeout, check=False)
@@ -96,7 +96,7 @@ class TestScriptsExecutable(unittest.TestCase):
         env python3 main.py \
           TestScriptsExecutable.test_detloclcheck_executable_2
         """
-        cpi = subprocess.run(
+        cpi = subprocess.run(  # nosec B602, B607
             "detloclcheck -h",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True, timeout=self.subprocess_timeout, check=True)
@@ -116,7 +116,7 @@ class TestScriptsExecutable(unittest.TestCase):
         env python3 main.py \
           TestScriptsExecutable.test_detloclcheck_executable_3
         """
-        cpi = subprocess.run(
+        cpi = subprocess.run(  # nosec B602, B607
             "detloclcheck version",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True, timeout=self.subprocess_timeout, check=True)
@@ -133,7 +133,7 @@ class TestScriptsExecutable(unittest.TestCase):
         env python3 main.py \
         TestScriptsExecutable.test_detloclcheck_find_checkerboard_executable
         """
-        cpi = subprocess.run(
+        cpi = subprocess.run(  # nosec B602, B607
             "detloclcheck find_checkerboard -h",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True, timeout=self.subprocess_timeout, check=True)
@@ -154,7 +154,7 @@ class TestScriptsExecutable(unittest.TestCase):
         env python3 main.py \
         TestScriptsExecutable.test_detloclcheck_create_checkerboard_executable
         """
-        cpi = subprocess.run(
+        cpi = subprocess.run(  # nosec B602, B607
             "detloclcheck create_checkerboard_image -h",
             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             shell=True, timeout=self.subprocess_timeout, check=True)
@@ -178,7 +178,7 @@ class TestScriptsExecutable(unittest.TestCase):
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, "foo.png")
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck create_checkerboard_image "
                 "-outfile " + filename + " -integrate_method 0",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -196,7 +196,7 @@ class TestScriptsExecutable(unittest.TestCase):
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, "bar.png")
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck create_checkerboard_image "
                 "-outfile " + filename + " -integrate_method 1",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -214,7 +214,7 @@ class TestScriptsExecutable(unittest.TestCase):
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, "baz.png")
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck create_checkerboard_image "
                 "-outfile " + filename + " -integrate_method 2",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -231,7 +231,7 @@ class TestScriptsExecutable(unittest.TestCase):
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, "foo.png")
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck create_checkerboard_image "
                 "-outfile " + filename + " -integrate_method 0",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -240,7 +240,7 @@ class TestScriptsExecutable(unittest.TestCase):
             data_filename = \
                 os.path.splitext(filename)[0] + '_ground_truth' + '.' + 'json'
             self.assertTrue(os.path.isfile(data_filename))
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck find_checkerboard "
                 "-f " + filename + " -crosssizes 11",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -259,7 +259,7 @@ class TestScriptsExecutable(unittest.TestCase):
         filename = "foo.png"
         with tempfile.TemporaryDirectory() as tmpdir:
             filename = os.path.join(tmpdir, "bar.png")
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck create_checkerboard_image "
                 "-outfile " + filename + " -integrate_method 0 "
                 "-output_format mat",
@@ -269,7 +269,7 @@ class TestScriptsExecutable(unittest.TestCase):
             data_filename = \
                 os.path.splitext(filename)[0] + '_ground_truth' + '.' + 'mat'
             self.assertTrue(os.path.isfile(data_filename))
-            subprocess.run(
+            subprocess.run(  # nosec B602
                 "detloclcheck find_checkerboard "
                 "-f " + filename + " -crosssizes 11 -o mat",
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,

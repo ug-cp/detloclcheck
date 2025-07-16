@@ -5,7 +5,7 @@
 """
 :Author: Daniel Mohr
 :Email: daniel.mohr@uni-greifswald.de
-:Date: 2025-04-11
+:Date: 2025-06-27
 :License: LGPL-3.0-or-later
 """
 # This file is part of DetLocLCheck.
@@ -124,7 +124,7 @@ def run_create_checkerboard_image(args):
 def run_visualize(args):
     """
     :Author: Daniel Mohr
-    :Date: 2025-04-11
+    :Date: 2025-06-27
     :License: LGPL-3.0-or-later
     """
     # pylint: disable=import-outside-toplevel,too-many-branches,too-many-locals
@@ -133,7 +133,10 @@ def run_visualize(args):
     if args.dosubplot:
         ncolumns = int(numpy.sqrt(len(args.data_file_name)))
         nrows = int(numpy.ceil(len(args.data_file_name) / ncolumns))
-        assert ncolumns * nrows >= len(args.data_file_name)
+        if ncolumns * nrows < len(args.data_file_name):
+            raise ValueError(
+                "something went wrong in 'run_visualize': "
+                f"{ncolumns * nrows} < {len(args.data_file_name)}")
     for fid, data_file_name in enumerate(args.data_file_name):
         if args.dosubplot:
             matplotlib.pyplot.subplot(
