@@ -161,7 +161,7 @@ ruff:
     - $PIP_INSTALL -e .
     - detloclcheck -h
     - $PIP_UNINSTALL DetLocLCheck
-    - python3 --version
+    - python3.11 --version
 
 debian-latest:
   stage: build_test
@@ -196,6 +196,12 @@ debian-latest-venv-pip-latest:
     PIP_INSTALL: "pip3 install"
     PIP_UNINSTALL: "pip3 uninstall --yes"
     VENV_PATH: "$HOME/.venv_DetLocLCheck"
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: on_success
   extends: .display_env
   script:
     - apt-get update
