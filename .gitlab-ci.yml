@@ -203,7 +203,7 @@ debian-latest-venv-pip-latest:
     - python3 --version
     - pip3 --version
     - python3 -m venv --upgrade-deps "$VENV_PATH"
-    - ."$VENV_PATH"/bin/activate
+    - . "$VENV_PATH"/bin/activate
     - pip3 --version
     - $PIP_INSTALL ".[opencv-python-headless]"
     - pip3 list --local
