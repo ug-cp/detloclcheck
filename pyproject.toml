@@ -32,7 +32,7 @@ detloclcheck = "detloclcheck.scripts.detloclcheck:main"
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov", "pytest-xdist"]
-docs = ["sphinx", "sphinx-argparse"]
+docs = ["recommonmark", "sphinx", "sphinx-argparse"]
 opencv-python = ["opencv-python"]
 opencv-python-headless = ["opencv-python-headless"]
 
