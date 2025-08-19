@@ -34,6 +34,8 @@ pre-commit:
     - apk add --no-cache git npm pre-commit
     - pre-commit --version
     - pre-commit run --all-files --show-diff-on-failure
+    - pre-commit autoupdate --jobs $((($(nproc) * 3 + 2 - 1)/2))
+    - git diff .pre-commit-config.yaml
 
 pycodestyle:
   stage: pre
